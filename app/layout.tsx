@@ -9,7 +9,7 @@ const geist = Geist({
 export const metadata: Metadata = {
   title: "Allexis Tsuda — Product Designer",
   description:
-    "Product Designer com +15 anos de experiência, atuando de ponta a ponta na criação e evolução de produtos.",
+    "Product Designer focado em produtos digitais complexos, design system e IA aplicada ao processo de produto.",
 };
 
 export default function RootLayout({
