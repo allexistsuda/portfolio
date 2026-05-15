@@ -104,7 +104,7 @@ export default function VetSmart() {
         <TwoCol heading="Oportunidade">
           <p>
             A informação já existia em algum lugar, mas não estava{" "}
-            <HighlightText>acessível de forma rápida e, muitas vezes, estava desatualizada durante a consulta.</HighlightText>
+            <HighlightText>acessível de forma rápida e, muitas vezes, estava desatualizada.</HighlightText>
           </p>
         </TwoCol>
 
