@@ -216,7 +216,7 @@ export default function Home() {
             </span>
             <a
               href="mailto:allexistsuda@gmail.com"
-              className="hover:opacity-60 transition-opacity duration-200 text-[18px] md:text-[60px]"
+              className="hover:opacity-60 transition-opacity duration-200 text-[26px] md:text-[60px]"
               style={{
                 fontWeight: 400,
                 letterSpacing: "-0.02em",
