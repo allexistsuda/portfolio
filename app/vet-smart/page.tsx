@@ -31,8 +31,9 @@ function TwoCol({ heading, children }: { heading: string; children: React.ReactN
 }
 
 function Divider() {
-  return <div className="md:mx-5" style={{ height: 1, background: "rgba(34,34,34,0.15)", margin: "100px 0" }} />;
+  return <div className="my-8 md:my-[100px] md:mx-5" style={{ height: 1, background: "rgba(34,34,34,0.15)" }} />;
 }
+
 
 function ImgBlock({ ratio }: { ratio: string }) {
   return (
@@ -58,7 +59,7 @@ export default function VetSmart() {
 
         {/* Hero images */}
         <div style={{ marginBottom: 32 }}><Img src="/vet-smart/01.png" alt="Vet Smart" /></div>
-        <div style={{ marginBottom: 100 }}><Img src="/vet-smart/02.png" alt="Vet Smart" /></div>
+        <div className="mb-8 md:mb-[100px]"><Img src="/vet-smart/02.png" alt="Vet Smart" /></div>
 
         {/* Intro */}
         <TwoCol heading="Criamos um aplicativo que mudou o comportamento da consulta veterinária, reduzindo o tempo de tomada de decisão durante o atendimento">
@@ -78,7 +79,7 @@ export default function VetSmart() {
         </TwoCol>
 
         {/* Images grouped */}
-        <div style={{ marginTop: 100, marginBottom: 100, display: "flex", flexDirection: "column", gap: 32 }}>
+        <div className="my-8 md:my-[100px]" style={{ display: "flex", flexDirection: "column", gap: 32 }}>
           <Img src="/vet-smart/03.png" alt="Vet Smart" />
           <Img src="/vet-smart/04.gif" alt="Vet Smart motion" />
           <Img src="/vet-smart/05.png" alt="Vet Smart resultados" />
@@ -144,7 +145,7 @@ export default function VetSmart() {
         </TwoCol>
 
         {/* Image after Solução */}
-        <div style={{ marginTop: 100, marginBottom: 100 }}><Img src="/vet-smart/frame41.png" alt="Vet Smart" /></div>
+        <div className="my-8 md:my-[100px]"><Img src="/vet-smart/frame41.png" alt="Vet Smart" /></div>
 
         {/* Evolução */}
         <TwoCol heading="Evolução">
@@ -183,7 +184,7 @@ export default function VetSmart() {
         </TwoCol>
 
         {/* Image before Resultado */}
-        <div style={{ marginTop: 100, marginBottom: 100 }}>
+        <div className="my-8 md:my-[100px]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <Img src="/vet-smart/06.png" alt="Vet Smart" />
         </div>
@@ -226,7 +227,7 @@ export default function VetSmart() {
         </TwoCol>
 
         {/* Final gifs */}
-        <div style={{ marginTop: 100, marginBottom: 32 }}>
+        <div className="mt-8 md:mt-[100px]" style={{ marginBottom: 32 }}>
           <Img src="/vet-smart/07.gif" alt="Vet Smart color" />
         </div>
         <div style={{ marginBottom: 100 }}>
