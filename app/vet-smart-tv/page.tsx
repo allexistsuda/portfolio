@@ -56,9 +56,9 @@ export default function VetSmartTV() {
             contexto.
           </p>
           <p style={{ marginTop: 32 }}>
-            Mais de 90% dos acessos eram para consulta de medicamentos, com um fluxo e navegação já
+            <HighlightText>Mais de 90% dos acessos eram para consulta de medicamentos, com um fluxo e navegação já
             bem definidos. Qualquer tentativa de colocar outras coisas ali poderia atrapalhar esse
-            uso.
+            uso.</HighlightText>
           </p>
         </TwoCol>
 
@@ -68,11 +68,11 @@ export default function VetSmartTV() {
         <TwoCol heading="Onde identificamos uma nova oportunidade">
           <p>
             Após diversas pesquisas, conversas com veterinários e com a indústria, e análise de
-            mercado, vimos que a atualização profissional ainda dependia de cursos e eventos
-            presenciais, com datas específicas e custo elevado.
+            mercado, vimos que <HighlightText>a atualização profissional ainda dependia de cursos e eventos
+            presenciais, com datas específicas e custo elevado.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
-            Muitos veterinários não conseguiam pagar por esses cursos e conteúdos de atualização.
+            Muitos <HighlightText>veterinários não conseguiam pagar</HighlightText> por esses cursos e conteúdos de atualização.
           </p>
           <p style={{ marginTop: 32 }}>
             Na época, não existia nenhum conteúdo digital voltado para isso.
@@ -90,8 +90,8 @@ export default function VetSmartTV() {
             Viabilizar esse produto era o maior desafio.
           </p>
           <p style={{ marginTop: 32 }}>
-            Além da incerteza de engajamento do novo produto, era necessário estruturar um modelo
-            que funcionasse de ponta a ponta.
+            Além da incerteza de engajamento do novo produto, era <HighlightText>necessário estruturar um modelo
+            que funcionasse de ponta a ponta.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>Definimos algumas premissas:</p>
           <ul style={{ marginTop: 16, listStyle: "disc", paddingLeft: "1.2em" }}>
@@ -101,7 +101,7 @@ export default function VetSmartTV() {
             <li style={{ paddingBottom: 8 }}>execução das transmissões, garantindo consistência na entrega</li>
           </ul>
           <p style={{ marginTop: 32 }}>
-            A indústria entrava como patrocinadora, viabilizando o modelo.
+            <HighlightText>A indústria entrava como patrocinadora, viabilizando o modelo.</HighlightText>
           </p>
         </TwoCol>
 
@@ -112,7 +112,7 @@ export default function VetSmartTV() {
 
         {/* Solução e evoluções */}
         <TwoCol heading="Solução e evoluções">
-          <p>Criamos o Vet Smart TV, nossa plataforma de palestras.</p>
+          <p><HighlightText>Criamos o Vet Smart TV, nossa plataforma de palestras.</HighlightText></p>
           <p style={{ marginTop: 32 }}>
             O formato foi evoluindo com o tempo, a partir do uso e do comportamento dos usuários.
           </p>
