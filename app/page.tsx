@@ -36,7 +36,6 @@ export default function Home() {
 
       {/* Nav — 90px tall */}
       <nav
-        className="mx-auto"
         className="mx-auto px-6 md:px-10"
         style={{ maxWidth: 1440, height: 90, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", alignItems: "center" }}
       >
