@@ -39,12 +39,12 @@ export default function Home() {
       <div className="px-6 md:px-10" style={{ maxWidth: 1440, margin: "0 auto" }}>
 
         {/* Hero */}
-        <section className="pb-[50px] md:pb-[100px]" style={{ paddingTop: 80 }}>
+        <section style={{ paddingTop: 80, paddingBottom: 100 }}>
           <TypingHero />
         </section>
 
         {/* Projetos */}
-        <section className="pb-[50px] md:pb-[100px]">
+        <section style={{ paddingBottom: 100 }}>
           <Tag label="PROJETOS" />
           <div style={{ marginTop: 32 }}>
             {projects.map((p, i) => (
@@ -70,7 +70,7 @@ export default function Home() {
         </section>
 
         {/* Sobre */}
-        <section className="pb-[50px] md:pb-[100px]">
+        <section style={{ paddingBottom: 100 }}>
           <Tag label="SOBRE" />
           <div
             style={{
@@ -88,7 +88,7 @@ export default function Home() {
                 discovery, definição de jornadas, prototipação e evolução de produtos.
               </HighlightText>
             </p>
-            <p className="mt-4 md:mt-[1.4em]">
+            <p style={{ marginTop: "1.4em" }}>
               Vivência em empresas do segmento financeiro, SaaS e startups, com foco em soluções
               orientadas a negócio.{" "}
               <HighlightText>
@@ -96,7 +96,7 @@ export default function Home() {
                 acelerar pesquisa, fluxos e protótipos.
               </HighlightText>
             </p>
-            <p className="mt-4 md:mt-[1.4em]">
+            <p style={{ marginTop: "1.4em" }}>
               Co-fundador e Product Designer do{" "}
               <HighlightText>Vet Smart</HighlightText>, empresa adquirida pela Petlove em 2019.
               Participei também da criação do{" "}
@@ -107,7 +107,7 @@ export default function Home() {
         </section>
 
         {/* Experiência */}
-        <section className="pb-[50px] md:pb-[100px]">
+        <section style={{ paddingBottom: 100 }}>
           <Tag label="EXPERIÊNCIA" />
 
           {/* Desktop: horizontal timeline */}
@@ -192,7 +192,7 @@ export default function Home() {
         </section>
 
         {/* Contato */}
-        <section id="contato" className="pb-[50px] md:pb-[96px]">
+        <section id="contato" style={{ paddingBottom: 96 }}>
           <Tag label="CONTATO" />
           <div className="flex items-center" style={{ marginTop: 20, gap: 12 }}>
             <span className="arrow-animate" style={{ display: "inline-flex", flexShrink: 0 }}>
