@@ -4,7 +4,6 @@ import Nav from "../components/Nav";
 import HighlightText from "../components/HighlightText";
 
 const body: React.CSSProperties = {
-  fontSize: 24,
   fontWeight: 400,
   letterSpacing: "-0.24px",
   lineHeight: "36px",
@@ -12,7 +11,6 @@ const body: React.CSSProperties = {
 };
 
 const title: React.CSSProperties = {
-  fontSize: 36,
   fontWeight: 500,
   letterSpacing: "-0.72px",
   lineHeight: "44px",
@@ -23,8 +21,8 @@ function TwoCol({ heading, children }: { heading: string; children: React.ReactN
   return (
     <div className="md:px-5">
       <div className="grid grid-cols-1 md:grid-cols-[42%_1fr] gap-y-6 gap-x-16 lg:gap-x-24">
-        <h2 style={title}>{heading}</h2>
-        <div style={body}>{children}</div>
+        <h2 className="text-[29px] md:text-[36px]" style={title}>{heading}</h2>
+        <div className="text-[19px] md:text-[24px]" style={body}>{children}</div>
       </div>
     </div>
   );
