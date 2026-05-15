@@ -55,8 +55,8 @@ export default function UnicoYou() {
         {/* Contexto */}
         <TwoCol heading="Contexto">
           <p>
-            Liderei a criação do Unico You, primeiro produto B2C da Unico, empresa especializada em
-            identidade digital e soluções para RH.
+            Liderei a criação do Unico You, <HighlightText>primeiro produto B2C da Unico</HighlightText>, empresa especializada em
+            identidade digital e soluções para RH, que <HighlightText>se tornou unicórnio em 2021.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
             O produto foi criado para expandir a atuação da empresa para a relação direta com
@@ -79,8 +79,8 @@ export default function UnicoYou() {
           </p>
           <p style={{ marginTop: 32 }}>
             Mapeamos diferentes oportunidades relacionadas a benefícios, serviços financeiros e
-            rotina do colaborador. Entre elas, um dos pontos de dor mais recorrentes estava
-            relacionado à pressão financeira cotidiana e seu impacto direto na rotina de trabalho.
+            rotina do colaborador. Entre elas, <HighlightText>um dos pontos de dor mais recorrentes estava
+            relacionado à pressão financeira cotidiana e seu impacto direto na rotina de trabalho.</HighlightText>
           </p>
         </TwoCol>
 
@@ -89,22 +89,22 @@ export default function UnicoYou() {
         {/* Tese de produto */}
         <TwoCol heading="Tese de produto">
           <p>
-            A partir desse contexto, definimos como foco inicial do produto a possibilidade de
-            permitir que colaboradores recebessem pelos dias já trabalhados antes da data tradicional
-            de pagamento.
+            A partir desse contexto, definimos como foco inicial do produto a possibilidade de{" "}
+            <HighlightText>permitir que colaboradores recebessem pelos dias já trabalhados antes da data tradicional
+            de pagamento.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
             Além do impacto direto na rotina financeira dos usuários, a decisão também estava
-            alinhada à necessidade de construir um produto com alto potencial de recorrência e
-            frequência de uso.
+            alinhada à necessidade de <HighlightText>construir um produto com alto potencial de recorrência e
+            frequência de uso.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
             A proposta buscava transformar uma lógica rígida de pagamento mensal em uma experiência
             mais flexível, permitindo acesso imediato ao valor disponível diretamente pelo aplicativo
-            e sem custo para o colaborador.
+            e <HighlightText>sem custo para o colaborador.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
-            A tese do produto era simples: "trabalhei hoje, recebo hoje".
+            A tese do produto era simples: <HighlightText>"trabalhei hoje, recebo hoje".</HighlightText>
           </p>
         </TwoCol>
 
@@ -114,8 +114,8 @@ export default function UnicoYou() {
         <TwoCol heading="Construção do MVP">
           <p>
             Durante a construção do MVP, um dos principais desafios identificados estava relacionado
-            à percepção de segurança e confiança dos usuários em relação ao compartilhamento de
-            dados e acesso financeiro.
+            à percepção de <HighlightText>segurança e confiança dos usuários em relação ao compartilhamento de
+            dados e acesso financeiro.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
             A partir dos testes iniciais e validações com usuários, refinamos o fluxo de cadastro e
@@ -127,8 +127,8 @@ export default function UnicoYou() {
             refinamento até chegar à versão final do Unico You.
           </p>
           <p style={{ marginTop: 32 }}>
-            O produto foi desenvolvido em parceria com a Creditas, responsável por viabilizar a
-            operação financeira da solução.
+            O produto foi desenvolvido em parceria com a <HighlightText>Creditas, responsável por viabilizar a
+            operação financeira da solução.</HighlightText>
           </p>
         </TwoCol>
 
@@ -142,8 +142,8 @@ export default function UnicoYou() {
         {/* Resultados */}
         <TwoCol heading="Resultados">
           <p>
-            O lançamento do MVP validou tanto a aderência da proposta quanto o potencial de
-            recorrência do produto.
+            O lançamento do <HighlightText>MVP validou tanto a aderência da proposta quanto o potencial de
+            recorrência do produto.</HighlightText>
           </p>
           <ul style={{ marginTop: 32, listStyle: "disc", paddingLeft: "1.2em" }}>
             <li style={{ paddingBottom: 8 }}>55% de conversão no fluxo de cadastro</li>
@@ -165,8 +165,8 @@ export default function UnicoYou() {
         {/* Evolução do produto */}
         <TwoCol heading="Evolução do produto">
           <p>
-            O projeto ajudou a validar não apenas a proposta inicial do produto, mas também o
-            potencial de expansão da companhia para novos serviços dentro do seu ecossistema.
+            A partir da validação do MVP, o produto continuou evoluindo com novas funcionalidades e
+            serviços incorporados à plataforma.
           </p>
         </TwoCol>
 

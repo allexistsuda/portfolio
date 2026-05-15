@@ -5,9 +5,9 @@ import HighlightText from "./components/HighlightText";
 const projects = [
   { title: "Vet Smart", category: "Mobile", href: "/vet-smart" },
   { title: "Unico You", category: "Mobile", href: "/unico-you" },
-  { title: "Santander Design System", category: "Design System", href: "#" },
-  { title: "Santander Workshops", category: "Design Ops", href: "#" },
-  { title: "Vet Smart TV", category: "Web", href: "#" },
+  { title: "Santander Design System", category: "Design System", href: "/santander-design-system" },
+  { title: "Santander Workshops", category: "Design Ops", href: "/santander-workshops" },
+  { title: "Vet Smart TV", category: "Web", href: "/vet-smart-tv" },
 ];
 
 const experiences = [

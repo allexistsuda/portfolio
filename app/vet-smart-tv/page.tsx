@@ -1,0 +1,195 @@
+import Link from "next/link";
+import Nav from "../components/Nav";
+import HighlightText from "../components/HighlightText";
+
+const body: React.CSSProperties = { fontWeight: 400, color: "#222" };
+const title: React.CSSProperties = { fontWeight: 500, color: "#222" };
+
+function TwoCol({ heading, children }: { heading: string; children: React.ReactNode }) {
+  return (
+    <div className="md:px-5">
+      <div className="grid grid-cols-1 md:grid-cols-[42%_1fr] gap-y-6 gap-x-16 lg:gap-x-24">
+        <h2
+          className="text-[29px] md:text-[36px] leading-[38px] md:leading-[44px] tracking-[-0.58px] md:tracking-[-0.72px]"
+          style={title}
+        >{heading}</h2>
+        <div
+          className="text-[19px] md:text-[24px] leading-[29px] md:leading-[36px] tracking-[-0.19px] md:tracking-[-0.24px]"
+          style={body}
+        >{children}</div>
+      </div>
+    </div>
+  );
+}
+
+function Divider() {
+  return <div className="my-8 md:my-[100px] md:mx-5" style={{ height: 1, background: "rgba(34,34,34,0.15)" }} />;
+}
+
+function Img({ src, alt }: { src: string; alt: string }) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={src} alt={alt} style={{ width: "100%", height: "auto", display: "block", borderRadius: 16 }} />
+  );
+}
+
+export default function VetSmartTV() {
+  return (
+    <div className="min-h-screen bg-[#F2F2F2]" style={{ color: "#222" }}>
+      <Nav />
+
+      <div className="px-6 md:px-10 mx-auto" style={{ maxWidth: 1440, paddingTop: 32 }}>
+
+        {/* Hero image */}
+        <div className="mb-8 md:mb-[100px]">
+          <Img src="/vet-smart-tv/01.png" alt="Vet Smart TV" />
+        </div>
+
+        {/* Intro */}
+        <TwoCol heading="Criamos um novo produto que expandiu o Vet Smart além da consulta, consolidando como plataforma de educação">
+          <p>
+            O Vet Smart já tinha uma base muito forte no aplicativo, com uso concentrado no momento
+            da consulta.
+          </p>
+          <p style={{ marginTop: 32 }}>
+            Isso trazia um limite claro: o produto era extremamente útil, mas restrito a esse
+            contexto.
+          </p>
+          <p style={{ marginTop: 32 }}>
+            Mais de 90% dos acessos eram para consulta de medicamentos, com um fluxo e navegação já
+            bem definidos. Qualquer tentativa de colocar outras coisas ali poderia atrapalhar esse
+            uso.
+          </p>
+        </TwoCol>
+
+        <Divider />
+
+        {/* Onde identificamos */}
+        <TwoCol heading="Onde identificamos uma nova oportunidade">
+          <p>
+            Após diversas pesquisas, conversas com veterinários e com a indústria, e análise de
+            mercado, vimos que a atualização profissional ainda dependia de cursos e eventos
+            presenciais, com datas específicas e custo elevado.
+          </p>
+          <p style={{ marginTop: 32 }}>
+            Muitos veterinários não conseguiam pagar por esses cursos e conteúdos de atualização.
+          </p>
+          <p style={{ marginTop: 32 }}>
+            Na época, não existia nenhum conteúdo digital voltado para isso.
+          </p>
+          <p style={{ marginTop: 32 }}>
+            A partir disso, decidimos criar um novo produto para atender essa demanda.
+          </p>
+        </TwoCol>
+
+        <Divider />
+
+        {/* Como viabilizamos */}
+        <TwoCol heading="Como viabilizamos">
+          <p>
+            Viabilizar esse produto era o maior desafio.
+          </p>
+          <p style={{ marginTop: 32 }}>
+            Além da incerteza de engajamento do novo produto, era necessário estruturar um modelo
+            que funcionasse de ponta a ponta.
+          </p>
+          <p style={{ marginTop: 32 }}>Definimos algumas premissas:</p>
+          <ul style={{ marginTop: 16, listStyle: "disc", paddingLeft: "1.2em" }}>
+            <li style={{ paddingBottom: 8 }}>assumir a produção completa do conteúdo, garantindo controle de qualidade</li>
+            <li style={{ paddingBottom: 8 }}>contato direto com palestrantes, escolhendo os principais nomes de cada tema</li>
+            <li style={{ paddingBottom: 8 }}>organização dos temas, priorizando o que geraria mais interesse para os veterinários</li>
+            <li style={{ paddingBottom: 8 }}>execução das transmissões, garantindo consistência na entrega</li>
+          </ul>
+          <p style={{ marginTop: 32 }}>
+            A indústria entrava como patrocinadora, viabilizando o modelo.
+          </p>
+        </TwoCol>
+
+        {/* Image before Solução */}
+        <div className="my-8 md:my-[100px]">
+          <Img src="/vet-smart-tv/02.png" alt="Vet Smart TV" />
+        </div>
+
+        {/* Solução e evoluções */}
+        <TwoCol heading="Solução e evoluções">
+          <p>Criamos o Vet Smart TV, nossa plataforma de palestras.</p>
+          <p style={{ marginTop: 32 }}>
+            O formato foi evoluindo com o tempo, a partir do uso e do comportamento dos usuários.
+          </p>
+          <p style={{ marginTop: 32 }}>Com base nisso, incorporamos alguns elementos:</p>
+          <ul style={{ marginTop: 16, listStyle: "disc", paddingLeft: "1.2em" }}>
+            <li style={{ paddingBottom: 8 }}>ao vivo, para permitir interação e dúvidas sendo respondidas na hora</li>
+            <li style={{ paddingBottom: 8 }}>gratuitas, resolvendo o problema de custo e acesso</li>
+            <li style={{ paddingBottom: 8 }}>votações, para manter engajamento durante a palestra</li>
+            <li style={{ paddingBottom: 8 }}>sorteios de brindes</li>
+            <li style={{ paddingBottom: 8 }}>certificados, válidos como horas complementares na faculdade</li>
+          </ul>
+          <p style={{ marginTop: 32 }}>
+            O certificado se mostrou um ponto importante, principalmente para estudantes, que
+            passaram a usar como horas complementares.
+          </p>
+        </TwoCol>
+
+        <div className="my-8 md:my-[100px]">
+          <Img src="/vet-smart-tv/03.gif" alt="Vet Smart TV" />
+        </div>
+
+        {/* Resultados */}
+        <TwoCol heading="Resultados">
+          <ul style={{ listStyle: "disc", paddingLeft: "1.2em" }}>
+            <li style={{ paddingBottom: 8 }}>as palestras foram um sucesso</li>
+            <li style={{ paddingBottom: 8 }}>picos de 7.500 pessoas assistindo ao vivo</li>
+            <li style={{ paddingBottom: 8 }}>expansão de 1 para 2 palestras por semana</li>
+            <li style={{ paddingBottom: 8 }}>programação definida com antecedência para todo o ano</li>
+          </ul>
+        </TwoCol>
+
+        <Divider />
+
+        {/* Meu papel */}
+        <TwoCol heading="Meu papel">
+          <p>
+            Atuei desde o início na definição do produto, estruturando o modelo e a proposta.
+          </p>
+          <p style={{ marginTop: 32 }}>
+            Conduzi a criação do formato, as decisões de experiência e a evolução do produto ao
+            longo do tempo.
+          </p>
+          <p style={{ marginTop: 32 }}>
+            Também liderei a execução, dirigindo as gravações e participando da produção das
+            palestras.
+          </p>
+        </TwoCol>
+
+        {/* Bottom navigation */}
+        <div className="flex items-center justify-between my-8 md:my-[100px]">
+          <Link
+            href="/santander-workshops"
+            className="flex items-center gap-3 hover:opacity-60 transition-opacity duration-200"
+            style={{ textDecoration: "none" }}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span style={{ fontSize: 26, fontWeight: 400, letterSpacing: "-0.13px", color: "#222" }}>
+              Santander Workshops
+            </span>
+          </Link>
+          <Link
+            href="/"
+            className="flex items-center gap-3 hover:opacity-60 transition-opacity duration-200"
+            style={{ textDecoration: "none" }}
+          >
+            <span style={{ fontSize: 26, fontWeight: 400, letterSpacing: "-0.13px", color: "#222" }}>
+              Home
+            </span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </Link>
+        </div>
+
+      </div>
+    </div>
+  );
+}
