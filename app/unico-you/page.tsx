@@ -55,7 +55,7 @@ export default function UnicoYou() {
         {/* Contexto */}
         <TwoCol heading="Contexto">
           <p>
-            Liderei a criação do Unico You, <HighlightText>primeiro produto B2C da Unico</HighlightText>, empresa especializada em
+            Liderei a criação do Unico You, <HighlightText delay={0.2}>primeiro produto B2C da Unico</HighlightText>, empresa especializada em
             identidade digital e soluções para RH, que <HighlightText>se tornou unicórnio em 2021.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>

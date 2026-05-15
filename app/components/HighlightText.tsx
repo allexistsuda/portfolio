@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 
-export default function HighlightText({ children }: { children: React.ReactNode }) {
+export default function HighlightText({ children, delay = 0.2 }: { children: React.ReactNode; delay?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [triggered, setTriggered] = useState(false);
 
@@ -36,7 +36,7 @@ export default function HighlightText({ children }: { children: React.ReactNode 
         transition: triggered
           ? "background-size 3s cubic-bezier(0.22, 0.61, 0.36, 1)"
           : "none",
-        transitionDelay: triggered ? "0.2s" : "0s",
+        transitionDelay: triggered ? `${delay}s` : "0s",
         WebkitBoxDecorationBreak: "clone",
         boxDecorationBreak: "clone",
         paddingBottom: "1px",

@@ -98,10 +98,10 @@ export default function Home() {
             </p>
             <p style={{ marginTop: "1.4em" }}>
               Co-fundador e Product Designer do{" "}
-              <HighlightText>Vet Smart</HighlightText>, empresa adquirida pela Petlove em 2019.
+              <HighlightText delay={0.2}>Vet Smart</HighlightText>, empresa adquirida pela Petlove em 2019.
               Participei também da criação do{" "}
-              <HighlightText>Unico You</HighlightText> e atuei por 2 anos no time de Design System
-              do <HighlightText>Santander</HighlightText>.
+              <HighlightText delay={3.7}>Unico You</HighlightText> e atuei por 2 anos no time de Design System
+              do <HighlightText delay={7.2}>Santander</HighlightText>.
             </p>
           </div>
         </section>

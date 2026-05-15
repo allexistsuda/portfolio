@@ -68,11 +68,11 @@ export default function VetSmartTV() {
         <TwoCol heading="Onde identificamos uma nova oportunidade">
           <p>
             Após diversas pesquisas, conversas com veterinários e com a indústria, e análise de
-            mercado, vimos que <HighlightText>a atualização profissional ainda dependia de cursos e eventos
+            mercado, vimos que <HighlightText delay={0.2}>a atualização profissional ainda dependia de cursos e eventos
             presenciais, com datas específicas e custo elevado.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
-            Muitos <HighlightText>veterinários não conseguiam pagar</HighlightText> por esses cursos e conteúdos de atualização.
+            Muitos <HighlightText delay={3.7}>veterinários não conseguiam pagar</HighlightText> por esses cursos e conteúdos de atualização.
           </p>
           <p style={{ marginTop: 32 }}>
             Na época, não existia nenhum conteúdo digital voltado para isso.
@@ -90,7 +90,7 @@ export default function VetSmartTV() {
             Viabilizar esse produto era o maior desafio.
           </p>
           <p style={{ marginTop: 32 }}>
-            Além da incerteza de engajamento do novo produto, era <HighlightText>necessário estruturar um modelo
+            Além da incerteza de engajamento do novo produto, era <HighlightText delay={0.2}>necessário estruturar um modelo
             que funcionasse de ponta a ponta.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>Definimos algumas premissas:</p>
@@ -101,7 +101,7 @@ export default function VetSmartTV() {
             <li style={{ paddingBottom: 8 }}>execução das transmissões, garantindo consistência na entrega</li>
           </ul>
           <p style={{ marginTop: 32 }}>
-            <HighlightText>A indústria entrava como patrocinadora, viabilizando o modelo.</HighlightText>
+            <HighlightText delay={3.7}>A indústria entrava como patrocinadora, viabilizando o modelo.</HighlightText>
           </p>
         </TwoCol>
 

@@ -89,7 +89,7 @@ export default function VetSmart() {
         <TwoCol heading="Onde identificamos uma dor">
           <p>
             Acompanhamos diversas consultas veterinárias e observamos que, durante o atendimento, o{" "}
-            <HighlightText>veterinário alternava entre livros e memória para buscar informações, incluindo dosagens de medicamentos.</HighlightText>
+            <HighlightText delay={0.2}>veterinário alternava entre livros e memória para buscar informações, incluindo dosagens de medicamentos.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
             Esse processo não apenas consumia tempo, como também era suscetível a falhas:{" "}
