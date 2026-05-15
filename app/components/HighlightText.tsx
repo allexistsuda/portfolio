@@ -18,8 +18,8 @@ export default function HighlightText({ children, delay = 0.2 }: { children: Rea
         }
       },
       {
-        threshold: 0.5,
-        rootMargin: "0px 0px -25% 0px",
+        threshold: 0.2,
+        rootMargin: "0px 0px -10% 0px",
       }
     );
 
