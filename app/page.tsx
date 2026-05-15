@@ -1,13 +1,13 @@
-import Image from "next/image";
+import Nav from "./components/Nav";
 import TypingHero from "./components/TypingHero";
 import HighlightText from "./components/HighlightText";
 
 const projects = [
-  { title: "Vet Smart", category: "Mobile" },
-  { title: "Unico You", category: "Mobile" },
-  { title: "Santander Design System", category: "Design System" },
-  { title: "Santander Workshops", category: "Design Ops" },
-  { title: "Vet Smart TV", category: "Web" },
+  { title: "Vet Smart", category: "Mobile", href: "/vet-smart" },
+  { title: "Unico You", category: "Mobile", href: "/unico-you" },
+  { title: "Santander Design System", category: "Design System", href: "#" },
+  { title: "Santander Workshops", category: "Design Ops", href: "#" },
+  { title: "Vet Smart TV", category: "Web", href: "#" },
 ];
 
 const experiences = [
@@ -34,23 +34,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#F6F6F5]" style={{ color: "#222", fontFamily: "inherit" }}>
 
-      {/* Nav — 90px tall */}
-      <nav
-        className="mx-auto px-6 md:px-10"
-        style={{ maxWidth: 1440, height: 90, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", alignItems: "center" }}
-      >
-        <div><Image src="/logo.png" alt="Allexis Tsuda" width={140} height={30} priority /></div>
-        <div className="invisible md:visible" style={{ textAlign: "center" }}>
-          <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: "-0.21px", color: "#8D8D8D" }}>
-            UI/UX Designer
-          </span>
-        </div>
-        <div style={{ textAlign: "right" }}>
-          <a href="#contato" style={{ fontSize: 14, fontWeight: 600, letterSpacing: "-0.21px", color: "#222" }}>
-            Contato
-          </a>
-        </div>
-      </nav>
+      <Nav />
 
       <div className="px-6 md:px-10" style={{ maxWidth: 1440, margin: "0 auto" }}>
 
@@ -64,12 +48,14 @@ export default function Home() {
           <Tag label="PROJETOS" />
           <div style={{ marginTop: 32 }}>
             {projects.map((p, i) => (
-              <div
+              <a
                 key={i}
-                className="flex items-center justify-between"
+                href={p.href}
+                className="flex items-center justify-between hover:opacity-60 transition-opacity duration-200"
                 style={{
                   height: 64,
                   borderTop: i > 0 ? "1px dashed #4F4F4F" : "none",
+                  textDecoration: "none",
                 }}
               >
                 <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: "-0.21px", color: "#222" }}>
@@ -78,7 +64,7 @@ export default function Home() {
                 <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: "-0.21px", color: "#999" }}>
                   {p.category}
                 </span>
-              </div>
+              </a>
             ))}
           </div>
         </section>
