@@ -163,7 +163,14 @@ export default function VetSmart() {
         </TwoCol>
 
         {/* Image after Solução */}
-        <div className="my-8 md:my-[100px]"><Img src="/vet-smart/frame41.png" alt="Vet Smart" /></div>
+        <div className="my-8 md:my-[100px]">
+          <div className="flex flex-col md:hidden" style={{ gap: 32 }}>
+            <Img src="/vet-smart/f41-mobile-a.png" alt="Vet Smart" />
+            <Img src="/vet-smart/f41-mobile-b.png" alt="Vet Smart" />
+            <Img src="/vet-smart/f41-mobile-c.png" alt="Vet Smart" />
+          </div>
+          <div className="hidden md:block"><Img src="/vet-smart/frame41.png" alt="Vet Smart" /></div>
+        </div>
 
         {/* Evolução */}
         <TwoCol heading="Evolução">
