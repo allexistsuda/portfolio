@@ -58,8 +58,18 @@ export default function VetSmart() {
       <div className="px-6 md:px-10 mx-auto" style={{ maxWidth: 1440, paddingTop: 32 }}>
 
         {/* Hero images */}
-        <div style={{ marginBottom: 32 }}><Img src="/vet-smart/01.png" alt="Vet Smart" /></div>
-        <div className="mb-8 md:mb-[100px]"><Img src="/vet-smart/02.png" alt="Vet Smart" /></div>
+        <div style={{ marginBottom: 32 }}>
+          <div className="md:hidden">
+            <Img src="/vet-smart/01-mobile.png" alt="Vet Smart" />
+          </div>
+          <div className="hidden md:block">
+            <Img src="/vet-smart/01.png" alt="Vet Smart" />
+          </div>
+        </div>
+        <div className="mb-8 md:mb-[100px]">
+          <div className="md:hidden"><Img src="/vet-smart/02-mobile.png" alt="Vet Smart" /></div>
+          <div className="hidden md:block"><Img src="/vet-smart/02.png" alt="Vet Smart" /></div>
+        </div>
 
         {/* Intro */}
         <TwoCol heading="Criamos um aplicativo que mudou o comportamento da consulta veterinária, reduzindo o tempo de tomada de decisão durante o atendimento">
