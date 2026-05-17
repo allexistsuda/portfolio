@@ -211,7 +211,8 @@ export default function VetSmart() {
         {/* Image before Resultado */}
         <div className="my-8 md:my-[100px]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <Img src="/vet-smart/06.png" alt="Vet Smart" />
+          <div className="md:hidden"><Img src="/vet-smart/06-mobile.png" alt="Vet Smart" /></div>
+          <div className="hidden md:block"><Img src="/vet-smart/06.png" alt="Vet Smart" /></div>
         </div>
 
         {/* Resultado */}
