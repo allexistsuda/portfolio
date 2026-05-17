@@ -91,7 +91,7 @@ export default function VetSmart() {
         {/* Images grouped */}
         <div className="my-8 md:my-[100px]" style={{ display: "flex", flexDirection: "column", gap: 32 }}>
           <div>
-            <div className="md:hidden" style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+            <div className="flex flex-col md:hidden" style={{ gap: 32 }}>
               <Img src="/vet-smart/03-mobile.png" alt="Vet Smart" />
               <Img src="/vet-smart/03b-mobile.png" alt="Vet Smart" />
             </div>
