@@ -164,7 +164,7 @@ export default function VetSmart() {
 
         {/* Image after Solução */}
         <div className="my-8 md:my-[100px]">
-          <div className="flex flex-col md:hidden" style={{ gap: 32 }}>
+          <div className="md:hidden space-y-8">
             <Img src="/vet-smart/f41-mobile-a.png" alt="Vet Smart" />
             <Img src="/vet-smart/f41-mobile-b.png" alt="Vet Smart" />
             <Img src="/vet-smart/f41-mobile-c.png" alt="Vet Smart" />
