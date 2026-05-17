@@ -99,6 +99,7 @@ export default function VetSmart() {
           </div>
           <div className="flex md:hidden"><Img src="/vet-smart/04-mobile.gif" alt="Vet Smart motion" /></div>
           <div className="hidden md:flex"><Img src="/vet-smart/04.gif" alt="Vet Smart motion" /></div>
+          <div className="flex md:hidden"><Img src="/vet-smart/celular-mobile.png" alt="Vet Smart" /></div>
           <Img src="/vet-smart/05.png" alt="Vet Smart resultados" />
         </div>
 
