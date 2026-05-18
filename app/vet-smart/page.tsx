@@ -75,7 +75,7 @@ export default function VetSmart() {
         <TwoCol heading="Criamos um aplicativo que mudou o comportamento da consulta veterinária, reduzindo o tempo de tomada de decisão durante o atendimento">
           <p>
             O Vet Smart surgiu em um momento em que não existiam aplicativos para médicos
-            veterinários. <HighlightText>Fomos os primeiros a construir um produto voltado para esse público.</HighlightText>
+            veterinários. Fomos os <HighlightText>primeiros a construir um produto voltado para esse público.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
             Desde o início, atuei como Product Designer conduzindo pesquisas e participando da
@@ -106,13 +106,10 @@ export default function VetSmart() {
         {/* Onde identificamos uma dor */}
         <TwoCol heading="Onde identificamos uma dor">
           <p>
-            Acompanhamos diversas consultas veterinárias e observamos que, durante o atendimento, o{" "}
-            <HighlightText delay={0.2}>veterinário alternava entre livros e memória para buscar informações, incluindo dosagens de medicamentos.</HighlightText>
+            Acompanhamos diversas consultas veterinárias e observamos que, durante o atendimento, o veterinário alternava entre livros e memória para buscar informações, incluindo dosagens de medicamentos.
           </p>
           <p style={{ marginTop: 32 }}>
-            Esse processo não apenas consumia tempo, como também era suscetível a falhas:{" "}
-            <HighlightText>a informação podia estar desatualizada e a memória não era confiável.</HighlightText>{" "}
-            Isso ocorria justamente no momento mais crítico da consulta.
+            Esse processo não apenas consumia tempo, como também era suscetível a falhas: a informação podia estar desatualizada e a memória não era confiável. Isso ocorria justamente no momento mais crítico da consulta.
           </p>
         </TwoCol>
 
@@ -121,8 +118,7 @@ export default function VetSmart() {
         {/* Oportunidade */}
         <TwoCol heading="Oportunidade">
           <p>
-            A informação já existia em algum lugar, mas não estava{" "}
-            <HighlightText>acessível de forma rápida e, muitas vezes, estava desatualizada.</HighlightText>
+            A informação já existia em algum lugar, mas não estava acessível de forma rápida e, muitas vezes, estava desatualizada.
           </p>
         </TwoCol>
 
@@ -131,8 +127,7 @@ export default function VetSmart() {
         {/* Solução */}
         <TwoCol heading="Solução">
           <p>
-            O problema acontecia durante a consulta, então a solução precisava existir nesse mesmo
-            contexto.
+            <HighlightText delay={0.2}>O problema acontecia durante a consulta, então a solução precisava existir nesse mesmo contexto.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
             Levamos essa informação para um aplicativo, disponível na mão do veterinário durante o
@@ -143,18 +138,18 @@ export default function VetSmart() {
             ser compreendida sem necessidade de leitura completa.
           </p>
           <p style={{ marginTop: 32 }}>
-            Priorizamos <HighlightText>escaneabilidade em vez de profundidade, reduzindo a quantidade de informação visível e organizando tudo em um padrão consistente.</HighlightText>
+            Priorizamos <HighlightText delay={3.7}>escaneabilidade em vez de profundidade</HighlightText>, reduzindo a quantidade de informação visível e organizando tudo em um padrão consistente.
           </p>
           <p style={{ marginTop: 32 }}>
-            Essa decisão veio da <HighlightText>observação de que a leitura completa não acontecia durante a consulta.</HighlightText>
+            Essa decisão veio da observação de que <HighlightText delay={7.2}>a leitura completa não acontecia durante a consulta.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
             Adotamos, então, algumas premissas de estrutura para o aplicativo:
           </p>
           <ul style={{ marginTop: 16, paddingLeft: "1.2em", listStyleType: "disc" }}>
-            <li>busca direta</li>
-            <li>listas simples</li>
-            <li>informação sempre no mesmo formato</li>
+            <li><HighlightText delay={10.7}>busca direta</HighlightText></li>
+            <li><HighlightText delay={14.2}>listas simples</HighlightText></li>
+            <li><HighlightText delay={17.7}>informação sempre no mesmo formato</HighlightText></li>
           </ul>
           <p style={{ marginTop: 32 }}>
             Com isso, o foco do veterinário passou para o acesso rápido à informação durante a
@@ -175,20 +170,18 @@ export default function VetSmart() {
         {/* Evolução */}
         <TwoCol heading="Evolução">
           <p>
-            Apesar de o aplicativo ser bem aceito, identificamos um problema de recorrência.
+            Apesar de o aplicativo ser bem aceito, identificamos um <HighlightText delay={0.2}>problema de recorrência.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
-            <HighlightText>O veterinário consultava quando precisava, mas não havia um motivo constante para voltar após ter domínio sobre o produto.</HighlightText>
+            O veterinário consultava quando precisava, mas não havia um motivo constante para voltar após ter domínio sobre o produto.
           </p>
           <p style={{ marginTop: 32 }}>
-            Com isso, fomos observar a consulta e o uso do aplicativo na prática e vimos que{" "}
-            <HighlightText>havia um cálculo recorrente de dosagem de medicamentos.</HighlightText>
+            Com isso, fomos observar a consulta e o uso do aplicativo na prática e vimos que havia um <HighlightText delay={3.7}>cálculo recorrente de dosagem de medicamentos.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
-            A dose dependia do peso do animal e de regras específicas de cada medicamento.{" "}
-            <HighlightText>Todo esse cálculo era feito manualmente durante a consulta.</HighlightText>
+            A dose dependia do peso do animal e de regras específicas de cada medicamento. Todo esse cálculo era feito manualmente durante a consulta.
           </p>
-          <p style={{ marginTop: 32 }}>Isso evidenciou uma oportunidade de evolução.</p>
+          <p style={{ marginTop: 32 }}>Isso evidenciou uma <HighlightText delay={7.2}>oportunidade de evolução.</HighlightText></p>
         </TwoCol>
 
         <Divider />
@@ -196,7 +189,7 @@ export default function VetSmart() {
         {/* O cálculo dentro do fluxo */}
         <TwoCol heading="O cálculo dentro do fluxo">
           <p>
-            <HighlightText>Nossa resposta foi trazer o cálculo para dentro do aplicativo, transformando esse passo manual em uma ação rápida dentro do fluxo.</HighlightText>
+            Nossa resposta foi <HighlightText delay={0.2}>trazer o cálculo para dentro do aplicativo</HighlightText>, transformando esse passo manual em uma ação rápida dentro do fluxo.
           </p>
           <ul style={{ marginTop: 32, paddingLeft: "1.2em", listStyleType: "disc" }}>
             <li>o veterinário informa o peso do animal</li>
@@ -204,7 +197,7 @@ export default function VetSmart() {
             <li>o cálculo da dosagem já vem pronto</li>
           </ul>
           <p style={{ marginTop: 32 }}>
-            Com essa solução, o uso deixou de ser pontual e passou a ser recorrente.
+            Com essa solução, <HighlightText delay={3.7}>o uso deixou de ser pontual e passou a ser recorrente.</HighlightText>
           </p>
         </TwoCol>
 
@@ -218,18 +211,12 @@ export default function VetSmart() {
         {/* Resultado */}
         <TwoCol heading="Resultado">
           <ul style={{ listStyle: "disc", padding: 0, margin: 0, paddingLeft: "1.2em" }}>
-            {[
-              "80 mil usuários ativos",
-              "média de 28 acessos por usuário por mês",
-              "2,5 milhões de pageviews por mês",
-              "6 minutos e 40 segundos por sessão",
-              "avaliação de 4,75 nas stores",
-              "empresa adquirida pela Petlove",
-            ].map((item, i) => (
-              <li key={i} style={{ paddingBottom: 8 }}>
-                {item}
-              </li>
-            ))}
+            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.2}>80 mil usuários ativos</HighlightText></li>
+            <li style={{ paddingBottom: 8 }}>média de <HighlightText delay={3.7}>28 acessos por usuário por mês</HighlightText></li>
+            <li style={{ paddingBottom: 8 }}><HighlightText delay={7.2}>2,5 milhões de pageviews por mês</HighlightText></li>
+            <li style={{ paddingBottom: 8 }}><HighlightText delay={10.7}>6 minutos e 40 segundos por sessão</HighlightText></li>
+            <li style={{ paddingBottom: 8 }}>avaliação de 4,75 nas stores</li>
+            <li style={{ paddingBottom: 8 }}><HighlightText delay={14.2}>empresa adquirida pela Petlove</HighlightText></li>
           </ul>
         </TwoCol>
 
