@@ -68,8 +68,10 @@ export default function UnicoYou() {
 
         {/* Images after Contexto */}
         <div className="my-8 md:my-[100px]" style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-          <Img src="/unico-you/02.png" alt="Unico You" />
-          <Img src="/unico-you/03.png" alt="Unico You" />
+          <div className="md:hidden"><Img src="/unico-you/02-mobile.png" alt="Unico You" /></div>
+          <div className="hidden md:block"><Img src="/unico-you/02.png" alt="Unico You" /></div>
+          <div className="md:hidden"><Img src="/unico-you/03-mobile.png" alt="Unico You" /></div>
+          <div className="hidden md:block"><Img src="/unico-you/03.png" alt="Unico You" /></div>
         </div>
 
         {/* Oportunidade */}
