@@ -194,8 +194,10 @@ export default function UnicoYou() {
         <div className="my-8 md:my-[100px]" style={{ display: "flex", flexDirection: "column", gap: 32 }}>
           <div className="md:hidden"><Img src="/unico-you/09-mobile.png" alt="Unico You" /></div>
           <div className="hidden md:block"><Img src="/unico-you/09.png" alt="Unico You" /></div>
-          <Img src="/unico-you/10.png" alt="Unico You" />
-          <Img src="/unico-you/11.png" alt="Unico You" />
+          <div className="md:hidden"><Img src="/unico-you/10-mobile.png" alt="Unico You" /></div>
+          <div className="hidden md:block"><Img src="/unico-you/10.png" alt="Unico You" /></div>
+          <div className="md:hidden"><Img src="/unico-you/11-mobile.png" alt="Unico You" /></div>
+          <div className="hidden md:block"><Img src="/unico-you/11.png" alt="Unico You" /></div>
         </div>
 
         <BottomNav prev={{ label: "Vet Smart", href: "/vet-smart" }} next={{ label: "Santander Design System", href: "/santander-design-system" }} />
