@@ -57,11 +57,11 @@ export default function UnicoYou() {
         <TwoCol heading="Contexto">
           <p>
             Liderei a criação do Unico You, <HighlightText delay={0.2}>primeiro produto B2C da Unico</HighlightText>, empresa especializada em
-            identidade digital e soluções para RH, que <HighlightText>se tornou unicórnio em 2021.</HighlightText>
+            identidade digital e soluções para RH, que se tornou <HighlightText delay={0.4}>unicórnio em 2021.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
-            O produto foi criado para expandir a atuação da empresa para a relação direta com
-            colaboradores, explorando novos serviços dentro do ecossistema já existente da companhia.
+            O produto foi criado para expandir a atuação da empresa para a <HighlightText delay={0.2}>relação direta com
+            colaboradores</HighlightText>, explorando novos serviços dentro do ecossistema já existente da companhia.
           </p>
         </TwoCol>
 
@@ -75,13 +75,13 @@ export default function UnicoYou() {
         <TwoCol heading="Oportunidade">
           <p>
             Durante o discovery, conduzimos uma série de pesquisas e análises para entender quais
-            problemas dentro da relação entre empresas e colaboradores poderiam gerar valor real como
-            uma nova frente de produto.
+            problemas dentro da relação entre empresas e colaboradores poderiam <HighlightText delay={0.2}>gerar valor real como
+            uma nova frente de produto.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
             Mapeamos diferentes oportunidades relacionadas a benefícios, serviços financeiros e
-            rotina do colaborador. Entre elas, <HighlightText>um dos pontos de dor mais recorrentes estava
-            relacionado à pressão financeira cotidiana e seu impacto direto na rotina de trabalho.</HighlightText>
+            rotina do colaborador. Entre elas, um dos pontos de dor mais recorrentes estava
+            relacionado à <HighlightText delay={0.4}>pressão financeira cotidiana</HighlightText> e seu <HighlightText delay={0.6}>impacto direto na rotina de trabalho.</HighlightText>
           </p>
         </TwoCol>
 
@@ -90,22 +90,22 @@ export default function UnicoYou() {
         {/* Tese de produto */}
         <TwoCol heading="Tese de produto">
           <p>
-            A partir desse contexto, definimos como foco inicial do produto a possibilidade de{" "}
-            <HighlightText>permitir que colaboradores recebessem pelos dias já trabalhados antes da data tradicional
+            A partir desse contexto, definimos como foco inicial do produto a possibilidade de
+            colaboradores <HighlightText delay={0.2}>recebessem pelos dias já trabalhados antes da data tradicional
             de pagamento.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
             Além do impacto direto na rotina financeira dos usuários, a decisão também estava
-            alinhada à necessidade de <HighlightText>construir um produto com alto potencial de recorrência e
+            alinhada à necessidade de construir um produto com <HighlightText delay={0.4}>alto potencial de recorrência e
             frequência de uso.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
             A proposta buscava transformar uma lógica rígida de pagamento mensal em uma experiência
-            mais flexível, permitindo acesso imediato ao valor disponível diretamente pelo aplicativo
-            e <HighlightText>sem custo para o colaborador.</HighlightText>
+            mais flexível, permitindo <HighlightText delay={0.6}>acesso imediato ao valor disponível</HighlightText> diretamente pelo aplicativo
+            e <HighlightText delay={0.8}>sem custo para o colaborador.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
-            A tese do produto era simples: <HighlightText>"trabalhei hoje, recebo hoje".</HighlightText>
+            <HighlightText delay={1.0}>A tese do produto era simples</HighlightText>: <HighlightText delay={1.2}>"trabalhei hoje, recebo hoje".</HighlightText>
           </p>
         </TwoCol>
 
@@ -115,7 +115,7 @@ export default function UnicoYou() {
         <TwoCol heading="Construção do MVP">
           <p>
             Durante a construção do MVP, um dos principais desafios identificados estava relacionado
-            à percepção de <HighlightText>segurança e confiança dos usuários em relação ao compartilhamento de
+            à percepção de <HighlightText delay={0.2}>segurança e confiança dos usuários</HighlightText> em relação ao <HighlightText delay={0.4}>compartilhamento de
             dados e acesso financeiro.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
@@ -124,11 +124,11 @@ export default function UnicoYou() {
             segurança da experiência.
           </p>
           <p style={{ marginTop: 32 }}>
-            O MVP inicial, lançado sob o nome DiaCinco, passou por diferentes ciclos de evolução e
-            refinamento até chegar à versão final do Unico You.
+            O MVP inicial, lançado sob o nome DiaCinco, passou por <HighlightText delay={0.6}>diferentes ciclos de evolução e
+            refinamento</HighlightText> até chegar à versão final do Unico You.
           </p>
           <p style={{ marginTop: 32 }}>
-            O produto foi desenvolvido em parceria com a <HighlightText>Creditas, responsável por viabilizar a
+            O produto foi desenvolvido em parceria com a Creditas, responsável por <HighlightText delay={0.8}>viabilizar a
             operação financeira da solução.</HighlightText>
           </p>
         </TwoCol>
@@ -143,16 +143,16 @@ export default function UnicoYou() {
         {/* Resultados */}
         <TwoCol heading="Resultados">
           <p>
-            O lançamento do <HighlightText>MVP validou tanto a aderência da proposta quanto o potencial de
-            recorrência do produto.</HighlightText>
+            O lançamento do MVP validou tanto a aderência da proposta quanto o potencial de
+            recorrência do produto.
           </p>
           <ul style={{ marginTop: 32, listStyle: "disc", paddingLeft: "1.2em" }}>
-            <li style={{ paddingBottom: 8 }}>55% de conversão no fluxo de cadastro</li>
-            <li style={{ paddingBottom: 8 }}>45,7% de usuários ativos mensais</li>
-            <li style={{ paddingBottom: 8 }}>Média de 5,5 sessões por usuário ao mês</li>
+            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.2}>55% de conversão no fluxo de cadastro</HighlightText></li>
+            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.4}>45,7% de usuários ativos mensais</HighlightText></li>
+            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.6}>Média de 5,5 sessões por usuário ao mês</HighlightText></li>
           </ul>
           <p style={{ marginTop: 32 }}>
-            Os resultados reforçaram a frequência de uso e a relevância da proposta dentro da rotina
+            Os resultados reforçaram a <HighlightText delay={0.8}>frequência de uso e a relevância da proposta</HighlightText> dentro da rotina
             dos colaboradores.
           </p>
         </TwoCol>
@@ -166,8 +166,8 @@ export default function UnicoYou() {
         {/* Evolução do produto */}
         <TwoCol heading="Evolução do produto">
           <p>
-            A partir da validação do MVP, o produto continuou evoluindo com novas funcionalidades e
-            serviços incorporados à plataforma.
+            A partir da validação do MVP, o produto continuou evoluindo com <HighlightText delay={0.2}>novas funcionalidades e
+            serviços incorporados à plataforma.</HighlightText>
           </p>
         </TwoCol>
 
