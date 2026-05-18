@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Carousel from "../components/Carousel";
 import BottomNav from "../components/BottomNav";
 import Nav from "../components/Nav";
 import HighlightText from "../components/HighlightText";
@@ -138,25 +139,16 @@ export default function UnicoYou() {
 
         {/* Final images */}
         <div className="my-8 md:my-[100px]" style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-          <div className="md:hidden space-y-8">
-            <Img src="/unico-you/04-mobile-a.png" alt="Unico You" />
-            <Img src="/unico-you/04-mobile-b.png" alt="Unico You" />
-            <Img src="/unico-you/04-mobile-c.png" alt="Unico You" />
+          <div className="md:hidden">
+            <Carousel images={["/unico-you/04-mobile-a.png", "/unico-you/04-mobile-b.png", "/unico-you/04-mobile-c.png"]} />
           </div>
           <div className="hidden md:block"><Img src="/unico-you/04.png" alt="Unico You" /></div>
-          <div className="md:hidden space-y-8">
-            <Img src="/unico-you/05-mobile-1.png" alt="Unico You" />
-            <Img src="/unico-you/05-mobile-2.png" alt="Unico You" />
-            <Img src="/unico-you/05-mobile-3.png" alt="Unico You" />
-            <Img src="/unico-you/05-mobile-4.png" alt="Unico You" />
-            <Img src="/unico-you/05-mobile-5.png" alt="Unico You" />
+          <div className="md:hidden">
+            <Carousel images={["/unico-you/05-mobile-1.png", "/unico-you/05-mobile-2.png", "/unico-you/05-mobile-3.png", "/unico-you/05-mobile-4.png", "/unico-you/05-mobile-5.png"]} />
           </div>
           <div className="hidden md:block"><Img src="/unico-you/05.png" alt="Unico You" /></div>
-          <div className="md:hidden space-y-8">
-            <Img src="/unico-you/06-mobile-a.png" alt="Unico You" />
-            <Img src="/unico-you/06-mobile-b.png" alt="Unico You" />
-            <Img src="/unico-you/06-mobile-c.png" alt="Unico You" />
-            <Img src="/unico-you/06-mobile-d.png" alt="Unico You" />
+          <div className="md:hidden">
+            <Carousel images={["/unico-you/06-mobile-a.png", "/unico-you/06-mobile-b.png", "/unico-you/06-mobile-c.png", "/unico-you/06-mobile-d.png"]} />
           </div>
           <div className="hidden md:block"><Img src="/unico-you/06.png" alt="Unico You" /></div>
         </div>
