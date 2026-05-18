@@ -33,7 +33,7 @@ export default function HighlightText({ children, delay = 0.2 }: { children: Rea
       style={{
         background: "linear-gradient(#FFE566, #FFE566) no-repeat left bottom",
         backgroundSize: triggered ? "100% 42%" : "0% 42%",
-        transitionProperty: triggered ? "background-size" : "none",
+        transitionProperty: "background-size",
         transitionDuration: "1.8s",
         transitionTimingFunction: "cubic-bezier(0.22, 0.61, 0.36, 1)",
         transitionDelay: triggered ? `${delay}s` : "0s",
