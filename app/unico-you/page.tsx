@@ -176,7 +176,10 @@ export default function UnicoYou() {
             <Carousel images={["/unico-you/07-mobile-1.png", "/unico-you/07-mobile-2.png", "/unico-you/07-mobile-3.png"]} />
           </div>
           <div className="hidden md:block"><Img src="/unico-you/07.png" alt="Unico You" /></div>
-          <Img src="/unico-you/08.png" alt="Unico You" />
+          <div className="md:hidden">
+            <Carousel images={["/unico-you/08-mobile-1.png", "/unico-you/08-mobile-2.png", "/unico-you/08-mobile-3.png"]} />
+          </div>
+          <div className="hidden md:block"><Img src="/unico-you/08.png" alt="Unico You" /></div>
         </div>
 
         {/* Evolução do produto */}
