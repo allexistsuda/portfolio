@@ -178,7 +178,7 @@ export default function UnicoYou() {
         </div>
 
         {/* Bottom navigation */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 md:gap-0 my-8 md:my-[100px]">
+        <div className="flex items-center justify-between my-8 md:my-[100px]">
           <Link
             href="/vet-smart"
             className="flex items-center gap-3 hover:opacity-60 transition-opacity duration-200"
