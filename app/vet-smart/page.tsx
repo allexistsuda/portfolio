@@ -254,7 +254,11 @@ export default function VetSmart() {
 
         {/* Final gifs */}
         <div className="mt-8 md:mt-[100px]" style={{ marginBottom: 32 }}>
-          <Img src="/vet-smart/07.gif" alt="Vet Smart color" />
+          <div className="md:hidden space-y-8">
+            <Img src="/vet-smart/07-mobile-a.png" alt="Vet Smart" />
+            <Img src="/vet-smart/07-mobile-b.gif" alt="Vet Smart" />
+          </div>
+          <div className="hidden md:block"><Img src="/vet-smart/07.gif" alt="Vet Smart color" /></div>
         </div>
         <div style={{ marginBottom: 100 }}>
           <Img src="/vet-smart/08.gif" alt="Vet Smart estudos" />
