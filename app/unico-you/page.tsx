@@ -138,7 +138,12 @@ export default function UnicoYou() {
 
         {/* Final images */}
         <div className="my-8 md:my-[100px]" style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-          <Img src="/unico-you/04.png" alt="Unico You" />
+          <div className="md:hidden space-y-8">
+            <Img src="/unico-you/04-mobile-a.png" alt="Unico You" />
+            <Img src="/unico-you/04-mobile-b.png" alt="Unico You" />
+            <Img src="/unico-you/04-mobile-c.png" alt="Unico You" />
+          </div>
+          <div className="hidden md:block"><Img src="/unico-you/04.png" alt="Unico You" /></div>
           <Img src="/unico-you/05.png" alt="Unico You" />
           <Img src="/unico-you/06.png" alt="Unico You" />
         </div>
