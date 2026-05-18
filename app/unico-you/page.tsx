@@ -50,7 +50,8 @@ export default function UnicoYou() {
 
         {/* Hero image */}
         <div className="mb-8 md:mb-[100px]">
-          <Img src="/unico-you/01.png" alt="Unico You" />
+          <div className="md:hidden"><Img src="/unico-you/01-mobile.png" alt="Unico You" /></div>
+          <div className="hidden md:block"><Img src="/unico-you/01.png" alt="Unico You" /></div>
         </div>
 
         {/* Contexto */}
