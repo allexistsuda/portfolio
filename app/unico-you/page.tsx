@@ -196,7 +196,7 @@ export default function UnicoYou() {
             className="flex items-center gap-3 hover:opacity-60 transition-opacity duration-200"
             style={{ textDecoration: "none" }}
           >
-            <span style={{ fontSize: 26, fontWeight: 400, letterSpacing: "-0.13px", color: "#222" }}>
+            <span className="text-[18px] md:text-[26px]" style={{ fontWeight: 400, letterSpacing: "-0.13px", color: "#222" }}>
               Santander Design System
             </span>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
