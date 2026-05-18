@@ -172,7 +172,10 @@ export default function UnicoYou() {
 
         {/* Images after Resultados */}
         <div className="my-8 md:my-[100px]" style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-          <Img src="/unico-you/07.png" alt="Unico You" />
+          <div className="md:hidden">
+            <Carousel images={["/unico-you/07-mobile-1.png", "/unico-you/07-mobile-2.png", "/unico-you/07-mobile-3.png"]} />
+          </div>
+          <div className="hidden md:block"><Img src="/unico-you/07.png" alt="Unico You" /></div>
           <Img src="/unico-you/08.png" alt="Unico You" />
         </div>
 
