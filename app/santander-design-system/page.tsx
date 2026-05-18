@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BottomNav from "../components/BottomNav";
 import Nav from "../components/Nav";
 import VideoPlayer from "../components/VideoPlayer";
 
@@ -47,33 +48,7 @@ export default function SantanderDesignSystem() {
           </p>
         </TwoCol>
 
-        {/* Bottom navigation */}
-        <div className="flex items-center justify-between my-8 md:my-[100px]">
-          <Link
-            href="/unico-you"
-            className="flex items-center gap-3 hover:opacity-60 transition-opacity duration-200"
-            style={{ textDecoration: "none" }}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <span style={{ fontSize: 26, fontWeight: 400, letterSpacing: "-0.13px", color: "#222" }}>
-              Unico You
-            </span>
-          </Link>
-          <Link
-            href="/santander-workshops"
-            className="flex items-center gap-3 hover:opacity-60 transition-opacity duration-200"
-            style={{ textDecoration: "none" }}
-          >
-            <span style={{ fontSize: 26, fontWeight: 400, letterSpacing: "-0.13px", color: "#222" }}>
-              Santander Workshops
-            </span>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </Link>
-        </div>
+        <BottomNav prev={{ label: "Unico You", href: "/unico-you" }} next={{ label: "Santander Workshops", href: "/santander-workshops" }} />
 
       </div>
     </div>
