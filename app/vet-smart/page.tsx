@@ -138,18 +138,18 @@ export default function VetSmart() {
             ser compreendida sem necessidade de leitura completa.
           </p>
           <p style={{ marginTop: 32 }}>
-            Priorizamos <HighlightText delay={3.2}>escaneabilidade em vez de profundidade</HighlightText>, reduzindo a quantidade de informação visível e organizando tudo em um padrão consistente.
+            Priorizamos <HighlightText delay={0.4}>escaneabilidade em vez de profundidade</HighlightText>, reduzindo a quantidade de informação visível e organizando tudo em um padrão consistente.
           </p>
           <p style={{ marginTop: 32 }}>
-            Essa decisão veio da observação de que <HighlightText delay={4.7}>a leitura completa não acontecia durante a consulta.</HighlightText>
+            Essa decisão veio da observação de que <HighlightText delay={0.6}>a leitura completa não acontecia durante a consulta.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
             Adotamos, então, algumas premissas de estrutura para o aplicativo:
           </p>
           <ul style={{ marginTop: 16, paddingLeft: "1.2em", listStyleType: "disc" }}>
-            <li><HighlightText delay={6.2}>busca direta</HighlightText></li>
-            <li><HighlightText delay={7.7}>listas simples</HighlightText></li>
-            <li><HighlightText delay={9.2}>informação sempre no mesmo formato</HighlightText></li>
+            <li><HighlightText delay={0.8}>busca direta</HighlightText></li>
+            <li><HighlightText delay={1.0}>listas simples</HighlightText></li>
+            <li><HighlightText delay={1.2}>informação sempre no mesmo formato</HighlightText></li>
           </ul>
           <p style={{ marginTop: 32 }}>
             Com isso, o foco do veterinário passou para o acesso rápido à informação durante a
@@ -176,12 +176,12 @@ export default function VetSmart() {
             O veterinário consultava quando precisava, mas não havia um motivo constante para voltar após ter domínio sobre o produto.
           </p>
           <p style={{ marginTop: 32 }}>
-            Com isso, fomos observar a consulta e o uso do aplicativo na prática e vimos que havia um <HighlightText delay={3.2}>cálculo recorrente de dosagem de medicamentos.</HighlightText>
+            Com isso, fomos observar a consulta e o uso do aplicativo na prática e vimos que havia um <HighlightText delay={0.4}>cálculo recorrente de dosagem de medicamentos.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
             A dose dependia do peso do animal e de regras específicas de cada medicamento. Todo esse cálculo era feito manualmente durante a consulta.
           </p>
-          <p style={{ marginTop: 32 }}>Isso evidenciou uma <HighlightText delay={4.7}>oportunidade de evolução.</HighlightText></p>
+          <p style={{ marginTop: 32 }}>Isso evidenciou uma <HighlightText delay={0.6}>oportunidade de evolução.</HighlightText></p>
         </TwoCol>
 
         <Divider />
@@ -197,7 +197,7 @@ export default function VetSmart() {
             <li>o cálculo da dosagem já vem pronto</li>
           </ul>
           <p style={{ marginTop: 32 }}>
-            Com essa solução, <HighlightText delay={3.2}>o uso deixou de ser pontual e passou a ser recorrente.</HighlightText>
+            Com essa solução, <HighlightText delay={0.4}>o uso deixou de ser pontual e passou a ser recorrente.</HighlightText>
           </p>
         </TwoCol>
 
@@ -212,11 +212,11 @@ export default function VetSmart() {
         <TwoCol heading="Resultado">
           <ul style={{ listStyle: "disc", padding: 0, margin: 0, paddingLeft: "1.2em" }}>
             <li style={{ paddingBottom: 8 }}><HighlightText delay={0.2}>80 mil usuários ativos</HighlightText></li>
-            <li style={{ paddingBottom: 8 }}>média de <HighlightText delay={3.2}>28 acessos por usuário por mês</HighlightText></li>
-            <li style={{ paddingBottom: 8 }}><HighlightText delay={4.7}>2,5 milhões de pageviews por mês</HighlightText></li>
-            <li style={{ paddingBottom: 8 }}><HighlightText delay={6.2}>6 minutos e 40 segundos por sessão</HighlightText></li>
+            <li style={{ paddingBottom: 8 }}>média de <HighlightText delay={0.4}>28 acessos por usuário por mês</HighlightText></li>
+            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.6}>2,5 milhões de pageviews por mês</HighlightText></li>
+            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.8}>6 minutos e 40 segundos por sessão</HighlightText></li>
             <li style={{ paddingBottom: 8 }}>avaliação de 4,75 nas stores</li>
-            <li style={{ paddingBottom: 8 }}><HighlightText delay={7.7}>empresa adquirida pela Petlove</HighlightText></li>
+            <li style={{ paddingBottom: 8 }}><HighlightText delay={1.0}>empresa adquirida pela Petlove</HighlightText></li>
           </ul>
         </TwoCol>
 

@@ -72,7 +72,7 @@ export default function VetSmartTV() {
             presenciais, com datas específicas e custo elevado.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
-            Muitos <HighlightText delay={3.2}>veterinários não conseguiam pagar</HighlightText> por esses cursos e conteúdos de atualização.
+            Muitos <HighlightText delay={0.4}>veterinários não conseguiam pagar</HighlightText> por esses cursos e conteúdos de atualização.
           </p>
           <p style={{ marginTop: 32 }}>
             Na época, não existia nenhum conteúdo digital voltado para isso.
@@ -101,7 +101,7 @@ export default function VetSmartTV() {
             <li style={{ paddingBottom: 8 }}>execução das transmissões, garantindo consistência na entrega</li>
           </ul>
           <p style={{ marginTop: 32 }}>
-            <HighlightText delay={3.2}>A indústria entrava como patrocinadora, viabilizando o modelo.</HighlightText>
+            <HighlightText delay={0.4}>A indústria entrava como patrocinadora, viabilizando o modelo.</HighlightText>
           </p>
         </TwoCol>
 

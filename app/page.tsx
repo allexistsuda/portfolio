@@ -100,8 +100,8 @@ export default function Home() {
               Co-fundador e Product Designer do{" "}
               <HighlightText delay={0.2}>Vet Smart</HighlightText>, empresa adquirida pela Petlove em 2019.
               Participei também da criação do{" "}
-              <HighlightText delay={3.2}>Unico You</HighlightText> e atuei por 2 anos no time de Design System
-              do <HighlightText delay={4.7}>Santander</HighlightText>.
+              <HighlightText delay={0.4}>Unico You</HighlightText> e atuei por 2 anos no time de Design System
+              do <HighlightText delay={0.6}>Santander</HighlightText>.
             </p>
           </div>
         </section>
