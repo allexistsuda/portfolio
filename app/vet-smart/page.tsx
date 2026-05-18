@@ -261,7 +261,12 @@ export default function VetSmart() {
           <div className="hidden md:block"><Img src="/vet-smart/07.gif" alt="Vet Smart color" /></div>
         </div>
         <div style={{ marginBottom: 100 }}>
-          <Img src="/vet-smart/08.gif" alt="Vet Smart estudos" />
+          <div className="md:hidden space-y-8">
+            <Img src="/vet-smart/08-mobile-a.gif" alt="Vet Smart" />
+            <Img src="/vet-smart/08-mobile-b.png" alt="Vet Smart" />
+            <Img src="/vet-smart/08-mobile-c.png" alt="Vet Smart" />
+          </div>
+          <div className="hidden md:block"><Img src="/vet-smart/08.gif" alt="Vet Smart estudos" /></div>
         </div>
 
         {/* Bottom navigation */}
