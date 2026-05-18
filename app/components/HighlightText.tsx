@@ -34,7 +34,7 @@ export default function HighlightText({ children, delay = 0.2 }: { children: Rea
         background: "linear-gradient(#FFE566, #FFE566) no-repeat left bottom",
         backgroundSize: triggered ? "100% 42%" : "0% 42%",
         transition: triggered
-          ? "background-size 1.2s cubic-bezier(0.22, 0.61, 0.36, 1)"
+          ? "background-size 1.8s cubic-bezier(0.22, 0.61, 0.36, 1)"
           : "none",
         transitionDelay: triggered ? `${delay}s` : "0s",
         WebkitBoxDecorationBreak: "clone",
