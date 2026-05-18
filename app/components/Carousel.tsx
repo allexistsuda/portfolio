@@ -22,18 +22,27 @@ export default function Carousel({ images }: { images: string[] }) {
 
   return (
     <div className="relative select-none">
-      {/* Image */}
-      <div
-        onTouchStart={onTouchStart}
-        onTouchEnd={onTouchEnd}
-        style={{ borderRadius: 16, overflow: "hidden" }}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={images[current]}
-          alt={`Slide ${current + 1}`}
-          style={{ width: "100%", height: "auto", display: "block" }}
-        />
+      {/* Track */}
+      <div style={{ borderRadius: 16, overflow: "hidden" }}>
+        <div
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+          style={{
+            display: "flex",
+            transform: `translateX(-${current * 100}%)`,
+            transition: "transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+          }}
+        >
+          {images.map((src, i) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={i}
+              src={src}
+              alt={`Slide ${i + 1}`}
+              style={{ width: "100%", flexShrink: 0, height: "auto", display: "block" }}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Dots */}
