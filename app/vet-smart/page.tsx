@@ -106,10 +106,10 @@ export default function VetSmart() {
         {/* Onde identificamos uma dor */}
         <TwoCol heading="Onde identificamos uma dor">
           <p>
-            Acompanhamos diversas consultas veterinárias e observamos que, durante o atendimento, o veterinário alternava entre livros e memória para buscar informações, incluindo dosagens de medicamentos.
+            Acompanhamos diversas consultas veterinárias e observamos que, durante o atendimento, o veterinário <HighlightText delay={0.2}>alternava entre livros e memória</HighlightText> para buscar informações, <HighlightText delay={0.4}>incluindo dosagens de medicamentos.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
-            Esse processo não apenas consumia tempo, como também era suscetível a falhas: a informação podia estar desatualizada e a memória não era confiável. Isso ocorria justamente no momento mais crítico da consulta.
+            Esse processo não apenas consumia tempo, como também era suscetível a falhas: a informação podia estar desatualizada e a memória não era confiável. Isso ocorria justamente no <HighlightText delay={0.6}>momento mais crítico da consulta.</HighlightText>
           </p>
         </TwoCol>
 
@@ -118,7 +118,7 @@ export default function VetSmart() {
         {/* Oportunidade */}
         <TwoCol heading="Oportunidade">
           <p>
-            A informação já existia em algum lugar, mas não estava acessível de forma rápida e, muitas vezes, estava desatualizada.
+            <HighlightText delay={0.2}>A informação já existia em algum lugar, mas não estava acessível de forma rápida</HighlightText> e, muitas vezes, estava desatualizada.
           </p>
         </TwoCol>
 
@@ -138,18 +138,18 @@ export default function VetSmart() {
             ser compreendida sem necessidade de leitura completa.
           </p>
           <p style={{ marginTop: 32 }}>
-            Priorizamos <HighlightText delay={0.4}>escaneabilidade em vez de profundidade</HighlightText>, reduzindo a quantidade de informação visível e organizando tudo em um padrão consistente.
+            Priorizamos <HighlightText delay={0.4}>escaneabilidade em vez de profundidade</HighlightText>, <HighlightText delay={0.6}>reduzindo a quantidade de informação visível</HighlightText> e organizando tudo em um padrão consistente.
           </p>
           <p style={{ marginTop: 32 }}>
-            Essa decisão veio da observação de que <HighlightText delay={0.6}>a leitura completa não acontecia durante a consulta.</HighlightText>
+            Essa decisão veio da observação de que <HighlightText delay={0.8}>a leitura completa não acontecia durante a consulta.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
             Adotamos, então, algumas premissas de estrutura para o aplicativo:
           </p>
           <ul style={{ marginTop: 16, paddingLeft: "1.2em", listStyleType: "disc" }}>
-            <li><HighlightText delay={0.8}>busca direta</HighlightText></li>
-            <li><HighlightText delay={1.0}>listas simples</HighlightText></li>
-            <li><HighlightText delay={1.2}>informação sempre no mesmo formato</HighlightText></li>
+            <li><HighlightText delay={1.0}>busca direta</HighlightText></li>
+            <li><HighlightText delay={1.2}>listas simples</HighlightText></li>
+            <li><HighlightText delay={1.4}>informação sempre no mesmo formato</HighlightText></li>
           </ul>
           <p style={{ marginTop: 32 }}>
             Com isso, o foco do veterinário passou para o acesso rápido à informação durante a
@@ -173,15 +173,15 @@ export default function VetSmart() {
             Apesar de o aplicativo ser bem aceito, identificamos um <HighlightText delay={0.2}>problema de recorrência.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
-            O veterinário consultava quando precisava, mas não havia um motivo constante para voltar após ter domínio sobre o produto.
+            <HighlightText delay={0.4}>O veterinário consultava quando precisava, mas não havia um motivo constante para voltar</HighlightText> após ter domínio sobre o produto.
           </p>
           <p style={{ marginTop: 32 }}>
-            Com isso, fomos observar a consulta e o uso do aplicativo na prática e vimos que havia um <HighlightText delay={0.4}>cálculo recorrente de dosagem de medicamentos.</HighlightText>
+            Com isso, fomos observar a consulta e o uso do aplicativo na prática e vimos que havia um <HighlightText delay={0.6}>cálculo recorrente de dosagem de medicamentos.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
-            A dose dependia do peso do animal e de regras específicas de cada medicamento. Todo esse cálculo era feito manualmente durante a consulta.
+            <HighlightText delay={0.8}>A dose dependia do peso do animal e de regras específicas de cada medicamento.</HighlightText> <HighlightText delay={1.0}>Todo esse cálculo era feito manualmente durante a consulta.</HighlightText>
           </p>
-          <p style={{ marginTop: 32 }}>Isso evidenciou uma <HighlightText delay={0.6}>oportunidade de evolução.</HighlightText></p>
+          <p style={{ marginTop: 32 }}>Isso evidenciou uma <HighlightText delay={1.2}>oportunidade de evolução.</HighlightText></p>
         </TwoCol>
 
         <Divider />
@@ -189,15 +189,15 @@ export default function VetSmart() {
         {/* O cálculo dentro do fluxo */}
         <TwoCol heading="O cálculo dentro do fluxo">
           <p>
-            Nossa resposta foi <HighlightText delay={0.2}>trazer o cálculo para dentro do aplicativo</HighlightText>, transformando esse passo manual em uma ação rápida dentro do fluxo.
+            Nossa resposta foi <HighlightText delay={0.2}>trazer o cálculo para dentro do aplicativo</HighlightText>, <HighlightText delay={0.4}>transformando esse passo manual em uma ação rápida dentro do fluxo.</HighlightText>
           </p>
           <ul style={{ marginTop: 32, paddingLeft: "1.2em", listStyleType: "disc" }}>
-            <li>o veterinário informa o peso do animal</li>
-            <li>cruzamos com os dados do medicamento automaticamente</li>
-            <li>o cálculo da dosagem já vem pronto</li>
+            <li><HighlightText delay={0.6}>o veterinário informa o peso do animal</HighlightText></li>
+            <li><HighlightText delay={0.8}>cruzamos com os dados do medicamento automaticamente</HighlightText></li>
+            <li><HighlightText delay={1.0}>o cálculo da dosagem já vem pronto</HighlightText></li>
           </ul>
           <p style={{ marginTop: 32 }}>
-            Com essa solução, <HighlightText delay={0.4}>o uso deixou de ser pontual e passou a ser recorrente.</HighlightText>
+            Com essa solução, <HighlightText delay={1.2}>o uso deixou de ser pontual e passou a ser recorrente.</HighlightText>
           </p>
         </TwoCol>
 
