@@ -32,18 +32,18 @@ export default function SantanderWorkshops() {
 
         {/* All images */}
         <div className="my-8 md:my-[100px]" style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-          <div style={{ display: "flex", gap: 32 }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/santander-workshops/01.jpg" alt="Santander Workshops" style={{ width: "calc(50% - 16px)", height: "auto", display: "block", borderRadius: 16 }} />
+            <img src="/santander-workshops/01.jpg" alt="Santander Workshops" style={{ width: "100%", height: "auto", display: "block", borderRadius: 16 }} />
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/santander-workshops/02.jpg" alt="Santander Workshops" style={{ width: "calc(50% - 16px)", height: "auto", display: "block", borderRadius: 16 }} />
+            <img src="/santander-workshops/02.jpg" alt="Santander Workshops" style={{ width: "100%", height: "auto", display: "block", borderRadius: 16 }} />
           </div>
           <VideoPlayer videoId="z0vpfWb699Q" thumbnail="/santander-workshops/05.png" />
-          <div style={{ display: "flex", gap: 32 }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/santander-workshops/03.jpg" alt="Santander Workshops" style={{ width: "calc(50% - 16px)", height: "auto", display: "block", borderRadius: 16 }} />
+            <img src="/santander-workshops/03.jpg" alt="Santander Workshops" style={{ width: "100%", height: "auto", display: "block", borderRadius: 16 }} />
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/santander-workshops/04.jpg" alt="Santander Workshops" style={{ width: "calc(50% - 16px)", height: "auto", display: "block", borderRadius: 16 }} />
+            <img src="/santander-workshops/04.jpg" alt="Santander Workshops" style={{ width: "100%", height: "auto", display: "block", borderRadius: 16 }} />
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/santander-workshops/06.png" alt="Santander Workshops" style={{ width: "100%", height: "auto", display: "block", borderRadius: 16 }} />
