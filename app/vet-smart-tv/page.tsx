@@ -49,16 +49,16 @@ export default function VetSmartTV() {
         {/* Intro */}
         <TwoCol heading="Criamos um novo produto que expandiu o Vet Smart além da consulta, consolidando como plataforma de educação">
           <p>
-            O Vet Smart já tinha uma base muito forte no aplicativo, com uso concentrado no momento
+            O Vet Smart já tinha uma <HighlightText delay={0.2}>base muito forte no aplicativo</HighlightText>, com uso concentrado no momento
             da consulta.
           </p>
           <p style={{ marginTop: 32 }}>
-            Isso trazia um limite claro: o produto era extremamente útil, mas restrito a esse
-            contexto.
+            Isso trazia um limite claro: o produto era extremamente útil, mas <HighlightText delay={0.4}>restrito a esse
+            contexto.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
-            <HighlightText>Mais de 90% dos acessos eram para consulta de medicamentos, com um fluxo e navegação já
-            bem definidos. Qualquer tentativa de colocar outras coisas ali poderia atrapalhar esse
+            <HighlightText delay={0.6}>Mais de 90% dos acessos eram para consulta de medicamentos</HighlightText>, com um fluxo e navegação já
+            bem definidos. <HighlightText delay={0.8}>Qualquer tentativa de colocar outras coisas ali poderia atrapalhar esse
             uso.</HighlightText>
           </p>
         </TwoCol>
@@ -69,17 +69,17 @@ export default function VetSmartTV() {
         <TwoCol heading="Onde identificamos uma nova oportunidade">
           <p>
             Após diversas pesquisas, conversas com veterinários e com a indústria, e análise de
-            mercado, vimos que <HighlightText delay={0.2}>a atualização profissional ainda dependia de cursos e eventos
-            presenciais, com datas específicas e custo elevado.</HighlightText>
+            mercado, vimos que <HighlightText delay={0.2}>atualização profissional ainda dependia de cursos e eventos
+            presenciais</HighlightText>, com datas específicas e custo elevado.
           </p>
           <p style={{ marginTop: 32 }}>
-            Muitos <HighlightText delay={0.4}>veterinários não conseguiam pagar</HighlightText> por esses cursos e conteúdos de atualização.
+            <HighlightText delay={0.4}>Muitos veterinários não conseguiam pagar por esses cursos</HighlightText> e conteúdos de atualização.
           </p>
           <p style={{ marginTop: 32 }}>
-            Na época, não existia nenhum conteúdo digital voltado para isso.
+            Na época, <HighlightText delay={0.6}>não existia nenhum conteúdo digital voltado para isso.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
-            A partir disso, decidimos criar um novo produto para atender essa demanda.
+            A partir disso, <HighlightText delay={0.8}>decidimos criar um novo produto para atender essa demanda.</HighlightText>
           </p>
         </TwoCol>
 
@@ -88,21 +88,21 @@ export default function VetSmartTV() {
         {/* Como viabilizamos */}
         <TwoCol heading="Como viabilizamos">
           <p>
-            Viabilizar esse produto era o maior desafio.
+            <HighlightText delay={0.2}>Viabilizar esse produto era o maior desafio.</HighlightText>
           </p>
           <p style={{ marginTop: 32 }}>
-            Além da incerteza de engajamento do novo produto, era <HighlightText delay={0.2}>necessário estruturar um modelo
-            que funcionasse de ponta a ponta.</HighlightText>
+            Além da incerteza de engajamento do novo produto, era necessário estruturar um modelo
+            que funcionasse de ponta a ponta.
           </p>
           <p style={{ marginTop: 32 }}>Definimos algumas premissas:</p>
           <ul style={{ marginTop: 16, listStyle: "disc", paddingLeft: "1.2em" }}>
-            <li style={{ paddingBottom: 8 }}>assumir a produção completa do conteúdo, garantindo controle de qualidade</li>
-            <li style={{ paddingBottom: 8 }}>contato direto com palestrantes, escolhendo os principais nomes de cada tema</li>
+            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.4}>assumir a produção completa do conteúdo</HighlightText>, garantindo controle de qualidade</li>
+            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.6}>contato direto com palestrantes</HighlightText>, escolhendo os principais nomes de cada tema</li>
             <li style={{ paddingBottom: 8 }}>organização dos temas, priorizando o que geraria mais interesse para os veterinários</li>
             <li style={{ paddingBottom: 8 }}>execução das transmissões, garantindo consistência na entrega</li>
           </ul>
           <p style={{ marginTop: 32 }}>
-            <HighlightText delay={0.4}>A indústria entrava como patrocinadora, viabilizando o modelo.</HighlightText>
+            <HighlightText delay={0.8}>A indústria entrava como patrocinadora, viabilizando o modelo.</HighlightText>
           </p>
         </TwoCol>
 
@@ -113,20 +113,20 @@ export default function VetSmartTV() {
 
         {/* Solução e evoluções */}
         <TwoCol heading="Solução e evoluções">
-          <p><HighlightText>Criamos o Vet Smart TV, nossa plataforma de palestras.</HighlightText></p>
+          <p><HighlightText delay={0.2}>Criamos o Vet Smart TV</HighlightText>, nossa plataforma de palestras.</p>
           <p style={{ marginTop: 32 }}>
             O formato foi evoluindo com o tempo, a partir do uso e do comportamento dos usuários.
           </p>
           <p style={{ marginTop: 32 }}>Com base nisso, incorporamos alguns elementos:</p>
           <ul style={{ marginTop: 16, listStyle: "disc", paddingLeft: "1.2em" }}>
-            <li style={{ paddingBottom: 8 }}>ao vivo, para permitir interação e dúvidas sendo respondidas na hora</li>
-            <li style={{ paddingBottom: 8 }}>gratuitas, resolvendo o problema de custo e acesso</li>
+            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.4}>ao vivo, para permitir interação e dúvidas sendo respondidas na hora</HighlightText></li>
+            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.6}>gratuitas, resolvendo o problema de custo e acesso</HighlightText></li>
             <li style={{ paddingBottom: 8 }}>votações, para manter engajamento durante a palestra</li>
             <li style={{ paddingBottom: 8 }}>sorteios de brindes</li>
-            <li style={{ paddingBottom: 8 }}>certificados, válidos como horas complementares na faculdade</li>
+            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.8}>certificados, válidos como horas complementares na faculdade</HighlightText></li>
           </ul>
           <p style={{ marginTop: 32 }}>
-            O certificado se mostrou um ponto importante, principalmente para estudantes, que
+            <HighlightText delay={1.0}>O certificado se mostrou um ponto importante</HighlightText>, principalmente para estudantes, que
             passaram a usar como horas complementares.
           </p>
         </TwoCol>
@@ -139,9 +139,9 @@ export default function VetSmartTV() {
         <TwoCol heading="Resultados">
           <ul style={{ listStyle: "disc", paddingLeft: "1.2em" }}>
             <li style={{ paddingBottom: 8 }}>as palestras foram um sucesso</li>
-            <li style={{ paddingBottom: 8 }}>picos de 7.500 pessoas assistindo ao vivo</li>
-            <li style={{ paddingBottom: 8 }}>expansão de 1 para 2 palestras por semana</li>
-            <li style={{ paddingBottom: 8 }}>programação definida com antecedência para todo o ano</li>
+            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.2}>picos de 7.500 pessoas assistindo ao vivo</HighlightText></li>
+            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.4}>expansão de 1 para 2 palestras por semana</HighlightText></li>
+            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.6}>programação definida com antecedência para todo o ano</HighlightText></li>
           </ul>
         </TwoCol>
 
