@@ -26,8 +26,8 @@ function GlobeIcon() {
 
 function CheckIcon() {
   return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
-      <path d="M8.49,19.71c-.53,0-1.07-.2-1.49-.62l-4.21-4.21c-.81-.81-.81-2.16,0-2.97s2.16-.81,2.97,0l2.72,2.72,9.74-9.74c.81-.81,2.16-.81,2.97,0s.81,2.16,0,2.97l-11.22,11.22c-.42.42-.95.62-1.49.62Z" />
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8D8D8D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+      <path d="M5 12.5l4.5 4.5L19 7" />
     </svg>
   );
 }
