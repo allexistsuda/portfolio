@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { useLang, type Lang } from "../i18n/lang";
+import { useLang, useHref, type Lang } from "../i18n/lang";
 
 function GlobeIcon() {
   return (
@@ -72,7 +72,7 @@ function LangSwitcher() {
   };
 
   return (
-    <div ref={ref} style={{ position: "relative" }}>
+    <div ref={ref} style={{ position: "relative", display: "flex", alignItems: "center" }}>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -160,6 +160,7 @@ function LangSwitcher() {
 
 export default function Nav() {
   const { lang } = useLang();
+  const href = useHref();
   return (
     <nav
       className="mx-auto px-6 md:px-10"
@@ -172,7 +173,7 @@ export default function Nav() {
       }}
     >
       <div>
-        <Link href="/">
+        <Link href={href("/")}>
           <Image src="/logo.png" alt="Allexis Tsuda" width={140} height={30} priority />
         </Link>
       </div>
@@ -183,21 +184,28 @@ export default function Nav() {
       </div>
       <div
         style={{
-          textAlign: "right",
           display: "flex",
           justifyContent: "flex-end",
           alignItems: "center",
           gap: 16,
         }}
       >
+        <LangSwitcher />
         <Link
-          href="/#contato"
+          href={href("/#contato")}
           className="hover:opacity-60 transition-opacity duration-200"
-          style={{ fontSize: 14, fontWeight: 600, letterSpacing: "-0.21px", color: "#222" }}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            fontSize: 14,
+            fontWeight: 600,
+            letterSpacing: "-0.21px",
+            color: "#222",
+            lineHeight: 1,
+          }}
         >
           {lang === "pt" ? "Contato" : "Contact"}
         </Link>
-        <LangSwitcher />
       </div>
     </nav>
   );

@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useHref } from "../i18n/lang";
 
 function ArrowLeft() {
   return (
@@ -33,10 +36,11 @@ export default function BottomNav({
   prev: { label: string; href: string };
   next: { label: string; href: string };
 }) {
+  const href = useHref();
   return (
     <div className="flex gap-4 mt-8 md:mt-[100px] pb-24">
       <Link
-        href={prev.href}
+        href={href(prev.href)}
         className="flex items-center gap-2 md:gap-3 hover:opacity-60 transition-opacity duration-200 min-w-0 flex-1"
         style={{ textDecoration: "none", overflow: "hidden" }}
       >
@@ -44,7 +48,7 @@ export default function BottomNav({
         <span style={textStyle}>{prev.label}</span>
       </Link>
       <Link
-        href={next.href}
+        href={href(next.href)}
         className="flex items-center justify-end gap-2 md:gap-3 hover:opacity-60 transition-opacity duration-200 min-w-0 flex-1"
         style={{ textDecoration: "none", overflow: "hidden" }}
       >

@@ -2,7 +2,7 @@
 
 import Nav from "./components/Nav";
 import TypingHero from "./components/TypingHero";
-import { useLang } from "./i18n/lang";
+import { useLang, useHref } from "./i18n/lang";
 import { Segs, type Seg } from "./i18n/render";
 
 const projects = [
@@ -56,7 +56,7 @@ const aboutPt: Seg[][] = [
 const aboutEn: Seg[][] = [
   [
     "End-to-end work on digital products, spanning ",
-    { h: "discovery, journey definition, prototyping and product evolution." },
+    { h: "discovery, journey mapping, prototyping and product evolution." },
   ],
   [
     "Experience across fintech, SaaS and startups, with a focus on business-oriented solutions. ",
@@ -86,6 +86,7 @@ function Tag({ label }: { label: string }) {
 
 export default function Home() {
   const { lang } = useLang();
+  const href = useHref();
   const about = lang === "pt" ? aboutPt : aboutEn;
 
   return (
@@ -107,7 +108,7 @@ export default function Home() {
             {projects.map((p, i) => (
               <a
                 key={i}
-                href={p.href}
+                href={href(p.href)}
                 className="flex items-center justify-between hover:opacity-60 transition-opacity duration-200"
                 style={{
                   height: 64,

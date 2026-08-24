@@ -177,7 +177,7 @@ const en: Content = {
   evolution: {
     heading: "Evolution",
     blocks: [
-      { p: ["Although the app was well received, we identified a ", { h: "problem with recurring use.", d: 0.2 }] },
+      { p: ["Although the app was well received, we identified a ", { h: "retention problem.", d: 0.2 }] },
       { p: [{ h: "Vets looked things up when they needed to, but there was no constant reason to come back", d: 0.4 }, " once they had mastered the product."] },
       { p: ["So we went to observe the consult and real-world app use, and saw there was a ", { h: "recurring calculation of drug dosages.", d: 0.6 }] },
       { p: [{ h: "The dose depended on the animal's weight and rules specific to each drug.", d: 0.8 }, " ", { h: "All of it was calculated by hand during the consult.", d: 1.0 }] },

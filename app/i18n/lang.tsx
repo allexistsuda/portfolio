@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export type Lang = "pt" | "en";
 
@@ -8,28 +9,39 @@ type LangCtx = { lang: Lang; setLang: (l: Lang) => void; toggle: () => void };
 
 const Ctx = createContext<LangCtx | null>(null);
 
-const STORAGE_KEY = "lang";
+// URL is the single source of truth: "/" is Portuguese, "/en/*" is English.
+function isEnPath(path: string) {
+  return path === "/en" || path.startsWith("/en/");
+}
+
+/** Remove a leading "/en" from a pathname, returning the Portuguese path. */
+function stripEn(path: string) {
+  if (path === "/en") return "/";
+  if (path.startsWith("/en/")) return path.slice(3);
+  return path;
+}
 
 export function LangProvider({ children }: { children: React.ReactNode }) {
-  // Server render and first client render both use "pt" to avoid a hydration
-  // mismatch; the stored preference is applied right after mount.
+  const router = useRouter();
+  // Server render and first client render use "pt"; the URL is read right after
+  // mount, which avoids a hydration mismatch (English pages briefly show PT).
   const [lang, setLangState] = useState<Lang>("pt");
 
   useEffect(() => {
-    const stored = (typeof window !== "undefined" &&
-      window.localStorage.getItem(STORAGE_KEY)) as Lang | null;
-    if (stored === "pt" || stored === "en") setLangState(stored);
+    if (isEnPath(window.location.pathname)) setLangState("en");
   }, []);
 
   useEffect(() => {
     document.documentElement.lang = lang === "pt" ? "pt-BR" : "en";
   }, [lang]);
 
-  const setLang = (l: Lang) => {
-    setLangState(l);
-    try {
-      window.localStorage.setItem(STORAGE_KEY, l);
-    } catch {}
+  const setLang = (next: Lang) => {
+    if (next === lang) return;
+    setLangState(next);
+    const base = stripEn(window.location.pathname);
+    const hash = window.location.hash || "";
+    const target = next === "en" ? (base === "/" ? "/en" : "/en" + base) + hash : base + hash;
+    router.push(target);
   };
 
   const toggle = () => setLang(lang === "pt" ? "en" : "pt");
@@ -43,8 +55,16 @@ export function useLang() {
   return ctx;
 }
 
-/** Pick the value for the current language. */
-export function useT() {
+/** Prefixes internal hrefs with /en when the current language is English. */
+export function useHref() {
   const { lang } = useLang();
-  return <T,>(pt: T, en: T): T => (lang === "pt" ? pt : en);
+  return (href: string): string => {
+    if (lang !== "en") return href;
+    if (href.startsWith("#")) return href;
+    const [path, hashPart] = href.split("#");
+    const hash = hashPart ? "#" + hashPart : "";
+    if (!path || path === "/") return "/en" + hash;
+    if (path.startsWith("/")) return "/en" + path + hash;
+    return href;
+  };
 }
