@@ -24,6 +24,14 @@ function GlobeIcon() {
   );
 }
 
+function CheckIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+      <path d="M8.49,19.71c-.53,0-1.07-.2-1.49-.62l-4.21-4.21c-.81-.81-.81-2.16,0-2.97s2.16-.81,2.97,0l2.72,2.72,9.74-9.74c.81-.81,2.16-.81,2.97,0s.81,2.16,0,2.97l-11.22,11.22c-.42.42-.95.62-1.49.62Z" />
+    </svg>
+  );
+}
+
 function ChevronIcon({ open }: { open: boolean }) {
   return (
     <svg
@@ -144,11 +152,7 @@ function LangSwitcher() {
                 }}
               >
                 {opt.label}
-                {active && (
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#222" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 6L9 17l-5-5" />
-                  </svg>
-                )}
+                {active && <CheckIcon />}
               </button>
             );
           })}
