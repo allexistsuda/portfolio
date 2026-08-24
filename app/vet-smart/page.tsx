@@ -141,7 +141,7 @@ const pt: Content = {
 const en: Content = {
   intro: {
     heading:
-      "We built an app that changed behavior in the vet consultation, cutting decision-making time during appointments",
+      "We built an app that changed how vets work during appointments, cutting decision-making time in the consult",
     blocks: [
       { p: ["Vet Smart came about at a time when there were no apps for veterinarians. We were the ", { h: "first to build a product for this audience." }] },
       { p: ["From the start, I worked as Product Designer, leading research and helping define the product, mapping problems and opportunities in the daily routine of small-animal vets."] },
@@ -165,7 +165,7 @@ const en: Content = {
     heading: "Solution",
     blocks: [
       { p: [{ h: "The problem happened during the consult, so the solution had to live in that same context.", d: 0.2 }] },
-      { p: ["We brought that information into an app, available in the vet's hand during the appointment."] },
+      { p: ["We brought that information into an app, available in the vet's hand during the consult."] },
       { p: ["We started by reorganizing the content for quick access, structuring information so it could be understood without reading it in full."] },
       { p: ["We prioritized ", { h: "scannability over depth", d: 0.4 }, ", ", { h: "reducing the amount of visible information", d: 0.6 }, " and organizing everything into a consistent pattern."] },
       { p: ["This decision came from observing that ", { h: "full reading didn't happen during the consult.", d: 0.8 }] },

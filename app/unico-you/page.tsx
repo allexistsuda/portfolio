@@ -107,7 +107,7 @@ const en: Content = {
   context: {
     heading: "Context",
     blocks: [
-      { p: ["I led the creation of Unico You, ", { h: "Unico's first B2C product", d: 0.2 }, " — a company specialized in digital identity and HR solutions that became a ", { h: "unicorn in 2021.", d: 0.4 }] },
+      { p: ["I led the creation of Unico You, ", { h: "Unico's first B2C product", d: 0.2 }, " — a company specializing in digital identity and HR solutions that became a ", { h: "unicorn in 2021.", d: 0.4 }] },
       { p: ["The product was created to expand the company into a ", { h: "direct relationship with employees", d: 0.2 }, ", exploring new services within its existing ecosystem."] },
     ],
   },
@@ -119,19 +119,19 @@ const en: Content = {
     ],
   },
   thesis: {
-    heading: "Product thesis",
+    heading: "Product hypothesis",
     blocks: [
       { p: ["From that context, we set the product's initial focus on letting employees ", { h: "get paid for days already worked, before the traditional payday.", d: 0.2 }] },
       { p: ["Beyond the direct impact on users' financial routine, the decision also aligned with the need to build a product with ", { h: "high potential for recurring, frequent use.", d: 0.4 }] },
       { p: ["The idea was to turn a rigid monthly-payment logic into a more flexible experience, allowing ", { h: "immediate access to the available amount", d: 0.6 }, " right from the app and ", { h: "at no cost to the employee.", d: 0.8 }] },
-      { p: [{ h: "The product thesis was simple", d: 1.0 }, ": ", { h: "\"worked today, paid today\".", d: 1.2 }] },
+      { p: [{ h: "The product hypothesis was simple", d: 1.0 }, ": ", { h: "\"worked today, paid today\".", d: 1.2 }] },
     ],
   },
   mvp: {
     heading: "Building the MVP",
     blocks: [
-      { p: ["While building the MVP, one of the main challenges was users' perception of ", { h: "safety and trust", d: 0.2 }, " around ", { h: "data sharing and financial access.", d: 0.4 }] },
-      { p: ["Based on early tests and user validation, we refined the sign-up and onboarding flow, adding validation steps and reinforcing elements tied to the safety of the experience."] },
+      { p: ["While building the MVP, one of the main challenges was users' perception of ", { h: "security and trust", d: 0.2 }, " around ", { h: "data sharing and financial access.", d: 0.4 }] },
+      { p: ["Based on early tests and user validation, we refined the sign-up and onboarding flow, adding validation steps and reinforcing elements tied to the security of the experience."] },
       { p: ["The initial MVP, launched under the name DiaCinco, went through ", { h: "several cycles of evolution and refinement", d: 0.6 }, " before reaching the final Unico You."] },
       { p: ["The product was developed in partnership with Creditas, responsible for ", { h: "enabling the financial operation behind the solution.", d: 0.8 }] },
     ],
