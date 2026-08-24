@@ -1,8 +1,9 @@
-import Link from "next/link";
+"use client";
+
 import BottomNav from "../components/BottomNav";
-import Image from "next/image";
 import Nav from "../components/Nav";
-import HighlightText from "../components/HighlightText";
+import { useLang } from "../i18n/lang";
+import { Blocks, type Block } from "../i18n/render";
 
 const body: React.CSSProperties = {
   fontWeight: 400,
@@ -35,15 +36,6 @@ function Divider() {
   return <div className="my-8 md:my-[100px] md:mx-5" style={{ height: 1, background: "rgba(34,34,34,0.15)" }} />;
 }
 
-
-function ImgBlock({ ratio }: { ratio: string }) {
-  return (
-    <div className="-mx-6 md:mx-0">
-      <div style={{ width: "100%", aspectRatio: ratio, background: "#D0D0D0", borderRadius: 16 }} />
-    </div>
-  );
-}
-
 function Img({ src, alt }: { src: string; alt: string }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
@@ -51,7 +43,187 @@ function Img({ src, alt }: { src: string; alt: string }) {
   );
 }
 
+type Section = { heading: string; blocks: Block[] };
+type Content = {
+  intro: Section;
+  pain: Section;
+  opportunity: Section;
+  solution: Section;
+  evolution: Section;
+  calc: Section;
+  results: Section;
+  role: Section;
+  back: string;
+};
+
+const pt: Content = {
+  intro: {
+    heading:
+      "Criamos um aplicativo que mudou o comportamento da consulta veterinária, reduzindo o tempo de tomada de decisão durante o atendimento",
+    blocks: [
+      { p: ["O Vet Smart surgiu em um momento em que não existiam aplicativos para médicos veterinários. Fomos os ", { h: "primeiros a construir um produto voltado para esse público." }] },
+      { p: ["Desde o início, atuei como Product Designer conduzindo pesquisas e participando da definição do produto, mapeando problemas e oportunidades no dia a dia de veterinários de pequenos animais."] },
+      { p: ["Como resultado, o Vet Smart alcançou 80 mil usuários ativos e 2,5 milhões de pageviews mensais, sendo posteriormente adquirido pela Petlove."] },
+    ],
+  },
+  pain: {
+    heading: "Onde identificamos uma dor",
+    blocks: [
+      { p: ["Acompanhamos diversas consultas veterinárias e observamos que, durante o atendimento, o veterinário ", { h: "alternava entre livros e memória", d: 0.2 }, " para buscar informações, ", { h: "incluindo dosagens de medicamentos.", d: 0.4 }] },
+      { p: ["Esse processo não apenas consumia tempo, como também era suscetível a falhas: a informação podia estar desatualizada e a memória não era confiável. Isso ocorria justamente no ", { h: "momento mais crítico da consulta.", d: 0.6 }] },
+    ],
+  },
+  opportunity: {
+    heading: "Oportunidade",
+    blocks: [
+      { p: [{ h: "A informação já existia em algum lugar, mas não estava acessível de forma rápida", d: 0.2 }, " e, muitas vezes, estava desatualizada."] },
+    ],
+  },
+  solution: {
+    heading: "Solução",
+    blocks: [
+      { p: [{ h: "O problema acontecia durante a consulta, então a solução precisava existir nesse mesmo contexto.", d: 0.2 }] },
+      { p: ["Levamos essa informação para um aplicativo, disponível na mão do veterinário durante o atendimento."] },
+      { p: ["Começamos reorganizando o conteúdo para acesso rápido, estruturando a informação para ser compreendida sem necessidade de leitura completa."] },
+      { p: ["Priorizamos ", { h: "escaneabilidade em vez de profundidade", d: 0.4 }, ", ", { h: "reduzindo a quantidade de informação visível", d: 0.6 }, " e organizando tudo em um padrão consistente."] },
+      { p: ["Essa decisão veio da observação de que ", { h: "a leitura completa não acontecia durante a consulta.", d: 0.8 }] },
+      { p: ["Adotamos, então, algumas premissas de estrutura para o aplicativo:"] },
+      { ul: [[{ h: "busca direta", d: 1.0 }], [{ h: "listas simples", d: 1.2 }], [{ h: "informação sempre no mesmo formato", d: 1.4 }]], mt: 16 },
+      { p: ["Com isso, o foco do veterinário passou para o acesso rápido à informação durante a consulta."] },
+    ],
+  },
+  evolution: {
+    heading: "Evolução",
+    blocks: [
+      { p: ["Apesar de o aplicativo ser bem aceito, identificamos um ", { h: "problema de recorrência.", d: 0.2 }] },
+      { p: [{ h: "O veterinário consultava quando precisava, mas não havia um motivo constante para voltar", d: 0.4 }, " após ter domínio sobre o produto."] },
+      { p: ["Com isso, fomos observar a consulta e o uso do aplicativo na prática e vimos que havia um ", { h: "cálculo recorrente de dosagem de medicamentos.", d: 0.6 }] },
+      { p: [{ h: "A dose dependia do peso do animal e de regras específicas de cada medicamento.", d: 0.8 }, " ", { h: "Todo esse cálculo era feito manualmente durante a consulta.", d: 1.0 }] },
+      { p: ["Isso evidenciou uma ", { h: "oportunidade de evolução.", d: 1.2 }] },
+    ],
+  },
+  calc: {
+    heading: "O cálculo dentro do fluxo",
+    blocks: [
+      { p: ["Nossa resposta foi ", { h: "trazer o cálculo para dentro do aplicativo", d: 0.2 }, ", ", { h: "transformando esse passo manual em uma ação rápida dentro do fluxo.", d: 0.4 }] },
+      { ul: [[{ h: "o veterinário informa o peso do animal", d: 0.6 }], [{ h: "cruzamos com os dados do medicamento automaticamente", d: 0.8 }], [{ h: "o cálculo da dosagem já vem pronto", d: 1.0 }]] },
+      { p: ["Com essa solução, ", { h: "o uso deixou de ser pontual e passou a ser recorrente.", d: 1.2 }] },
+    ],
+  },
+  results: {
+    heading: "Resultado",
+    blocks: [
+      {
+        ul: [
+          [{ h: "80 mil usuários ativos", d: 0.2 }],
+          ["média de ", { h: "28 acessos por usuário por mês", d: 0.4 }],
+          [{ h: "2,5 milhões de pageviews por mês", d: 0.6 }],
+          [{ h: "6 minutos e 40 segundos por sessão", d: 0.8 }],
+          ["avaliação de 4,75 nas stores"],
+          [{ h: "empresa adquirida pela Petlove", d: 1.0 }],
+        ],
+        mt: 0,
+        liPad: 8,
+      },
+    ],
+  },
+  role: {
+    heading: "Meu papel",
+    blocks: [
+      { p: ["Atuei desde o início na definição do produto, conduzindo pesquisas e entrevistas para entender a rotina de atendimento de veterinários de pequenos animais."] },
+      { p: ["A partir desses aprendizados, estruturei a experiência do aplicativo, definindo a organização da informação, os padrões de navegação e os princípios de uso focados em decisão durante a consulta."] },
+      { p: ["Ao longo da evolução do produto, conduzi testes e acompanhei o uso em campo, ajustando fluxos e priorizando funcionalidades com base no comportamento real dos usuários."] },
+    ],
+  },
+  back: "Voltar",
+};
+
+const en: Content = {
+  intro: {
+    heading:
+      "We built an app that changed behavior in the vet consultation, cutting decision-making time during appointments",
+    blocks: [
+      { p: ["Vet Smart came about at a time when there were no apps for veterinarians. We were the ", { h: "first to build a product for this audience." }] },
+      { p: ["From the start, I worked as Product Designer, leading research and helping define the product, mapping problems and opportunities in the daily routine of small-animal vets."] },
+      { p: ["As a result, Vet Smart reached 80,000 active users and 2.5 million monthly pageviews, and was later acquired by Petlove."] },
+    ],
+  },
+  pain: {
+    heading: "Where we spotted a pain point",
+    blocks: [
+      { p: ["We followed many vet appointments and noticed that, during the consult, the vet ", { h: "switched between books and memory", d: 0.2 }, " to look up information, ", { h: "including drug dosages.", d: 0.4 }] },
+      { p: ["This process was not only time-consuming but also error-prone: information could be outdated and memory was unreliable. And it happened at exactly the ", { h: "most critical moment of the consult.", d: 0.6 }] },
+    ],
+  },
+  opportunity: {
+    heading: "Opportunity",
+    blocks: [
+      { p: [{ h: "The information already existed somewhere, but it wasn't quickly accessible", d: 0.2 }, " and was often outdated."] },
+    ],
+  },
+  solution: {
+    heading: "Solution",
+    blocks: [
+      { p: [{ h: "The problem happened during the consult, so the solution had to live in that same context.", d: 0.2 }] },
+      { p: ["We brought that information into an app, available in the vet's hand during the appointment."] },
+      { p: ["We started by reorganizing the content for quick access, structuring information so it could be understood without reading it in full."] },
+      { p: ["We prioritized ", { h: "scannability over depth", d: 0.4 }, ", ", { h: "reducing the amount of visible information", d: 0.6 }, " and organizing everything into a consistent pattern."] },
+      { p: ["This decision came from observing that ", { h: "full reading didn't happen during the consult.", d: 0.8 }] },
+      { p: ["So we adopted a few structural principles for the app:"] },
+      { ul: [[{ h: "direct search", d: 1.0 }], [{ h: "simple lists", d: 1.2 }], [{ h: "information always in the same format", d: 1.4 }]], mt: 16 },
+      { p: ["With that, the vet's focus shifted to quick access to information during the consult."] },
+    ],
+  },
+  evolution: {
+    heading: "Evolution",
+    blocks: [
+      { p: ["Although the app was well received, we identified a ", { h: "problem with recurring use.", d: 0.2 }] },
+      { p: [{ h: "Vets looked things up when they needed to, but there was no constant reason to come back", d: 0.4 }, " once they had mastered the product."] },
+      { p: ["So we went to observe the consult and real-world app use, and saw there was a ", { h: "recurring calculation of drug dosages.", d: 0.6 }] },
+      { p: [{ h: "The dose depended on the animal's weight and rules specific to each drug.", d: 0.8 }, " ", { h: "All of it was calculated by hand during the consult.", d: 1.0 }] },
+      { p: ["This revealed an ", { h: "opportunity to evolve.", d: 1.2 }] },
+    ],
+  },
+  calc: {
+    heading: "The calculation inside the flow",
+    blocks: [
+      { p: ["Our answer was to ", { h: "bring the calculation into the app", d: 0.2 }, ", ", { h: "turning that manual step into a quick action within the flow.", d: 0.4 }] },
+      { ul: [[{ h: "the vet enters the animal's weight", d: 0.6 }], [{ h: "we cross-reference the drug data automatically", d: 0.8 }], [{ h: "the dosage comes out ready to use", d: 1.0 }]] },
+      { p: ["With this solution, ", { h: "use went from occasional to recurring.", d: 1.2 }] },
+    ],
+  },
+  results: {
+    heading: "Results",
+    blocks: [
+      {
+        ul: [
+          [{ h: "80,000 active users", d: 0.2 }],
+          ["an average of ", { h: "28 visits per user per month", d: 0.4 }],
+          [{ h: "2.5 million pageviews per month", d: 0.6 }],
+          [{ h: "6 minutes and 40 seconds per session", d: 0.8 }],
+          ["4.75 rating on the app stores"],
+          [{ h: "company acquired by Petlove", d: 1.0 }],
+        ],
+        mt: 0,
+        liPad: 8,
+      },
+    ],
+  },
+  role: {
+    heading: "My role",
+    blocks: [
+      { p: ["I worked from the start on defining the product, running research and interviews to understand the appointment routine of small-animal vets."] },
+      { p: ["From those learnings, I structured the app experience — defining information organization, navigation patterns and usage principles focused on decision-making during the consult."] },
+      { p: ["As the product evolved, I ran tests and followed field usage, adjusting flows and prioritizing features based on real user behavior."] },
+    ],
+  },
+  back: "Back",
+};
+
 export default function VetSmart() {
+  const { lang } = useLang();
+  const c = lang === "pt" ? pt : en;
+
   return (
     <div className="min-h-screen bg-[#F2F2F2]" style={{ color: "#222" }}>
       <Nav />
@@ -73,20 +245,8 @@ export default function VetSmart() {
         </div>
 
         {/* Intro */}
-        <TwoCol heading="Criamos um aplicativo que mudou o comportamento da consulta veterinária, reduzindo o tempo de tomada de decisão durante o atendimento">
-          <p>
-            O Vet Smart surgiu em um momento em que não existiam aplicativos para médicos
-            veterinários. Fomos os <HighlightText>primeiros a construir um produto voltado para esse público.</HighlightText>
-          </p>
-          <p style={{ marginTop: 32 }}>
-            Desde o início, atuei como Product Designer conduzindo pesquisas e participando da
-            definição do produto, mapeando problemas e oportunidades no dia a dia de veterinários de
-            pequenos animais.
-          </p>
-          <p style={{ marginTop: 32 }}>
-            Como resultado, o Vet Smart alcançou 80 mil usuários ativos e 2,5 milhões de pageviews
-            mensais, sendo posteriormente adquirido pela Petlove.
-          </p>
+        <TwoCol heading={c.intro.heading}>
+          <Blocks blocks={c.intro.blocks} />
         </TwoCol>
 
         {/* Images grouped */}
@@ -105,57 +265,22 @@ export default function VetSmart() {
         </div>
 
         {/* Onde identificamos uma dor */}
-        <TwoCol heading="Onde identificamos uma dor">
-          <p>
-            Acompanhamos diversas consultas veterinárias e observamos que, durante o atendimento, o veterinário <HighlightText delay={0.2}>alternava entre livros e memória</HighlightText> para buscar informações, <HighlightText delay={0.4}>incluindo dosagens de medicamentos.</HighlightText>
-          </p>
-          <p style={{ marginTop: 32 }}>
-            Esse processo não apenas consumia tempo, como também era suscetível a falhas: a informação podia estar desatualizada e a memória não era confiável. Isso ocorria justamente no <HighlightText delay={0.6}>momento mais crítico da consulta.</HighlightText>
-          </p>
+        <TwoCol heading={c.pain.heading}>
+          <Blocks blocks={c.pain.blocks} />
         </TwoCol>
 
         <Divider />
 
         {/* Oportunidade */}
-        <TwoCol heading="Oportunidade">
-          <p>
-            <HighlightText delay={0.2}>A informação já existia em algum lugar, mas não estava acessível de forma rápida</HighlightText> e, muitas vezes, estava desatualizada.
-          </p>
+        <TwoCol heading={c.opportunity.heading}>
+          <Blocks blocks={c.opportunity.blocks} />
         </TwoCol>
 
         <Divider />
 
         {/* Solução */}
-        <TwoCol heading="Solução">
-          <p>
-            <HighlightText delay={0.2}>O problema acontecia durante a consulta, então a solução precisava existir nesse mesmo contexto.</HighlightText>
-          </p>
-          <p style={{ marginTop: 32 }}>
-            Levamos essa informação para um aplicativo, disponível na mão do veterinário durante o
-            atendimento.
-          </p>
-          <p style={{ marginTop: 32 }}>
-            Começamos reorganizando o conteúdo para acesso rápido, estruturando a informação para
-            ser compreendida sem necessidade de leitura completa.
-          </p>
-          <p style={{ marginTop: 32 }}>
-            Priorizamos <HighlightText delay={0.4}>escaneabilidade em vez de profundidade</HighlightText>, <HighlightText delay={0.6}>reduzindo a quantidade de informação visível</HighlightText> e organizando tudo em um padrão consistente.
-          </p>
-          <p style={{ marginTop: 32 }}>
-            Essa decisão veio da observação de que <HighlightText delay={0.8}>a leitura completa não acontecia durante a consulta.</HighlightText>
-          </p>
-          <p style={{ marginTop: 32 }}>
-            Adotamos, então, algumas premissas de estrutura para o aplicativo:
-          </p>
-          <ul style={{ marginTop: 16, paddingLeft: "1.2em", listStyleType: "disc" }}>
-            <li><HighlightText delay={1.0}>busca direta</HighlightText></li>
-            <li><HighlightText delay={1.2}>listas simples</HighlightText></li>
-            <li><HighlightText delay={1.4}>informação sempre no mesmo formato</HighlightText></li>
-          </ul>
-          <p style={{ marginTop: 32 }}>
-            Com isso, o foco do veterinário passou para o acesso rápido à informação durante a
-            consulta.
-          </p>
+        <TwoCol heading={c.solution.heading}>
+          <Blocks blocks={c.solution.blocks} />
         </TwoCol>
 
         {/* Image after Solução */}
@@ -169,75 +294,33 @@ export default function VetSmart() {
         </div>
 
         {/* Evolução */}
-        <TwoCol heading="Evolução">
-          <p>
-            Apesar de o aplicativo ser bem aceito, identificamos um <HighlightText delay={0.2}>problema de recorrência.</HighlightText>
-          </p>
-          <p style={{ marginTop: 32 }}>
-            <HighlightText delay={0.4}>O veterinário consultava quando precisava, mas não havia um motivo constante para voltar</HighlightText> após ter domínio sobre o produto.
-          </p>
-          <p style={{ marginTop: 32 }}>
-            Com isso, fomos observar a consulta e o uso do aplicativo na prática e vimos que havia um <HighlightText delay={0.6}>cálculo recorrente de dosagem de medicamentos.</HighlightText>
-          </p>
-          <p style={{ marginTop: 32 }}>
-            <HighlightText delay={0.8}>A dose dependia do peso do animal e de regras específicas de cada medicamento.</HighlightText> <HighlightText delay={1.0}>Todo esse cálculo era feito manualmente durante a consulta.</HighlightText>
-          </p>
-          <p style={{ marginTop: 32 }}>Isso evidenciou uma <HighlightText delay={1.2}>oportunidade de evolução.</HighlightText></p>
+        <TwoCol heading={c.evolution.heading}>
+          <Blocks blocks={c.evolution.blocks} />
         </TwoCol>
 
         <Divider />
 
         {/* O cálculo dentro do fluxo */}
-        <TwoCol heading="O cálculo dentro do fluxo">
-          <p>
-            Nossa resposta foi <HighlightText delay={0.2}>trazer o cálculo para dentro do aplicativo</HighlightText>, <HighlightText delay={0.4}>transformando esse passo manual em uma ação rápida dentro do fluxo.</HighlightText>
-          </p>
-          <ul style={{ marginTop: 32, paddingLeft: "1.2em", listStyleType: "disc" }}>
-            <li><HighlightText delay={0.6}>o veterinário informa o peso do animal</HighlightText></li>
-            <li><HighlightText delay={0.8}>cruzamos com os dados do medicamento automaticamente</HighlightText></li>
-            <li><HighlightText delay={1.0}>o cálculo da dosagem já vem pronto</HighlightText></li>
-          </ul>
-          <p style={{ marginTop: 32 }}>
-            Com essa solução, <HighlightText delay={1.2}>o uso deixou de ser pontual e passou a ser recorrente.</HighlightText>
-          </p>
+        <TwoCol heading={c.calc.heading}>
+          <Blocks blocks={c.calc.blocks} />
         </TwoCol>
 
         {/* Image before Resultado */}
         <div className="my-8 md:my-[100px]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <div className="md:hidden"><Img src="/vet-smart/06-mobile.png" alt="Vet Smart" /></div>
           <div className="hidden md:block"><Img src="/vet-smart/06.png" alt="Vet Smart" /></div>
         </div>
 
         {/* Resultado */}
-        <TwoCol heading="Resultado">
-          <ul style={{ listStyle: "disc", padding: 0, margin: 0, paddingLeft: "1.2em" }}>
-            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.2}>80 mil usuários ativos</HighlightText></li>
-            <li style={{ paddingBottom: 8 }}>média de <HighlightText delay={0.4}>28 acessos por usuário por mês</HighlightText></li>
-            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.6}>2,5 milhões de pageviews por mês</HighlightText></li>
-            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.8}>6 minutos e 40 segundos por sessão</HighlightText></li>
-            <li style={{ paddingBottom: 8 }}>avaliação de 4,75 nas stores</li>
-            <li style={{ paddingBottom: 8 }}><HighlightText delay={1.0}>empresa adquirida pela Petlove</HighlightText></li>
-          </ul>
+        <TwoCol heading={c.results.heading}>
+          <Blocks blocks={c.results.blocks} />
         </TwoCol>
 
         <Divider />
 
         {/* Meu papel */}
-        <TwoCol heading="Meu papel">
-          <p>
-            Atuei desde o início na definição do produto, conduzindo pesquisas e entrevistas para
-            entender a rotina de atendimento de veterinários de pequenos animais.
-          </p>
-          <p style={{ marginTop: 32 }}>
-            A partir desses aprendizados, estruturei a experiência do aplicativo, definindo a
-            organização da informação, os padrões de navegação e os princípios de uso focados em
-            decisão durante a consulta.
-          </p>
-          <p style={{ marginTop: 32 }}>
-            Ao longo da evolução do produto, conduzi testes e acompanhei o uso em campo, ajustando
-            fluxos e priorizando funcionalidades com base no comportamento real dos usuários.
-          </p>
+        <TwoCol heading={c.role.heading}>
+          <Blocks blocks={c.role.blocks} />
         </TwoCol>
 
         {/* Final gifs */}
@@ -257,7 +340,7 @@ export default function VetSmart() {
           <div className="hidden md:block"><Img src="/vet-smart/08.gif" alt="Vet Smart estudos" /></div>
         </div>
 
-        <BottomNav prev={{ label: "Voltar", href: "/" }} next={{ label: "Unico You", href: "/unico-you" }} />
+        <BottomNav prev={{ label: c.back, href: "/" }} next={{ label: "Unico You", href: "/unico-you" }} />
 
       </div>
     </div>

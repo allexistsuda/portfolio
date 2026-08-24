@@ -1,7 +1,10 @@
-import Link from "next/link";
+"use client";
+
 import BottomNav from "../components/BottomNav";
 import Nav from "../components/Nav";
 import VideoPlayer from "../components/VideoPlayer";
+import { useLang } from "../i18n/lang";
+import { Blocks, type Block } from "../i18n/render";
 
 const body: React.CSSProperties = { fontWeight: 400, color: "#222" };
 const title: React.CSSProperties = { fontWeight: 500, color: "#222" };
@@ -23,7 +26,20 @@ function TwoCol({ heading, children }: { heading: string; children: React.ReactN
   );
 }
 
+const flamePt: Block[] = [
+  { p: ["Atuação no time de Design System do Santander, contribuindo para a evolução de componentes, bibliotecas compartilhadas e padrões utilizados em diferentes produtos da companhia."] },
+  { p: ["Participação na construção de um novo Design System global para diferentes países, apoiando a consistência e escalabilidade da experiência."] },
+];
+
+const flameEn: Block[] = [
+  { p: ["Worked on Santander's Design System team, contributing to the evolution of components, shared libraries and patterns used across the company's products."] },
+  { p: ["Helped build a new global Design System for multiple countries, supporting consistency and scalability of the experience."] },
+];
+
 export default function SantanderDesignSystem() {
+  const { lang } = useLang();
+  const flame = lang === "pt" ? flamePt : flameEn;
+
   return (
     <div className="min-h-screen bg-[#F2F2F2]" style={{ color: "#222" }}>
       <Nav />
@@ -37,15 +53,7 @@ export default function SantanderDesignSystem() {
 
         {/* Flame */}
         <TwoCol heading="Flame">
-          <p>
-            Atuação no time de Design System do Santander, contribuindo para a evolução de
-            componentes, bibliotecas compartilhadas e padrões utilizados em diferentes produtos da
-            companhia.
-          </p>
-          <p style={{ marginTop: 32 }}>
-            Participação na construção de um novo Design System global para diferentes países,
-            apoiando a consistência e escalabilidade da experiência.
-          </p>
+          <Blocks blocks={flame} />
         </TwoCol>
 
         <BottomNav prev={{ label: "Unico You", href: "/unico-you" }} next={{ label: "Santander Workshops", href: "/santander-workshops" }} />

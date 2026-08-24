@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
+import { LangProvider } from "./i18n/lang";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -21,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={geist.className}>
       <body className="bg-[#F2F2F2] text-[#0D0D0D] antialiased" suppressHydrationWarning>
-        {children}
+        <LangProvider>{children}</LangProvider>
         <Analytics />
       </body>
     </html>

@@ -1,8 +1,10 @@
-import Link from "next/link";
+"use client";
+
 import Carousel from "../components/Carousel";
 import BottomNav from "../components/BottomNav";
 import Nav from "../components/Nav";
-import HighlightText from "../components/HighlightText";
+import { useLang } from "../i18n/lang";
+import { Blocks, type Block } from "../i18n/render";
 
 const body: React.CSSProperties = {
   fontWeight: 400,
@@ -42,7 +44,118 @@ function Img({ src, alt }: { src: string; alt: string }) {
   );
 }
 
+type Section = { heading: string; blocks: Block[] };
+type Content = {
+  context: Section;
+  opportunity: Section;
+  thesis: Section;
+  mvp: Section;
+  results: Section;
+  evolution: Section;
+};
+
+const pt: Content = {
+  context: {
+    heading: "Contexto",
+    blocks: [
+      { p: ["Liderei a criação do Unico You, ", { h: "primeiro produto B2C da Unico", d: 0.2 }, ", empresa especializada em identidade digital e soluções para RH, que se tornou ", { h: "unicórnio em 2021.", d: 0.4 }] },
+      { p: ["O produto foi criado para expandir a atuação da empresa para a ", { h: "relação direta com colaboradores", d: 0.2 }, ", explorando novos serviços dentro do ecossistema já existente da companhia."] },
+    ],
+  },
+  opportunity: {
+    heading: "Oportunidade",
+    blocks: [
+      { p: ["Durante o discovery, conduzimos uma série de pesquisas e análises para entender quais problemas dentro da relação entre empresas e colaboradores poderiam ", { h: "gerar valor real como uma nova frente de produto.", d: 0.2 }] },
+      { p: ["Mapeamos diferentes oportunidades relacionadas a benefícios, serviços financeiros e rotina do colaborador. Entre elas, um dos pontos de dor mais recorrentes estava relacionado à ", { h: "pressão financeira cotidiana", d: 0.4 }, " e seu ", { h: "impacto direto na rotina de trabalho.", d: 0.6 }] },
+    ],
+  },
+  thesis: {
+    heading: "Tese de produto",
+    blocks: [
+      { p: ["A partir desse contexto, definimos como foco inicial do produto a possibilidade de colaboradores ", { h: "recebessem pelos dias já trabalhados antes da data tradicional de pagamento.", d: 0.2 }] },
+      { p: ["Além do impacto direto na rotina financeira dos usuários, a decisão também estava alinhada à necessidade de construir um produto com ", { h: "alto potencial de recorrência e frequência de uso.", d: 0.4 }] },
+      { p: ["A proposta buscava transformar uma lógica rígida de pagamento mensal em uma experiência mais flexível, permitindo ", { h: "acesso imediato ao valor disponível", d: 0.6 }, " diretamente pelo aplicativo e ", { h: "sem custo para o colaborador.", d: 0.8 }] },
+      { p: [{ h: "A tese do produto era simples", d: 1.0 }, ": ", { h: "\"trabalhei hoje, recebo hoje\".", d: 1.2 }] },
+    ],
+  },
+  mvp: {
+    heading: "Construção do MVP",
+    blocks: [
+      { p: ["Durante a construção do MVP, um dos principais desafios identificados estava relacionado à percepção de ", { h: "segurança e confiança dos usuários", d: 0.2 }, " em relação ao ", { h: "compartilhamento de dados e acesso financeiro.", d: 0.4 }] },
+      { p: ["A partir dos testes iniciais e validações com usuários, refinamos o fluxo de cadastro e onboarding, incorporando etapas de validação e reforçando elementos relacionados à segurança da experiência."] },
+      { p: ["O MVP inicial, lançado sob o nome DiaCinco, passou por ", { h: "diferentes ciclos de evolução e refinamento", d: 0.6 }, " até chegar à versão final do Unico You."] },
+      { p: ["O produto foi desenvolvido em parceria com a Creditas, responsável por ", { h: "viabilizar a operação financeira da solução.", d: 0.8 }] },
+    ],
+  },
+  results: {
+    heading: "Resultados",
+    blocks: [
+      { p: ["O lançamento do MVP validou tanto a aderência da proposta quanto o potencial de recorrência do produto."] },
+      { ul: [[{ h: "55% de conversão no fluxo de cadastro", d: 0.2 }], [{ h: "45,7% de usuários ativos mensais", d: 0.4 }], [{ h: "Média de 5,5 sessões por usuário ao mês", d: 0.6 }]], liPad: 8 },
+      { p: ["Os resultados reforçaram a ", { h: "frequência de uso e a relevância da proposta", d: 0.8 }, " dentro da rotina dos colaboradores."] },
+    ],
+  },
+  evolution: {
+    heading: "Evolução do produto",
+    blocks: [
+      { p: ["A partir da validação do MVP, o produto continuou evoluindo com ", { h: "novas funcionalidades e serviços incorporados à plataforma.", d: 0.2 }] },
+    ],
+  },
+};
+
+const en: Content = {
+  context: {
+    heading: "Context",
+    blocks: [
+      { p: ["I led the creation of Unico You, ", { h: "Unico's first B2C product", d: 0.2 }, " — a company specialized in digital identity and HR solutions that became a ", { h: "unicorn in 2021.", d: 0.4 }] },
+      { p: ["The product was created to expand the company into a ", { h: "direct relationship with employees", d: 0.2 }, ", exploring new services within its existing ecosystem."] },
+    ],
+  },
+  opportunity: {
+    heading: "Opportunity",
+    blocks: [
+      { p: ["During discovery, we ran a series of studies and analyses to understand which problems in the relationship between companies and employees could ", { h: "create real value as a new product line.", d: 0.2 }] },
+      { p: ["We mapped several opportunities around benefits, financial services and the employee's routine. Among them, one of the most recurring pain points was ", { h: "everyday financial pressure", d: 0.4 }, " and its ", { h: "direct impact on the workday.", d: 0.6 }] },
+    ],
+  },
+  thesis: {
+    heading: "Product thesis",
+    blocks: [
+      { p: ["From that context, we set the product's initial focus on letting employees ", { h: "get paid for days already worked, before the traditional payday.", d: 0.2 }] },
+      { p: ["Beyond the direct impact on users' financial routine, the decision also aligned with the need to build a product with ", { h: "high potential for recurring, frequent use.", d: 0.4 }] },
+      { p: ["The idea was to turn a rigid monthly-payment logic into a more flexible experience, allowing ", { h: "immediate access to the available amount", d: 0.6 }, " right from the app and ", { h: "at no cost to the employee.", d: 0.8 }] },
+      { p: [{ h: "The product thesis was simple", d: 1.0 }, ": ", { h: "\"worked today, paid today\".", d: 1.2 }] },
+    ],
+  },
+  mvp: {
+    heading: "Building the MVP",
+    blocks: [
+      { p: ["While building the MVP, one of the main challenges was users' perception of ", { h: "safety and trust", d: 0.2 }, " around ", { h: "data sharing and financial access.", d: 0.4 }] },
+      { p: ["Based on early tests and user validation, we refined the sign-up and onboarding flow, adding validation steps and reinforcing elements tied to the safety of the experience."] },
+      { p: ["The initial MVP, launched under the name DiaCinco, went through ", { h: "several cycles of evolution and refinement", d: 0.6 }, " before reaching the final Unico You."] },
+      { p: ["The product was developed in partnership with Creditas, responsible for ", { h: "enabling the financial operation behind the solution.", d: 0.8 }] },
+    ],
+  },
+  results: {
+    heading: "Results",
+    blocks: [
+      { p: ["The MVP launch validated both the appeal of the idea and the product's recurring-use potential."] },
+      { ul: [[{ h: "55% conversion in the sign-up flow", d: 0.2 }], [{ h: "45.7% monthly active users", d: 0.4 }], [{ h: "an average of 5.5 sessions per user per month", d: 0.6 }]], liPad: 8 },
+      { p: ["The results reinforced the ", { h: "frequency of use and the relevance of the idea", d: 0.8 }, " within employees' routines."] },
+    ],
+  },
+  evolution: {
+    heading: "Product evolution",
+    blocks: [
+      { p: ["After validating the MVP, the product kept evolving with ", { h: "new features and services added to the platform.", d: 0.2 }] },
+    ],
+  },
+};
+
 export default function UnicoYou() {
+  const { lang } = useLang();
+  const c = lang === "pt" ? pt : en;
+
   return (
     <div className="min-h-screen bg-[#F2F2F2]" style={{ color: "#222" }}>
       <Nav />
@@ -56,15 +169,8 @@ export default function UnicoYou() {
         </div>
 
         {/* Contexto */}
-        <TwoCol heading="Contexto">
-          <p>
-            Liderei a criação do Unico You, <HighlightText delay={0.2}>primeiro produto B2C da Unico</HighlightText>, empresa especializada em
-            identidade digital e soluções para RH, que se tornou <HighlightText delay={0.4}>unicórnio em 2021.</HighlightText>
-          </p>
-          <p style={{ marginTop: 32 }}>
-            O produto foi criado para expandir a atuação da empresa para a <HighlightText delay={0.2}>relação direta com
-            colaboradores</HighlightText>, explorando novos serviços dentro do ecossistema já existente da companhia.
-          </p>
+        <TwoCol heading={c.context.heading}>
+          <Blocks blocks={c.context.blocks} />
         </TwoCol>
 
         {/* Images after Contexto */}
@@ -76,65 +182,22 @@ export default function UnicoYou() {
         </div>
 
         {/* Oportunidade */}
-        <TwoCol heading="Oportunidade">
-          <p>
-            Durante o discovery, conduzimos uma série de pesquisas e análises para entender quais
-            problemas dentro da relação entre empresas e colaboradores poderiam <HighlightText delay={0.2}>gerar valor real como
-            uma nova frente de produto.</HighlightText>
-          </p>
-          <p style={{ marginTop: 32 }}>
-            Mapeamos diferentes oportunidades relacionadas a benefícios, serviços financeiros e
-            rotina do colaborador. Entre elas, um dos pontos de dor mais recorrentes estava
-            relacionado à <HighlightText delay={0.4}>pressão financeira cotidiana</HighlightText> e seu <HighlightText delay={0.6}>impacto direto na rotina de trabalho.</HighlightText>
-          </p>
+        <TwoCol heading={c.opportunity.heading}>
+          <Blocks blocks={c.opportunity.blocks} />
         </TwoCol>
 
         <Divider />
 
         {/* Tese de produto */}
-        <TwoCol heading="Tese de produto">
-          <p>
-            A partir desse contexto, definimos como foco inicial do produto a possibilidade de
-            colaboradores <HighlightText delay={0.2}>recebessem pelos dias já trabalhados antes da data tradicional
-            de pagamento.</HighlightText>
-          </p>
-          <p style={{ marginTop: 32 }}>
-            Além do impacto direto na rotina financeira dos usuários, a decisão também estava
-            alinhada à necessidade de construir um produto com <HighlightText delay={0.4}>alto potencial de recorrência e
-            frequência de uso.</HighlightText>
-          </p>
-          <p style={{ marginTop: 32 }}>
-            A proposta buscava transformar uma lógica rígida de pagamento mensal em uma experiência
-            mais flexível, permitindo <HighlightText delay={0.6}>acesso imediato ao valor disponível</HighlightText> diretamente pelo aplicativo
-            e <HighlightText delay={0.8}>sem custo para o colaborador.</HighlightText>
-          </p>
-          <p style={{ marginTop: 32 }}>
-            <HighlightText delay={1.0}>A tese do produto era simples</HighlightText>: <HighlightText delay={1.2}>"trabalhei hoje, recebo hoje".</HighlightText>
-          </p>
+        <TwoCol heading={c.thesis.heading}>
+          <Blocks blocks={c.thesis.blocks} />
         </TwoCol>
 
         <Divider />
 
         {/* Construção do MVP */}
-        <TwoCol heading="Construção do MVP">
-          <p>
-            Durante a construção do MVP, um dos principais desafios identificados estava relacionado
-            à percepção de <HighlightText delay={0.2}>segurança e confiança dos usuários</HighlightText> em relação ao <HighlightText delay={0.4}>compartilhamento de
-            dados e acesso financeiro.</HighlightText>
-          </p>
-          <p style={{ marginTop: 32 }}>
-            A partir dos testes iniciais e validações com usuários, refinamos o fluxo de cadastro e
-            onboarding, incorporando etapas de validação e reforçando elementos relacionados à
-            segurança da experiência.
-          </p>
-          <p style={{ marginTop: 32 }}>
-            O MVP inicial, lançado sob o nome DiaCinco, passou por <HighlightText delay={0.6}>diferentes ciclos de evolução e
-            refinamento</HighlightText> até chegar à versão final do Unico You.
-          </p>
-          <p style={{ marginTop: 32 }}>
-            O produto foi desenvolvido em parceria com a Creditas, responsável por <HighlightText delay={0.8}>viabilizar a
-            operação financeira da solução.</HighlightText>
-          </p>
+        <TwoCol heading={c.mvp.heading}>
+          <Blocks blocks={c.mvp.blocks} />
         </TwoCol>
 
         {/* Final images */}
@@ -154,20 +217,8 @@ export default function UnicoYou() {
         </div>
 
         {/* Resultados */}
-        <TwoCol heading="Resultados">
-          <p>
-            O lançamento do MVP validou tanto a aderência da proposta quanto o potencial de
-            recorrência do produto.
-          </p>
-          <ul style={{ marginTop: 32, listStyle: "disc", paddingLeft: "1.2em" }}>
-            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.2}>55% de conversão no fluxo de cadastro</HighlightText></li>
-            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.4}>45,7% de usuários ativos mensais</HighlightText></li>
-            <li style={{ paddingBottom: 8 }}><HighlightText delay={0.6}>Média de 5,5 sessões por usuário ao mês</HighlightText></li>
-          </ul>
-          <p style={{ marginTop: 32 }}>
-            Os resultados reforçaram a <HighlightText delay={0.8}>frequência de uso e a relevância da proposta</HighlightText> dentro da rotina
-            dos colaboradores.
-          </p>
+        <TwoCol heading={c.results.heading}>
+          <Blocks blocks={c.results.blocks} />
         </TwoCol>
 
         {/* Images after Resultados */}
@@ -183,11 +234,8 @@ export default function UnicoYou() {
         </div>
 
         {/* Evolução do produto */}
-        <TwoCol heading="Evolução do produto">
-          <p>
-            A partir da validação do MVP, o produto continuou evoluindo com <HighlightText delay={0.2}>novas funcionalidades e
-            serviços incorporados à plataforma.</HighlightText>
-          </p>
+        <TwoCol heading={c.evolution.heading}>
+          <Blocks blocks={c.evolution.blocks} />
         </TwoCol>
 
         {/* Final 3 images */}

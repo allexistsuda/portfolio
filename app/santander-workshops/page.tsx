@@ -1,7 +1,10 @@
-import Link from "next/link";
+"use client";
+
 import Nav from "../components/Nav";
 import BottomNav from "../components/BottomNav";
 import VideoPlayer from "../components/VideoPlayer";
+import { useLang } from "../i18n/lang";
+import { Blocks, type Block } from "../i18n/render";
 
 const body: React.CSSProperties = { fontWeight: 400, color: "#222" };
 const title: React.CSSProperties = { fontWeight: 500, color: "#222" };
@@ -23,7 +26,20 @@ function TwoCol({ heading, children }: { heading: string; children: React.ReactN
   );
 }
 
+const workshopsPt: Block[] = [
+  { p: ["Criação e condução de workshops internos voltados à disseminação de boas práticas, utilização de Design Systems e fortalecimento de uma cultura de design orientada por dados."] },
+  { p: ["As apresentações envolveram mais de 50 designers, promovendo alinhamento entre diferentes squads e maior consistência na construção de produtos digitais."] },
+];
+
+const workshopsEn: Block[] = [
+  { p: ["Created and led internal workshops focused on spreading best practices, using Design Systems and strengthening a data-driven design culture."] },
+  { p: ["The sessions involved more than 50 designers, driving alignment across squads and greater consistency in building digital products."] },
+];
+
 export default function SantanderWorkshops() {
+  const { lang } = useLang();
+  const workshops = lang === "pt" ? workshopsPt : workshopsEn;
+
   return (
     <div className="min-h-screen bg-[#F2F2F2]" style={{ color: "#222" }}>
       <Nav />
@@ -51,14 +67,7 @@ export default function SantanderWorkshops() {
 
         {/* Workshops text */}
         <TwoCol heading="Workshops">
-          <p>
-            Criação e condução de workshops internos voltados à disseminação de boas práticas,
-            utilização de Design Systems e fortalecimento de uma cultura de design orientada por dados.
-          </p>
-          <p style={{ marginTop: 32 }}>
-            As apresentações envolveram mais de 50 designers, promovendo alinhamento entre diferentes
-            squads e maior consistência na construção de produtos digitais.
-          </p>
+          <Blocks blocks={workshops} />
         </TwoCol>
 
         <BottomNav prev={{ label: "Santander Design System", href: "/santander-design-system" }} next={{ label: "Vet Smart TV", href: "/vet-smart-tv" }} />
