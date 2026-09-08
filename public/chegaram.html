@@ -37,13 +37,11 @@
     overflow:hidden;
     border-radius:0;
     user-select:none;
-    transform:scale(min(calc(100vw / 375), calc(100dvh / 812)));
     transform-origin:center center;
   }
-  /* mobile: fill full width, edges flush, native scroll */
+  /* mobile: switch stage to block so JS can size it for native scroll */
   @media (max-width:600px){
-    .stage{ display:block; min-height:0; width:100vw; height:calc((100vw + 1px) * 812 / 375); }
-    .frame{ transform:scale(calc((100vw + 1px) / 375)); transform-origin:top left; }
+    .stage{ display:block; min-height:0; }
   }
 
   /* ---- Hero photo (image 60): x-74 y-43 w486 h1054, FILL ---- */
@@ -181,8 +179,31 @@
 
 <script>
   const frame = document.getElementById('frame');
+  const stage = document.querySelector('.stage');
   const cta = document.getElementById('cta');
   const hero = document.getElementById('hero');
+
+  // Scale the 375x812 frame to the viewport with a real numeric scale.
+  // (CSS scale(calc(100vw/375)) is invalid — scale() needs a number, not a length.)
+  function fit(){
+    const mobile = window.matchMedia('(max-width:600px)').matches;
+    if(mobile){
+      const s = (window.innerWidth + 1) / 375; // +1px so the right edge is always flush (overflow clipped)
+      frame.style.transformOrigin = 'top left';
+      frame.style.transform = 'scale(' + s + ')';
+      stage.style.width = '100%';
+      stage.style.height = (812 * s) + 'px';
+    } else {
+      const s = Math.min(window.innerWidth / 375, window.innerHeight / 812);
+      frame.style.transformOrigin = 'center center';
+      frame.style.transform = 'scale(' + s + ')';
+      stage.style.width = '';
+      stage.style.height = '';
+    }
+  }
+  fit();
+  window.addEventListener('resize', fit);
+  window.addEventListener('orientationchange', fit);
 
   function playVideo(){ const p = hero.play(); if(p && p.catch) p.catch(()=>{}); }
 
