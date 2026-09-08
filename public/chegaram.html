@@ -154,46 +154,92 @@
 
   /* ===================== Screens & transition ===================== */
   .screen{position:absolute;inset:0;}
-  .screen-bib{opacity:0;pointer-events:none;background:#fff;}
 
-  /* home exits (push up + fade), bib enters */
-  .frame.show-bib .screen-home{animation:homeOut .5s cubic-bezier(.16,1,.3,1) forwards;pointer-events:none;}
-  @keyframes homeOut{to{opacity:0;transform:translateY(-26px) scale(.98);}}
-  .frame.show-bib .screen-bib{opacity:1;pointer-events:auto;animation:bibIn .45s ease forwards;}
-  @keyframes bibIn{from{opacity:0;}to{opacity:1;}}
+  /* The CTA opens into the next screen: a white rounded surface (the opener)
+     grows from the button's exact rect (24,648,327x48,r10) to fill the frame. */
+  .screen-bib{opacity:0;pointer-events:none;background:transparent;}
+  .frame.show-bib .screen-bib{opacity:1;pointer-events:auto;}
+  /* opener = white window that grows from the button rect; its content lives in
+     .opener-inner, counter-translated so it stays locked to the frame while the
+     window opens (overflow:hidden reveals it as the surface expands). */
+  .opener{
+    position:absolute;left:24px;top:648px;width:327px;height:48px;border-radius:10px;
+    background:#fff;overflow:hidden;will-change:left,top,width,height,border-radius;
+    box-shadow:0 12px 44px -14px rgba(0,0,0,.20);
+  }
+  .opener-inner{position:absolute;left:-24px;top:-648px;width:375px;height:812px;will-change:left,top;}
+  .frame.show-bib .opener{animation:cardOpen .72s cubic-bezier(.55,0,.2,1) forwards;}
+  .frame.show-bib .opener-inner{animation:cardOpenInner .72s cubic-bezier(.55,0,.2,1) forwards;}
+  @keyframes cardOpen{
+    from{left:24px;top:648px;width:327px;height:48px;border-radius:10px;box-shadow:0 12px 44px -14px rgba(0,0,0,.20);}
+    to  {left:0px; top:0px; width:375px;height:812px;border-radius:0;box-shadow:0 0 0 0 rgba(0,0,0,0);}
+  }
+  @keyframes cardOpenInner{
+    from{left:-24px;top:-648px;}
+    to  {left:0px;top:0px;}
+  }
+  /* button compresses right before it opens */
+  .btn.compress{transform:scale(.955);transition:transform .13s cubic-bezier(.4,0,1,1);}
 
   /* ===================== Bibliotecas layout (positions 1:1) ===================== */
-  .screen-bib img{position:absolute;display:block;}
-  .bib-search{left:16px;top:50px;width:343px;height:40px;}
-  .bib-tabs{left:16px;top:106px;width:377px;height:36px;}
   .bib-h{position:absolute;left:16px;margin:0;font-weight:600;font-size:16px;line-height:26px;color:#1c1c1e;}
   .bib-h-estudos{top:166px;}
   .bib-h-protocolos{top:514px;}
-  .bib-c-e1{left:16px;top:208px;width:252px;height:282px;}
-  .bib-c-e2{left:287px;top:208px;width:252px;height:282px;}
-  .bib-c-p1{left:16px;top:556px;width:252px;height:282px;}
-  .bib-c-p2{left:287px;top:556px;width:252px;height:282px;}
-  .bib-tabbar{left:0;top:729px;width:375px;height:90px;z-index:5;}
+  .bib-tabbar{position:absolute;left:0;top:729px;width:375px;height:90px;z-index:5;display:block;}
 
-  /* assembly — every bib piece starts hidden, animates in on show-bib */
-  .screen-bib > *{opacity:0;will-change:transform,opacity;}
-  .frame.show-bib .screen-bib > *{animation:bibRise .8s cubic-bezier(.16,1,.3,1) forwards;}
+  /* search — tap feedback */
+  .bib-search{position:absolute;left:16px;top:50px;width:343px;height:40px;padding:0;border:0;background:none;cursor:text;
+    transition:filter .18s ease;}
+  .bib-search img{display:block;width:343px;height:40px;}
+  .bib-search:active{filter:brightness(.96);}
+
+  /* filter tabs — interactive, sliding underline */
+  .bib-tabs{position:absolute;left:0;top:106px;width:375px;height:36px;
+    display:flex;gap:12px;align-items:flex-start;padding:0 16px;
+    overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+  .bib-tabs::-webkit-scrollbar{display:none;}
+  .tab{flex:none;border:0;background:none;font-family:inherit;cursor:pointer;white-space:nowrap;
+    padding:0 4px 12px;font-size:16px;line-height:24px;font-weight:500;color:#6b6e6d;
+    transition:color .2s ease,opacity .15s ease;}
+  .tab.is-active{font-weight:600;color:#3aae5b;}
+  .tab:active{opacity:.6;}
+  .tab-underline{position:absolute;bottom:0;left:16px;width:0;height:2px;background:#3aae5b;border-radius:2px;
+    transition:transform .32s cubic-bezier(.16,1,.3,1),width .32s cubic-bezier(.16,1,.3,1);}
+
+  /* card rows — swipeable; cards — press */
+  .bib-row{position:absolute;left:0;width:375px;display:flex;gap:19px;padding:0 16px;
+    overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    scroll-snap-type:x proximity;}
+  .bib-row::-webkit-scrollbar{display:none;}
+  .bib-row-estudos{top:208px;}
+  .bib-row-protocolos{top:556px;}
+  .card-slot{flex:none;scroll-snap-align:start;}
+  .bib-card{display:block;padding:0;border:0;background:none;cursor:pointer;
+    transition:transform .18s cubic-bezier(.2,.8,.25,1);}
+  .bib-card:active{transform:scale(.965);}
+  .bib-card img{display:block;width:252px;height:282px;border-radius:8px;}
+
+  /* assembly — pieces start hidden, animate in on show-bib */
+  .screen-bib .bib-search,.screen-bib .bib-tabs,.screen-bib .bib-h,.screen-bib .card-slot,.screen-bib .bib-tabbar{opacity:0;will-change:transform,opacity;}
+  .frame.show-bib .screen-bib .bib-h,
+  .frame.show-bib .screen-bib .card-slot,
+  .frame.show-bib .bib-tabs{animation:bibRise .8s cubic-bezier(.16,1,.3,1) forwards;}
   @keyframes bibRise{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
   .frame.show-bib .bib-search{animation:bibDrop .75s cubic-bezier(.16,1,.3,1) forwards;}
   @keyframes bibDrop{from{opacity:0;transform:translateY(-14px);}to{opacity:1;transform:translateY(0);}}
   .frame.show-bib .bib-tabbar{animation:bibUp .7s cubic-bezier(.16,1,.3,1) forwards;}
   @keyframes bibUp{from{opacity:0;transform:translateY(100%);}to{opacity:1;transform:translateY(0);}}
 
-  /* stagger rhythm */
-  .frame.show-bib .bib-search{animation-delay:.16s;}
-  .frame.show-bib .bib-tabs{animation-delay:.28s;}
-  .frame.show-bib .bib-h-estudos{animation-delay:.34s;}
-  .frame.show-bib .bib-c-e1{animation-delay:.40s;}
-  .frame.show-bib .bib-c-e2{animation-delay:.48s;}
-  .frame.show-bib .bib-h-protocolos{animation-delay:.54s;}
-  .frame.show-bib .bib-c-p1{animation-delay:.60s;}
-  .frame.show-bib .bib-c-p2{animation-delay:.68s;}
-  .frame.show-bib .bib-tabbar{animation-delay:.30s;}
+  /* stagger rhythm — content assembles as the surface finishes opening (~0.6s) */
+  .frame.show-bib .bib-search{animation-delay:.52s;}
+  .frame.show-bib .bib-tabs{animation-delay:.58s;}
+  .frame.show-bib .bib-h-estudos{animation-delay:.60s;}
+  .frame.show-bib .bib-row-estudos .card-slot:nth-child(1){animation-delay:.63s;}
+  .frame.show-bib .bib-row-estudos .card-slot:nth-child(2){animation-delay:.69s;}
+  .frame.show-bib .bib-h-protocolos{animation-delay:.73s;}
+  .frame.show-bib .bib-row-protocolos .card-slot:nth-child(1){animation-delay:.76s;}
+  .frame.show-bib .bib-row-protocolos .card-slot:nth-child(2){animation-delay:.82s;}
+  .frame.show-bib .bib-tabbar{animation-delay:.56s;}
 </style>
 </head>
 <body>
@@ -221,15 +267,34 @@
     </div><!-- /screen-home -->
 
     <div class="screen screen-bib" id="screenBib">
-      <img class="bib-search" src="bib/search.png" alt="">
-      <img class="bib-tabs" src="bib/tabs.png" alt="">
-      <h2 class="bib-h bib-h-estudos">Estudos</h2>
-      <img class="bib-c-e1" src="bib/card_estudos_1.png" alt="">
-      <img class="bib-c-e2" src="bib/card_estudos_2.png" alt="">
-      <h2 class="bib-h bib-h-protocolos">Protocolos</h2>
-      <img class="bib-c-p1" src="bib/card_protocolos_1.png" alt="">
-      <img class="bib-c-p2" src="bib/card_protocolos_2.png" alt="">
-      <img class="bib-tabbar" src="bib/tabbar.png" alt="">
+      <div class="opener" id="opener">
+      <div class="opener-inner" id="openerInner">
+        <button class="bib-search"><img src="bib/search.png" alt=""></button>
+
+        <div class="bib-tabs" id="bibTabs">
+          <button class="tab is-active">Todos</button>
+          <button class="tab">Estudos</button>
+          <button class="tab">Protocolos</button>
+          <button class="tab">Raças</button>
+          <button class="tab">Casos</button>
+          <span class="tab-underline" id="tabUnderline"></span>
+        </div>
+
+        <h2 class="bib-h bib-h-estudos">Estudos</h2>
+        <div class="bib-row bib-row-estudos">
+          <div class="card-slot"><button class="bib-card"><img src="bib/card_estudos_1.png" alt=""></button></div>
+          <div class="card-slot"><button class="bib-card"><img src="bib/card_estudos_2.png" alt=""></button></div>
+        </div>
+
+        <h2 class="bib-h bib-h-protocolos">Protocolos</h2>
+        <div class="bib-row bib-row-protocolos">
+          <div class="card-slot"><button class="bib-card"><img src="bib/card_protocolos_1.png" alt=""></button></div>
+          <div class="card-slot"><button class="bib-card"><img src="bib/card_protocolos_2.png" alt=""></button></div>
+        </div>
+
+        <img class="bib-tabbar" src="bib/tabbar.png" alt="">
+      </div>
+      </div>
     </div>
   </div>
   </div>
@@ -272,10 +337,33 @@
     playVideo();
   }
   window.addEventListener('load', () => { playVideo(); setTimeout(play, 150); });
-  window.addEventListener('keydown', e => { if(e.key.toLowerCase()==='r'){ frame.classList.remove('show-bib'); play(); } });
+  window.addEventListener('keydown', e => { if(e.key.toLowerCase()==='r'){ frame.classList.remove('show-bib'); cta.classList.remove('compress'); play(); } });
 
-  // navigate: Explorar bibliotecas -> Bibliotecas screen (after the ripple reads)
-  cta.addEventListener('click', () => { setTimeout(() => frame.classList.add('show-bib'), 200); });
+  // CTA opens into Bibliotecas: compress, then the white surface expands from the button
+  cta.addEventListener('click', () => {
+    cta.classList.add('compress');
+    setTimeout(() => { frame.classList.add('show-bib'); if(window.__placeUnderline) window.__placeUnderline(); }, 130);
+  });
+
+  // filter tabs: sliding green underline
+  (function(){
+    const wrap = document.getElementById('bibTabs');
+    if(!wrap) return;
+    const underline = document.getElementById('tabUnderline');
+    const tabs = [...wrap.querySelectorAll('.tab')];
+    const active = () => tabs.find(t => t.classList.contains('is-active')) || tabs[0];
+    function place(tab){ if(!tab) return; underline.style.width = tab.offsetWidth + 'px'; underline.style.transform = 'translateX(' + (tab.offsetLeft - 16) + 'px)'; }
+    tabs.forEach(t => t.addEventListener('click', () => {
+      tabs.forEach(x => x.classList.remove('is-active'));
+      t.classList.add('is-active');
+      place(t); // offsetWidth read forces reflow so the SemiBold width is current
+      t.scrollIntoView({inline:'center', block:'nearest', behavior:'smooth'});
+    }));
+    const init = () => place(active());
+    window.__placeUnderline = init;
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(init);
+    window.addEventListener('load', init);
+  })();
   // fallback: if the browser blocks muted autoplay, start on first interaction
   document.addEventListener('click', playVideo);
 
