@@ -151,11 +151,55 @@
     position:fixed;bottom:14px;left:0;right:0;text-align:center;
     font:400 12px/1 "Work Sans",sans-serif;color:#8b8580;letter-spacing:.02em;
   }
+
+  /* ===================== Screens & transition ===================== */
+  .screen{position:absolute;inset:0;}
+  .screen-bib{opacity:0;pointer-events:none;background:#fff;}
+
+  /* home exits (push up + fade), bib enters */
+  .frame.show-bib .screen-home{animation:homeOut .5s cubic-bezier(.16,1,.3,1) forwards;pointer-events:none;}
+  @keyframes homeOut{to{opacity:0;transform:translateY(-26px) scale(.98);}}
+  .frame.show-bib .screen-bib{opacity:1;pointer-events:auto;animation:bibIn .45s ease forwards;}
+  @keyframes bibIn{from{opacity:0;}to{opacity:1;}}
+
+  /* ===================== Bibliotecas layout (positions 1:1) ===================== */
+  .screen-bib img{position:absolute;display:block;}
+  .bib-search{left:16px;top:50px;width:343px;height:40px;}
+  .bib-tabs{left:16px;top:106px;width:377px;height:36px;}
+  .bib-h{position:absolute;left:16px;margin:0;font-weight:600;font-size:16px;line-height:26px;color:#1c1c1e;}
+  .bib-h-estudos{top:166px;}
+  .bib-h-protocolos{top:514px;}
+  .bib-c-e1{left:16px;top:208px;width:252px;height:282px;}
+  .bib-c-e2{left:287px;top:208px;width:252px;height:282px;}
+  .bib-c-p1{left:16px;top:556px;width:252px;height:282px;}
+  .bib-c-p2{left:287px;top:556px;width:252px;height:282px;}
+  .bib-tabbar{left:0;top:729px;width:375px;height:90px;z-index:5;}
+
+  /* assembly — every bib piece starts hidden, animates in on show-bib */
+  .screen-bib > *{opacity:0;will-change:transform,opacity;}
+  .frame.show-bib .screen-bib > *{animation:bibRise .8s cubic-bezier(.16,1,.3,1) forwards;}
+  @keyframes bibRise{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+  .frame.show-bib .bib-search{animation:bibDrop .75s cubic-bezier(.16,1,.3,1) forwards;}
+  @keyframes bibDrop{from{opacity:0;transform:translateY(-14px);}to{opacity:1;transform:translateY(0);}}
+  .frame.show-bib .bib-tabbar{animation:bibUp .7s cubic-bezier(.16,1,.3,1) forwards;}
+  @keyframes bibUp{from{opacity:0;transform:translateY(100%);}to{opacity:1;transform:translateY(0);}}
+
+  /* stagger rhythm */
+  .frame.show-bib .bib-search{animation-delay:.16s;}
+  .frame.show-bib .bib-tabs{animation-delay:.28s;}
+  .frame.show-bib .bib-h-estudos{animation-delay:.34s;}
+  .frame.show-bib .bib-c-e1{animation-delay:.40s;}
+  .frame.show-bib .bib-c-e2{animation-delay:.48s;}
+  .frame.show-bib .bib-h-protocolos{animation-delay:.54s;}
+  .frame.show-bib .bib-c-p1{animation-delay:.60s;}
+  .frame.show-bib .bib-c-p2{animation-delay:.68s;}
+  .frame.show-bib .bib-tabbar{animation-delay:.30s;}
 </style>
 </head>
 <body>
   <div class="stage">
   <div class="frame" id="frame">
+    <div class="screen screen-home" id="screenHome">
     <video class="hero reveal" id="hero" src="hero.mp4" autoplay loop muted playsinline preload="auto"></video>
     <div class="hero-fade"></div>
 
@@ -174,6 +218,19 @@
       </svg>
     </button>
     <button class="ghost reveal">Agora não</button>
+    </div><!-- /screen-home -->
+
+    <div class="screen screen-bib" id="screenBib">
+      <img class="bib-search" src="bib/search.png" alt="">
+      <img class="bib-tabs" src="bib/tabs.png" alt="">
+      <h2 class="bib-h bib-h-estudos">Estudos</h2>
+      <img class="bib-c-e1" src="bib/card_estudos_1.png" alt="">
+      <img class="bib-c-e2" src="bib/card_estudos_2.png" alt="">
+      <h2 class="bib-h bib-h-protocolos">Protocolos</h2>
+      <img class="bib-c-p1" src="bib/card_protocolos_1.png" alt="">
+      <img class="bib-c-p2" src="bib/card_protocolos_2.png" alt="">
+      <img class="bib-tabbar" src="bib/tabbar.png" alt="">
+    </div>
   </div>
   </div>
 
@@ -215,7 +272,10 @@
     playVideo();
   }
   window.addEventListener('load', () => { playVideo(); setTimeout(play, 150); });
-  window.addEventListener('keydown', e => { if(e.key.toLowerCase()==='r') play(); });
+  window.addEventListener('keydown', e => { if(e.key.toLowerCase()==='r'){ frame.classList.remove('show-bib'); play(); } });
+
+  // navigate: Explorar bibliotecas -> Bibliotecas screen (after the ripple reads)
+  cta.addEventListener('click', () => { setTimeout(() => frame.classList.add('show-bib'), 200); });
   // fallback: if the browser blocks muted autoplay, start on first interaction
   document.addEventListener('click', playVideo);
 
