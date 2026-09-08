@@ -36,10 +36,10 @@
     transform:scale(min(calc(100vw / 375), calc(100dvh / 812)));
     transform-origin:center center;
   }
-  /* mobile: fill the full screen width (100%), edge to edge */
+  /* mobile: fill the full screen width (100%) with real scroll */
   @media (max-width:600px){
-    .frame{ transform:scale(calc(100vw / 375)); transform-origin:top center; }
-    body{ align-items:flex-start; }
+    body{ display:block; overflow:visible; overflow-x:hidden; min-height:0; }
+    .frame{ transform:none; zoom:calc(100vw / 375); }
   }
 
   /* ---- Hero photo (image 60): x-74 y-43 w486 h1054, FILL ---- */
@@ -60,21 +60,21 @@
 
   /* ---- Text block ---- */
   .title{
-    position:absolute;left:24px;top:412px;width:327px;
+    position:absolute;left:24px;top:380px;width:327px;
     margin:0;
     font-weight:500;font-size:36px;line-height:44px;
     letter-spacing:-0.72px;
     color:var(--title);
   }
   .subtitle{
-    position:absolute;left:24px;top:506px;width:327px;
+    position:absolute;left:24px;top:474px;width:327px;
     margin:0;
     font-weight:500;font-size:20px;line-height:28px;
     letter-spacing:-0.2px;
     color:var(--green);
   }
   .body{
-    position:absolute;left:24px;top:602px;width:327px;
+    position:absolute;left:24px;top:570px;width:327px;
     margin:0;
     font-weight:400;font-size:16px;line-height:24px;
     color:var(--body);
@@ -82,7 +82,7 @@
 
   /* ---- Primary button (Frame 20): x24 y680 w327 h48 r10 ---- */
   .btn{
-    position:absolute;left:24px;top:680px;width:327px;height:48px;
+    position:absolute;left:24px;top:648px;width:327px;height:48px;
     border:0;padding:0;
     display:flex;align-items:center;justify-content:center;gap:8px;
     background:var(--green);
@@ -111,7 +111,7 @@
 
   /* ---- Secondary text button ---- */
   .ghost{
-    position:absolute;left:24px;top:740px;width:327px;height:32px;
+    position:absolute;left:24px;top:708px;width:327px;height:32px;
     display:flex;align-items:center;justify-content:center;
     background:none;border:0;padding:0;cursor:pointer;
     font-family:inherit;font-weight:500;font-size:16px;line-height:24px;
