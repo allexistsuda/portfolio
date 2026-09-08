@@ -36,6 +36,11 @@
     transform:scale(min(calc(100vw / 375), calc(100dvh / 812)));
     transform-origin:center center;
   }
+  /* mobile: fill the full screen width (100%), edge to edge */
+  @media (max-width:600px){
+    .frame{ transform:scale(calc(100vw / 375)); transform-origin:top center; }
+    body{ align-items:flex-start; }
+  }
 
   /* ---- Hero photo (image 60): x-74 y-43 w486 h1054, FILL ---- */
   .hero{
