@@ -164,22 +164,29 @@
      window opens (overflow:hidden reveals it as the surface expands). */
   .opener{
     position:absolute;left:24px;top:648px;width:327px;height:48px;border-radius:10px;
-    background:#fff;overflow:hidden;will-change:left,top,width,height,border-radius;
-    box-shadow:0 12px 44px -14px rgba(0,0,0,.20);
+    background:#3aae5b;overflow:hidden;
+    will-change:left,top,width,height,border-radius,background;
   }
   .opener-inner{position:absolute;left:-24px;top:-648px;width:375px;height:812px;will-change:left,top;}
-  .frame.show-bib .opener{animation:cardOpen .72s cubic-bezier(.55,0,.2,1) forwards;}
-  .frame.show-bib .opener-inner{animation:cardOpenInner .72s cubic-bezier(.55,0,.2,1) forwards;}
+  .frame.show-bib .opener{animation:cardOpen .82s cubic-bezier(.55,0,.2,1) forwards;}
+  .frame.show-bib .opener-inner{animation:cardOpenInner .82s cubic-bezier(.55,0,.2,1) forwards;}
+  /* button rect -> green circle -> grows while turning white, revealing the screen */
   @keyframes cardOpen{
-    from{left:24px;top:648px;width:327px;height:48px;border-radius:10px;box-shadow:0 12px 44px -14px rgba(0,0,0,.20);}
-    to  {left:0px; top:0px; width:375px;height:812px;border-radius:0;box-shadow:0 0 0 0 rgba(0,0,0,0);}
+    0%  {left:24px;   top:648px; width:327px;height:48px; border-radius:10px; background:#3aae5b;}
+    24% {left:163.5px;top:648px; width:48px; height:48px; border-radius:24px; background:#3aae5b;}
+    55% {background:#ffffff;}
+    100%{left:0px;    top:0px;   width:375px;height:812px;border-radius:0;    background:#ffffff;}
   }
   @keyframes cardOpenInner{
-    from{left:-24px;top:-648px;}
-    to  {left:0px;top:0px;}
+    0%  {left:-24px;   top:-648px;}
+    24% {left:-163.5px;top:-648px;}
+    100%{left:0px;     top:0px;}
   }
-  /* button compresses right before it opens */
-  .btn.compress{transform:scale(.955);transition:transform .13s cubic-bezier(.4,0,1,1);}
+  /* opening: label + arrow fade out (no scale, so nothing shifts) before the morph */
+  .btn span,.btn .btn-arrow{transition:opacity .16s ease;}
+  .btn.opening span,.btn.opening .btn-arrow{opacity:0;}
+  .btn.opening{background:#3aae5b;}
+  .frame.show-bib .screen-home .btn{opacity:0;}  /* hidden under the identical green opener */
 
   /* ===================== Bibliotecas layout (positions 1:1) ===================== */
   .bib-h{position:absolute;left:16px;margin:0;font-weight:600;font-size:16px;line-height:26px;color:#1c1c1e;}
@@ -337,12 +344,13 @@
     playVideo();
   }
   window.addEventListener('load', () => { playVideo(); setTimeout(play, 150); });
-  window.addEventListener('keydown', e => { if(e.key.toLowerCase()==='r'){ frame.classList.remove('show-bib'); cta.classList.remove('compress'); play(); } });
+  window.addEventListener('keydown', e => { if(e.key.toLowerCase()==='r'){ frame.classList.remove('show-bib'); cta.classList.remove('opening'); play(); } });
 
-  // CTA opens into Bibliotecas: compress, then the white surface expands from the button
+  // CTA opens into Bibliotecas: fade the label/arrow, then the button morphs into
+  // a green circle that grows and turns white, revealing the next screen.
   cta.addEventListener('click', () => {
-    cta.classList.add('compress');
-    setTimeout(() => { frame.classList.add('show-bib'); if(window.__placeUnderline) window.__placeUnderline(); }, 130);
+    cta.classList.add('opening');
+    setTimeout(() => { frame.classList.add('show-bib'); if(window.__placeUnderline) window.__placeUnderline(); }, 170);
   });
 
   // filter tabs: sliding green underline
@@ -367,18 +375,6 @@
   // fallback: if the browser blocks muted autoplay, start on first interaction
   document.addEventListener('click', playVideo);
 
-  // ripple on button click
-  cta.addEventListener('click', e => {
-    const r = document.createElement('span');
-    r.className = 'ripple';
-    const rect = cta.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height) * 2.2;
-    r.style.width = r.style.height = size + 'px';
-    r.style.left = (e.clientX - rect.left) + 'px';
-    r.style.top  = (e.clientY - rect.top) + 'px';
-    cta.appendChild(r);
-    setTimeout(() => r.remove(), 650);
-  });
 </script>
 </body>
 </html>
