@@ -18,11 +18,15 @@
   *{box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
   html,body{height:100%;margin:0;}
   body{
+    margin:0;
+    background:#fff;
+    overflow-x:hidden;
+    font-family:"Work Sans", system-ui, -apple-system, sans-serif;
+  }
+  /* desktop: center and fit to viewport height */
+  .stage{
     display:flex;align-items:center;justify-content:center;
     min-height:100vh;min-height:100dvh;
-    background:#fff;
-    overflow:hidden;
-    font-family:"Work Sans", system-ui, -apple-system, sans-serif;
   }
 
   /* ---- Device frame: exact 375 x 812 ---- */
@@ -36,10 +40,10 @@
     transform:scale(min(calc(100vw / 375), calc(100dvh / 812)));
     transform-origin:center center;
   }
-  /* mobile: fill the full screen width (100%) with real scroll */
+  /* mobile: fill full width, edges flush, native scroll */
   @media (max-width:600px){
-    body{ display:block; overflow:visible; overflow-x:hidden; min-height:0; }
-    .frame{ transform:none; zoom:calc(100vw / 375); }
+    .stage{ display:block; min-height:0; width:100vw; height:calc(100vw * 812 / 375); }
+    .frame{ transform:scale(calc(100vw / 375)); transform-origin:top left; }
   }
 
   /* ---- Hero photo (image 60): x-74 y-43 w486 h1054, FILL ---- */
@@ -152,6 +156,7 @@
 </style>
 </head>
 <body>
+  <div class="stage">
   <div class="frame" id="frame">
     <video class="hero reveal" id="hero" src="hero.mp4" autoplay loop muted playsinline preload="auto"></video>
     <div class="hero-fade"></div>
@@ -171,6 +176,7 @@
       </svg>
     </button>
     <button class="ghost reveal">Agora não</button>
+  </div>
   </div>
 
 <script>
