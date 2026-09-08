@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chegaram as bibliotecas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#3aae5b;
+    --green-dark:#2f9a4e;
+    --title:#1c1c1e;
+    --body:#3a3a3c;
+    --bg:#ffffff;
+  }
+  *{box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  html,body{height:100%;margin:0;}
+  body{
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh;min-height:100dvh;
+    background:#fff;
+    overflow:hidden;
+    font-family:"Work Sans", system-ui, -apple-system, sans-serif;
+  }
+
+  /* ---- Device frame: exact 375 x 812 ---- */
+  .frame{
+    position:relative;
+    width:375px;height:812px;
+    background:var(--bg);
+    overflow:hidden;
+    border-radius:0;
+    user-select:none;
+    transform:scale(min(calc(100vw / 375), calc(100dvh / 812)));
+    transform-origin:center center;
+  }
+
+  /* ---- Hero photo (image 60): x-74 y-43 w486 h1054, FILL ---- */
+  .hero{
+    position:absolute;left:0;top:-72px;
+    width:375px;height:452px;
+    object-fit:cover;object-position:50% 32%;
+    display:block;
+    transform-origin:50% 30%;
+    will-change:transform;
+  }
+  /* fade the bottom of the video band into the frame bg */
+  .hero-fade{
+    position:absolute;left:0;right:0;top:250px;height:150px;
+    background:linear-gradient(to bottom, rgba(255,255,255,0) 0%, var(--bg) 80%);
+    pointer-events:none;
+  }
+
+  /* ---- Text block ---- */
+  .title{
+    position:absolute;left:24px;top:412px;width:327px;
+    margin:0;
+    font-weight:500;font-size:36px;line-height:44px;
+    letter-spacing:-0.72px;
+    color:var(--title);
+  }
+  .subtitle{
+    position:absolute;left:24px;top:506px;width:327px;
+    margin:0;
+    font-weight:500;font-size:20px;line-height:28px;
+    letter-spacing:-0.2px;
+    color:var(--green);
+  }
+  .body{
+    position:absolute;left:24px;top:602px;width:327px;
+    margin:0;
+    font-weight:400;font-size:16px;line-height:24px;
+    color:var(--body);
+  }
+
+  /* ---- Primary button (Frame 20): x24 y680 w327 h48 r10 ---- */
+  .btn{
+    position:absolute;left:24px;top:680px;width:327px;height:48px;
+    border:0;padding:0;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    background:var(--green);
+    border-radius:10px;
+    color:#fff;font-family:inherit;
+    font-weight:600;font-size:16px;line-height:24px;
+    cursor:pointer;overflow:hidden;
+    transition:transform .18s cubic-bezier(.2,.8,.25,1), background .18s ease;
+  }
+  .btn:hover{background:#40b862;}
+  .btn:active{transform:scale(.985);background:#37a656;}
+  .btn span{position:relative;z-index:2;}
+  /* animated arrow */
+  .btn-arrow{position:relative;z-index:2;width:22px;height:22px;flex:none;display:block;
+    animation:nudge 1.3s ease-in-out infinite;will-change:transform;}
+  @keyframes nudge{0%,100%{transform:translateX(0);}50%{transform:translateX(4px);}}
+  .btn:hover .btn-arrow{animation-play-state:paused;transform:translateX(5px);}
+  .btn:active .btn-arrow{transform:translateX(2px);}
+  /* ripple */
+  .ripple{
+    position:absolute;border-radius:50%;transform:translate(-50%,-50%) scale(0);
+    background:rgba(255,255,255,.45);pointer-events:none;z-index:2;
+    animation:ripple .6s ease-out forwards;
+  }
+  @keyframes ripple{to{transform:translate(-50%,-50%) scale(1);opacity:0;}}
+
+  /* ---- Secondary text button ---- */
+  .ghost{
+    position:absolute;left:24px;top:740px;width:327px;height:32px;
+    display:flex;align-items:center;justify-content:center;
+    background:none;border:0;padding:0;cursor:pointer;
+    font-family:inherit;font-weight:500;font-size:16px;line-height:24px;
+    color:rgba(0,0,0,.8);
+    transition:opacity .18s ease, transform .18s ease;
+  }
+  .ghost:hover{opacity:.6;}
+  .ghost:active{transform:scale(.97);}
+
+  /* ---- Entrance choreography (premium, GPU-only: transform + opacity) ---- */
+  /* smooth expo-out settle — no blur (blur animation is what stutters) */
+  .reveal{opacity:0;transform:translateY(16px);will-change:transform,opacity;}
+  @keyframes rise{to{opacity:1;transform:translateY(0);}}
+  .play .reveal{animation:rise 1s cubic-bezier(.16,1,.3,1) forwards;}
+
+  /* hero: fade in only — no zoom/scale on the video */
+  .play .hero{opacity:0;animation:heroIn 1s cubic-bezier(.16,1,.3,1) forwards;}
+  @keyframes heroIn{from{opacity:0;}to{opacity:1;}}
+
+  /* title: line-by-line mask reveal (transform only) */
+  .title .line{display:block;overflow:hidden;padding-bottom:.14em;margin-bottom:-.14em;}
+  .title .line > span{display:block;transform:translateY(118%);will-change:transform;}
+  .play .title .line > span{animation:lineUp 1.05s cubic-bezier(.16,1,.3,1) forwards;}
+  @keyframes lineUp{to{transform:translateY(0);}}
+
+  /* stagger rhythm */
+  .play .title .line:nth-child(1) > span{animation-delay:.28s;}
+  .play .title .line:nth-child(2) > span{animation-delay:.40s;}
+  .play .subtitle{animation-delay:.56s;}
+  .play .body{animation-delay:.70s;}
+  .play .btn{animation-delay:.86s;}
+  .play .ghost{animation-delay:.98s;}
+
+  .hint{
+    position:fixed;bottom:14px;left:0;right:0;text-align:center;
+    font:400 12px/1 "Work Sans",sans-serif;color:#8b8580;letter-spacing:.02em;
+  }
+</style>
+</head>
+<body>
+  <div class="frame" id="frame">
+    <video class="hero reveal" id="hero" src="hero.mp4" autoplay loop muted playsinline preload="auto"></video>
+    <div class="hero-fade"></div>
+
+    <h1 class="title">
+      <span class="line"><span>Chegaram as</span></span>
+      <span class="line"><span>bibliotecas</span></span>
+    </h1>
+    <p class="subtitle reveal">Embasamento científico sem sair da consulta</p>
+    <p class="body reveal">Estudos, protocolos, guias de raças e casos reais, atualizados frequentemente.</p>
+
+    <button class="btn reveal" id="cta">
+      <span>Explorar bibliotecas</span>
+      <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path class="shaft" d="M3.5 12H20.33" stroke="#fff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+        <path class="head" d="M14.4302 5.92969L20.5002 11.9997L14.4302 18.0697" stroke="#fff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <button class="ghost reveal">Agora não</button>
+  </div>
+
+<script>
+  const frame = document.getElementById('frame');
+  const cta = document.getElementById('cta');
+  const hero = document.getElementById('hero');
+
+  function playVideo(){ const p = hero.play(); if(p && p.catch) p.catch(()=>{}); }
+
+  function play(){
+    frame.classList.remove('play');
+    void frame.offsetWidth; // reflow to restart animations
+    frame.classList.add('play');
+    try{ hero.currentTime = 0; }catch(e){}
+    playVideo();
+  }
+  window.addEventListener('load', () => { playVideo(); setTimeout(play, 150); });
+  window.addEventListener('keydown', e => { if(e.key.toLowerCase()==='r') play(); });
+  // fallback: if the browser blocks muted autoplay, start on first interaction
+  document.addEventListener('click', playVideo);
+
+  // ripple on button click
+  cta.addEventListener('click', e => {
+    const r = document.createElement('span');
+    r.className = 'ripple';
+    const rect = cta.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 2.2;
+    r.style.width = r.style.height = size + 'px';
+    r.style.left = (e.clientX - rect.left) + 'px';
+    r.style.top  = (e.clientY - rect.top) + 'px';
+    cta.appendChild(r);
+    setTimeout(() => r.remove(), 650);
+  });
+</script>
+</body>
+</html>
