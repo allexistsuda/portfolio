@@ -42,8 +42,8 @@
   }
   /* mobile: fill full width, edges flush, native scroll */
   @media (max-width:600px){
-    .stage{ display:block; min-height:0; width:100vw; height:calc(100vw * 812 / 375); }
-    .frame{ transform:scale(calc(100vw / 375)); transform-origin:top left; }
+    .stage{ display:block; min-height:0; width:100vw; height:calc((100vw + 1px) * 812 / 375); }
+    .frame{ transform:scale(calc((100vw + 1px) / 375)); transform-origin:top left; }
   }
 
   /* ---- Hero photo (image 60): x-74 y-43 w486 h1054, FILL ---- */
