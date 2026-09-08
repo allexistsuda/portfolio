@@ -165,21 +165,28 @@
   .opener{
     position:absolute;left:24px;top:648px;width:327px;height:48px;border-radius:10px;
     background:#3aae5b;overflow:hidden;
-    will-change:left,top,width,height,border-radius,background;
+    will-change:left,top,width,height,border-radius;
   }
-  .opener-inner{position:absolute;left:-24px;top:-648px;width:375px;height:812px;will-change:left,top;}
-  .frame.show-bib .opener{animation:cardOpen .82s cubic-bezier(.55,0,.2,1) forwards;}
-  .frame.show-bib .opener-inner{animation:cardOpenInner .82s cubic-bezier(.55,0,.2,1) forwards;}
-  /* button rect -> green circle -> grows while turning white, revealing the screen */
+  .opener-white{position:absolute;inset:0;background:#fff;opacity:0;z-index:0;}
+  .opener-inner{position:absolute;left:-24px;top:-648px;width:375px;height:812px;z-index:1;will-change:left,top;}
+  .frame.show-bib .opener{animation:cardOpen .84s forwards;}
+  .frame.show-bib .opener-white{animation:whiten .84s ease forwards;}
+  .frame.show-bib .opener-inner{animation:cardOpenInner .84s forwards;}
+  /* button rect -> green circle (held a beat) -> grows to fill; white crossfades in */
   @keyframes cardOpen{
-    0%  {left:24px;   top:648px; width:327px;height:48px; border-radius:10px; background:#3aae5b;}
-    24% {left:163.5px;top:648px; width:48px; height:48px; border-radius:24px; background:#3aae5b;}
-    55% {background:#ffffff;}
-    100%{left:0px;    top:0px;   width:375px;height:812px;border-radius:0;    background:#ffffff;}
+    0%  {left:24px;   top:648px; width:327px;height:48px; border-radius:10px; animation-timing-function:cubic-bezier(.5,0,.35,1);}
+    22% {left:163.5px;top:648px; width:48px; height:48px; border-radius:24px; animation-timing-function:linear;}
+    36% {left:163.5px;top:648px; width:48px; height:48px; border-radius:24px; animation-timing-function:cubic-bezier(.5,0,.2,1);}
+    100%{left:0px;    top:0px;   width:375px;height:812px;border-radius:0;}
+  }
+  @keyframes whiten{
+    0%,32%{opacity:0;}
+    58%,100%{opacity:1;}
   }
   @keyframes cardOpenInner{
-    0%  {left:-24px;   top:-648px;}
-    24% {left:-163.5px;top:-648px;}
+    0%  {left:-24px;   top:-648px; animation-timing-function:cubic-bezier(.5,0,.35,1);}
+    22% {left:-163.5px;top:-648px; animation-timing-function:linear;}
+    36% {left:-163.5px;top:-648px; animation-timing-function:cubic-bezier(.5,0,.2,1);}
     100%{left:0px;     top:0px;}
   }
   /* opening: label + arrow fade out (no scale, so nothing shifts) before the morph */
@@ -237,16 +244,16 @@
   .frame.show-bib .bib-tabbar{animation:bibUp .7s cubic-bezier(.16,1,.3,1) forwards;}
   @keyframes bibUp{from{opacity:0;transform:translateY(100%);}to{opacity:1;transform:translateY(0);}}
 
-  /* stagger rhythm — content assembles as the surface finishes opening (~0.6s) */
-  .frame.show-bib .bib-search{animation-delay:.52s;}
-  .frame.show-bib .bib-tabs{animation-delay:.58s;}
-  .frame.show-bib .bib-h-estudos{animation-delay:.60s;}
-  .frame.show-bib .bib-row-estudos .card-slot:nth-child(1){animation-delay:.63s;}
-  .frame.show-bib .bib-row-estudos .card-slot:nth-child(2){animation-delay:.69s;}
-  .frame.show-bib .bib-h-protocolos{animation-delay:.73s;}
-  .frame.show-bib .bib-row-protocolos .card-slot:nth-child(1){animation-delay:.76s;}
-  .frame.show-bib .bib-row-protocolos .card-slot:nth-child(2){animation-delay:.82s;}
-  .frame.show-bib .bib-tabbar{animation-delay:.56s;}
+  /* stagger rhythm — content assembles once the surface is white & mostly open */
+  .frame.show-bib .bib-search{animation-delay:.60s;}
+  .frame.show-bib .bib-tabs{animation-delay:.66s;}
+  .frame.show-bib .bib-h-estudos{animation-delay:.68s;}
+  .frame.show-bib .bib-row-estudos .card-slot:nth-child(1){animation-delay:.71s;}
+  .frame.show-bib .bib-row-estudos .card-slot:nth-child(2){animation-delay:.77s;}
+  .frame.show-bib .bib-h-protocolos{animation-delay:.81s;}
+  .frame.show-bib .bib-row-protocolos .card-slot:nth-child(1){animation-delay:.84s;}
+  .frame.show-bib .bib-row-protocolos .card-slot:nth-child(2){animation-delay:.90s;}
+  .frame.show-bib .bib-tabbar{animation-delay:.64s;}
 </style>
 </head>
 <body>
@@ -275,6 +282,7 @@
 
     <div class="screen screen-bib" id="screenBib">
       <div class="opener" id="opener">
+      <div class="opener-white"></div>
       <div class="opener-inner" id="openerInner">
         <button class="bib-search"><img src="bib/search.png" alt=""></button>
 
