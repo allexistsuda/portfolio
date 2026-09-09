@@ -189,8 +189,8 @@
     100%{left:-562.5px;top:-78px; width:1500px;height:1500px;border-radius:750px;}
   }
   @keyframes whiten{
-    0%,66%{opacity:0;}
-    86%,100%{opacity:1;}
+    0%,50%{opacity:0;}
+    70%,100%{opacity:1;}
   }
   @keyframes cardOpenInner{
     0%  {left:-24px;    top:-648px; animation-timing-function:cubic-bezier(.5,0,.3,1);}
@@ -203,10 +203,10 @@
   .frame.show-bib .opener-echo{animation:cardOpenEcho 1.15s forwards;}
   @keyframes cardOpenEcho{
     0%  {left:24px;    top:648px; width:327px; height:48px;  border-radius:10px; animation-timing-function:cubic-bezier(.5,0,.3,1);}
-    16% {left:159.5px; top:644px; width:56px;  height:56px;  border-radius:28px; animation-timing-function:linear;}
-    26% {left:159.5px; top:644px; width:56px;  height:56px;  border-radius:28px; animation-timing-function:cubic-bezier(.45,0,.2,1);}
-    66% {left:-662.5px;top:-178px;width:1700px;height:1700px;border-radius:850px;}
-    100%{left:-662.5px;top:-178px;width:1700px;height:1700px;border-radius:850px;}
+    16% {left:158.5px; top:643px; width:58px;  height:58px;  border-radius:29px; animation-timing-function:linear;}
+    26% {left:158.5px; top:643px; width:58px;  height:58px;  border-radius:29px; animation-timing-function:cubic-bezier(.45,0,.2,1);}
+    66% {left:-712.5px;top:-228px;width:1800px;height:1800px;border-radius:900px;}
+    100%{left:-712.5px;top:-228px;width:1800px;height:1800px;border-radius:900px;}
   }
   /* opening: label + arrow fade out (no scale, so nothing shifts) before the morph */
   .btn span,.btn .btn-arrow{transition:opacity .16s ease;}
@@ -243,12 +243,11 @@
 
   /* card rows — swipeable; cards — press */
   .bib-row{position:absolute;left:0;width:375px;display:flex;gap:19px;padding:0 16px;
-    overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;
-    scroll-snap-type:x proximity;}
+    overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
   .bib-row::-webkit-scrollbar{display:none;}
   .bib-row-estudos{top:208px;}
   .bib-row-protocolos{top:556px;}
-  .card-slot{flex:none;scroll-snap-align:start;}
+  .card-slot{flex:0 0 auto;}
   .bib-card{display:block;padding:0;border:0;background:none;cursor:pointer;
     transition:transform .18s cubic-bezier(.2,.8,.25,1);}
   .bib-card:active{transform:scale(.965);}
@@ -256,27 +255,24 @@
 
   /* assembly — pieces start hidden, animate in on show-bib */
   .screen-bib .bib-search,.screen-bib .bib-tabs,.screen-bib .bib-h,.screen-bib .card-slot,.screen-bib .bib-tabbar{opacity:0;will-change:transform,opacity;}
+  /* content is not faded in element-by-element — it is simply revealed, already
+     laid out, as the white surface finishes opening (single instant reveal). */
+  .frame.show-bib .screen-bib .bib-search,
+  .frame.show-bib .screen-bib .bib-tabs,
   .frame.show-bib .screen-bib .bib-h,
   .frame.show-bib .screen-bib .card-slot,
-  .frame.show-bib .bib-tabs{animation:bibRise 1s cubic-bezier(.22,.61,.36,1) forwards;}
-  @keyframes bibRise{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
-  .frame.show-bib .bib-search{animation:bibDrop .95s cubic-bezier(.22,.61,.36,1) forwards;}
-  @keyframes bibDrop{from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:translateY(0);}}
-  .frame.show-bib .bib-tabbar{animation:bibUp .95s cubic-bezier(.22,.61,.36,1) forwards;}
-  @keyframes bibUp{from{opacity:0;transform:translateY(100%);}to{opacity:1;transform:translateY(0);}}
+  .frame.show-bib .screen-bib .bib-tabbar{animation:bibReveal .5s cubic-bezier(.22,.61,.36,1) forwards;}
+  @keyframes bibReveal{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  /* light assembly: top chrome, then Estudos block, then Protocolos block */
+  .frame.show-bib .bib-search{animation-delay:.90s;}
+  .frame.show-bib .bib-tabbar{animation-delay:.92s;}
+  .frame.show-bib .bib-tabs{animation-delay:.96s;}
+  .frame.show-bib .bib-h-estudos,
+  .frame.show-bib .bib-row-estudos .card-slot{animation-delay:1.04s;}
+  .frame.show-bib .bib-h-protocolos,
+  .frame.show-bib .bib-row-protocolos .card-slot{animation-delay:1.14s;}
 
   /* stagger rhythm — content assembles once the surface is white & mostly open */
-  .frame.show-bib .bib-search{animation-delay:.96s;}
-  .frame.show-bib .bib-tabbar{animation-delay:1.00s;}
-  .frame.show-bib .bib-tabs{animation-delay:1.06s;}
-  /* Estudos section rises as one filled block (header + both cards together) */
-  .frame.show-bib .bib-h-estudos{animation-delay:1.16s;}
-  .frame.show-bib .bib-row-estudos .card-slot:nth-child(1){animation-delay:1.18s;}
-  .frame.show-bib .bib-row-estudos .card-slot:nth-child(2){animation-delay:1.22s;}
-  /* Protocolos section, also filled */
-  .frame.show-bib .bib-h-protocolos{animation-delay:1.38s;}
-  .frame.show-bib .bib-row-protocolos .card-slot:nth-child(1){animation-delay:1.40s;}
-  .frame.show-bib .bib-row-protocolos .card-slot:nth-child(2){animation-delay:1.44s;}
 </style>
 </head>
 <body>
