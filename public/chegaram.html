@@ -167,7 +167,7 @@
     background:#3aae5b;overflow:hidden;
     will-change:left,top,width,height,border-radius;
   }
-  .opener-white{position:absolute;inset:0;background:#fff;opacity:0;z-index:0;}
+  .opener-white{position:absolute;inset:0;background:#fff;opacity:0;z-index:0;border-radius:inherit;}
   .opener-inner{position:absolute;left:-24px;top:-648px;width:375px;height:812px;z-index:1;will-change:left,top;}
   .frame.show-bib .opener{animation:cardOpen .84s forwards;}
   .frame.show-bib .opener-white{animation:whiten .84s ease forwards;}
@@ -193,7 +193,9 @@
   .btn span,.btn .btn-arrow{transition:opacity .16s ease;}
   .btn.opening span,.btn.opening .btn-arrow{opacity:0;}
   .btn.opening{background:#3aae5b;}
-  .frame.show-bib .screen-home .btn{opacity:0;}  /* hidden under the identical green opener */
+  /* hide the real button once opening (its entrance animation is forwards, so
+     it overrides a normal opacity:0 — needs !important to beat the animation) */
+  .frame.show-bib .screen-home .btn{opacity:0 !important;animation:none !important;}
 
   /* ===================== Bibliotecas layout (positions 1:1) ===================== */
   .bib-h{position:absolute;left:16px;margin:0;font-weight:600;font-size:16px;line-height:26px;color:#1c1c1e;}
