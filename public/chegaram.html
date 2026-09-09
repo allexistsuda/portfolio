@@ -169,25 +169,29 @@
   }
   .opener-white{position:absolute;inset:0;background:#fff;opacity:0;z-index:0;border-radius:inherit;}
   .opener-inner{position:absolute;left:-24px;top:-648px;width:375px;height:812px;z-index:1;will-change:left,top;}
-  .frame.show-bib .opener{animation:cardOpen .84s forwards;}
-  .frame.show-bib .opener-white{animation:whiten .84s ease forwards;}
-  .frame.show-bib .opener-inner{animation:cardOpenInner .84s forwards;}
-  /* button rect -> green circle (held a beat) -> grows to fill; white crossfades in */
+  .frame.show-bib .opener{animation:cardOpen .95s forwards;}
+  .frame.show-bib .opener-white{animation:whiten .95s ease forwards;}
+  .frame.show-bib .opener-inner{animation:cardOpenInner .95s forwards;}
+  /* button rect -> green circle (held) -> circle grows (staying round) until it
+     covers the whole frame -> then white fades in, revealing the screen.
+     Circle center = button center (187.5,672); at 1500px it covers every corner. */
   @keyframes cardOpen{
-    0%  {left:24px;   top:648px; width:327px;height:48px; border-radius:10px; animation-timing-function:cubic-bezier(.5,0,.35,1);}
-    22% {left:163.5px;top:648px; width:48px; height:48px; border-radius:24px; animation-timing-function:linear;}
-    36% {left:163.5px;top:648px; width:48px; height:48px; border-radius:24px; animation-timing-function:cubic-bezier(.5,0,.2,1);}
-    100%{left:0px;    top:0px;   width:375px;height:812px;border-radius:0;}
+    0%  {left:24px;    top:648px; width:327px; height:48px;  border-radius:10px;  animation-timing-function:cubic-bezier(.5,0,.3,1);}
+    16% {left:163.5px; top:648px; width:48px;  height:48px;  border-radius:24px;  animation-timing-function:linear;}
+    26% {left:163.5px; top:648px; width:48px;  height:48px;  border-radius:24px;  animation-timing-function:cubic-bezier(.45,0,.2,1);}
+    66% {left:-562.5px;top:-78px; width:1500px;height:1500px;border-radius:750px;}
+    100%{left:-562.5px;top:-78px; width:1500px;height:1500px;border-radius:750px;}
   }
   @keyframes whiten{
-    0%,32%{opacity:0;}
-    58%,100%{opacity:1;}
+    0%,66%{opacity:0;}
+    86%,100%{opacity:1;}
   }
   @keyframes cardOpenInner{
-    0%  {left:-24px;   top:-648px; animation-timing-function:cubic-bezier(.5,0,.35,1);}
-    22% {left:-163.5px;top:-648px; animation-timing-function:linear;}
-    36% {left:-163.5px;top:-648px; animation-timing-function:cubic-bezier(.5,0,.2,1);}
-    100%{left:0px;     top:0px;}
+    0%  {left:-24px;    top:-648px; animation-timing-function:cubic-bezier(.5,0,.3,1);}
+    16% {left:-163.5px; top:-648px; animation-timing-function:linear;}
+    26% {left:-163.5px; top:-648px; animation-timing-function:cubic-bezier(.45,0,.2,1);}
+    66% {left:562.5px;  top:78px;}
+    100%{left:562.5px;  top:78px;}
   }
   /* opening: label + arrow fade out (no scale, so nothing shifts) before the morph */
   .btn span,.btn .btn-arrow{transition:opacity .16s ease;}
@@ -247,22 +251,22 @@
   @keyframes bibUp{from{opacity:0;transform:translateY(100%);}to{opacity:1;transform:translateY(0);}}
 
   /* stagger rhythm — content assembles once the surface is white & mostly open */
-  .frame.show-bib .bib-search{animation-delay:.60s;}
-  .frame.show-bib .bib-tabs{animation-delay:.66s;}
-  .frame.show-bib .bib-h-estudos{animation-delay:.68s;}
-  .frame.show-bib .bib-row-estudos .card-slot:nth-child(1){animation-delay:.71s;}
-  .frame.show-bib .bib-row-estudos .card-slot:nth-child(2){animation-delay:.77s;}
-  .frame.show-bib .bib-h-protocolos{animation-delay:.81s;}
-  .frame.show-bib .bib-row-protocolos .card-slot:nth-child(1){animation-delay:.84s;}
-  .frame.show-bib .bib-row-protocolos .card-slot:nth-child(2){animation-delay:.90s;}
-  .frame.show-bib .bib-tabbar{animation-delay:.64s;}
+  .frame.show-bib .bib-search{animation-delay:.82s;}
+  .frame.show-bib .bib-tabs{animation-delay:.88s;}
+  .frame.show-bib .bib-h-estudos{animation-delay:.90s;}
+  .frame.show-bib .bib-row-estudos .card-slot:nth-child(1){animation-delay:.93s;}
+  .frame.show-bib .bib-row-estudos .card-slot:nth-child(2){animation-delay:.99s;}
+  .frame.show-bib .bib-h-protocolos{animation-delay:1.03s;}
+  .frame.show-bib .bib-row-protocolos .card-slot:nth-child(1){animation-delay:1.06s;}
+  .frame.show-bib .bib-row-protocolos .card-slot:nth-child(2){animation-delay:1.12s;}
+  .frame.show-bib .bib-tabbar{animation-delay:.86s;}
 </style>
 </head>
 <body>
   <div class="stage">
   <div class="frame" id="frame">
     <div class="screen screen-home" id="screenHome">
-    <video class="hero reveal" id="hero" src="hero.mp4" autoplay loop muted playsinline preload="auto"></video>
+    <img class="hero reveal" id="hero" src="hero.jpg" alt="">
     <div class="hero-fade"></div>
 
     <h1 class="title">
@@ -344,13 +348,12 @@
   window.addEventListener('resize', fit);
   window.addEventListener('orientationchange', fit);
 
-  function playVideo(){ const p = hero.play(); if(p && p.catch) p.catch(()=>{}); }
+  function playVideo(){ if(hero && typeof hero.play === 'function'){ const p = hero.play(); if(p && p.catch) p.catch(()=>{}); } }
 
   function play(){
     frame.classList.remove('play');
     void frame.offsetWidth; // reflow to restart animations
     frame.classList.add('play');
-    try{ hero.currentTime = 0; }catch(e){}
     playVideo();
   }
   window.addEventListener('load', () => { playVideo(); setTimeout(play, 150); });
