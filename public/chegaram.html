@@ -162,6 +162,12 @@
   /* opener = white window that grows from the button rect; its content lives in
      .opener-inner, counter-translated so it stays locked to the frame while the
      window opens (overflow:hidden reveals it as the surface expands). */
+  /* second circle: a lighter-green echo, concentric, slightly larger & leading */
+  .opener-echo{
+    position:absolute;left:24px;top:648px;width:327px;height:48px;border-radius:10px;
+    background:#5cc07c;
+    will-change:left,top,width,height,border-radius;
+  }
   .opener{
     position:absolute;left:24px;top:648px;width:327px;height:48px;border-radius:10px;
     background:#3aae5b;overflow:hidden;
@@ -169,9 +175,9 @@
   }
   .opener-white{position:absolute;inset:0;background:#fff;opacity:0;z-index:0;border-radius:inherit;}
   .opener-inner{position:absolute;left:-24px;top:-648px;width:375px;height:812px;z-index:1;will-change:left,top;}
-  .frame.show-bib .opener{animation:cardOpen .95s forwards;}
-  .frame.show-bib .opener-white{animation:whiten .95s ease forwards;}
-  .frame.show-bib .opener-inner{animation:cardOpenInner .95s forwards;}
+  .frame.show-bib .opener{animation:cardOpen 1.15s forwards;}
+  .frame.show-bib .opener-white{animation:whiten 1.15s ease forwards;}
+  .frame.show-bib .opener-inner{animation:cardOpenInner 1.15s forwards;}
   /* button rect -> green circle (held) -> circle grows (staying round) until it
      covers the whole frame -> then white fades in, revealing the screen.
      Circle center = button center (187.5,672); at 1500px it covers every corner. */
@@ -192,6 +198,15 @@
     26% {left:-163.5px; top:-648px; animation-timing-function:cubic-bezier(.45,0,.2,1);}
     66% {left:562.5px;  top:78px;}
     100%{left:562.5px;  top:78px;}
+  }
+  /* echo circle — concentric with the main one, a bit bigger and slightly ahead */
+  .frame.show-bib .opener-echo{animation:cardOpenEcho 1.15s forwards;}
+  @keyframes cardOpenEcho{
+    0%  {left:24px;    top:648px; width:327px; height:48px;  border-radius:10px; animation-timing-function:cubic-bezier(.5,0,.3,1);}
+    16% {left:159.5px; top:644px; width:56px;  height:56px;  border-radius:28px; animation-timing-function:linear;}
+    26% {left:159.5px; top:644px; width:56px;  height:56px;  border-radius:28px; animation-timing-function:cubic-bezier(.45,0,.2,1);}
+    66% {left:-662.5px;top:-178px;width:1700px;height:1700px;border-radius:850px;}
+    100%{left:-662.5px;top:-178px;width:1700px;height:1700px;border-radius:850px;}
   }
   /* opening: label + arrow fade out (no scale, so nothing shifts) before the morph */
   .btn span,.btn .btn-arrow{transition:opacity .16s ease;}
@@ -243,23 +258,25 @@
   .screen-bib .bib-search,.screen-bib .bib-tabs,.screen-bib .bib-h,.screen-bib .card-slot,.screen-bib .bib-tabbar{opacity:0;will-change:transform,opacity;}
   .frame.show-bib .screen-bib .bib-h,
   .frame.show-bib .screen-bib .card-slot,
-  .frame.show-bib .bib-tabs{animation:bibRise .8s cubic-bezier(.16,1,.3,1) forwards;}
-  @keyframes bibRise{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-  .frame.show-bib .bib-search{animation:bibDrop .75s cubic-bezier(.16,1,.3,1) forwards;}
-  @keyframes bibDrop{from{opacity:0;transform:translateY(-14px);}to{opacity:1;transform:translateY(0);}}
-  .frame.show-bib .bib-tabbar{animation:bibUp .7s cubic-bezier(.16,1,.3,1) forwards;}
+  .frame.show-bib .bib-tabs{animation:bibRise 1s cubic-bezier(.22,.61,.36,1) forwards;}
+  @keyframes bibRise{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+  .frame.show-bib .bib-search{animation:bibDrop .95s cubic-bezier(.22,.61,.36,1) forwards;}
+  @keyframes bibDrop{from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:translateY(0);}}
+  .frame.show-bib .bib-tabbar{animation:bibUp .95s cubic-bezier(.22,.61,.36,1) forwards;}
   @keyframes bibUp{from{opacity:0;transform:translateY(100%);}to{opacity:1;transform:translateY(0);}}
 
   /* stagger rhythm — content assembles once the surface is white & mostly open */
-  .frame.show-bib .bib-search{animation-delay:.82s;}
-  .frame.show-bib .bib-tabs{animation-delay:.88s;}
-  .frame.show-bib .bib-h-estudos{animation-delay:.90s;}
-  .frame.show-bib .bib-row-estudos .card-slot:nth-child(1){animation-delay:.93s;}
-  .frame.show-bib .bib-row-estudos .card-slot:nth-child(2){animation-delay:.99s;}
-  .frame.show-bib .bib-h-protocolos{animation-delay:1.03s;}
-  .frame.show-bib .bib-row-protocolos .card-slot:nth-child(1){animation-delay:1.06s;}
-  .frame.show-bib .bib-row-protocolos .card-slot:nth-child(2){animation-delay:1.12s;}
-  .frame.show-bib .bib-tabbar{animation-delay:.86s;}
+  .frame.show-bib .bib-search{animation-delay:.96s;}
+  .frame.show-bib .bib-tabbar{animation-delay:1.00s;}
+  .frame.show-bib .bib-tabs{animation-delay:1.06s;}
+  /* Estudos section rises as one filled block (header + both cards together) */
+  .frame.show-bib .bib-h-estudos{animation-delay:1.16s;}
+  .frame.show-bib .bib-row-estudos .card-slot:nth-child(1){animation-delay:1.18s;}
+  .frame.show-bib .bib-row-estudos .card-slot:nth-child(2){animation-delay:1.22s;}
+  /* Protocolos section, also filled */
+  .frame.show-bib .bib-h-protocolos{animation-delay:1.38s;}
+  .frame.show-bib .bib-row-protocolos .card-slot:nth-child(1){animation-delay:1.40s;}
+  .frame.show-bib .bib-row-protocolos .card-slot:nth-child(2){animation-delay:1.44s;}
 </style>
 </head>
 <body>
@@ -287,6 +304,7 @@
     </div><!-- /screen-home -->
 
     <div class="screen screen-bib" id="screenBib">
+      <div class="opener-echo" id="openerEcho"></div>
       <div class="opener" id="opener">
       <div class="opener-white"></div>
       <div class="opener-inner" id="openerInner">
