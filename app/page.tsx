@@ -18,10 +18,9 @@ const experiences: {
   role: string;
   period: { pt: string; en: string };
 }[] = [
-  { company: "Ticket", role: "Product Designer", period: { pt: "set/2024 – fev/2026", en: "Sep 2024 – Feb 2026" } },
-  { company: "Santander", role: "Product Designer", period: { pt: "jul/2022 – jul/2024", en: "Jul 2022 – Jul 2024" } },
-  { company: "Lojacorr", role: "Head of Design", period: { pt: "jun/2021 – jul/2022", en: "Jun 2021 – Jul 2022" } },
-  { company: "Sioux", role: "Product Designer", period: { pt: "jan/2021 – jun/2021", en: "Jan 2021 – Jun 2021" } },
+  { company: "Ticket", role: "Product Designer", period: { pt: "set/2024 – mar/2026", en: "Sep 2024 – Mar 2026" } },
+  { company: "Santander", role: "Product Designer", period: { pt: "jan/2022 – jul/2024", en: "Jan 2022 – Jul 2024" } },
+  { company: "Sioux", role: "Product Designer", period: { pt: "jan/2021 – dez/2021", en: "Jan 2021 – Dec 2021" } },
   { company: "Unico ID", role: "Head of Product", period: { pt: "out/2019 – dez/2020", en: "Oct 2019 – Dec 2020" } },
   { company: "Vet Smart", role: "Head of Design", period: { pt: "out/2015 – out/2019", en: "Oct 2015 – Oct 2019" } },
 ];
