@@ -32,28 +32,27 @@ function CheckIcon() {
   );
 }
 
-function ChevronIcon({ open }: { open: boolean }) {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      style={{ transition: "transform 0.2s ease", transform: open ? "rotate(180deg)" : "none" }}
-    >
-      <path d="M6 9l6 6 6-6" />
-    </svg>
-  );
-}
+// abre no hover (só em dispositivos com mouse de verdade) — toque/mobile não mexe, continua só no clique
+const canHover = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia?.("(hover: hover) and (pointer: fine)").matches;
+
+const HOVER_OPEN_DELAY = 100; // evita abrir ao só "passar" o mouse de raspão
+const HOVER_CLOSE_DELAY = 250; // dá tempo de mover o mouse até o menu sem fechar
 
 function LangSwitcher() {
   const { lang, setLang } = useLang();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearTimers = () => {
+    if (openTimer.current) clearTimeout(openTimer.current);
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    openTimer.current = null;
+    closeTimer.current = null;
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -69,25 +68,48 @@ function LangSwitcher() {
     };
   }, [open]);
 
+  useEffect(() => clearTimers, []);
+
   const options: { value: Lang; label: string }[] = [
     { value: "pt", label: "Português" },
     { value: "en", label: "English" },
   ];
 
   const choose = (l: Lang) => {
+    clearTimers();
     setLang(l);
     setOpen(false);
   };
 
+  const handleMouseEnter = () => {
+    if (!canHover()) return;
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    openTimer.current = setTimeout(() => setOpen(true), HOVER_OPEN_DELAY);
+  };
+
+  const handleMouseLeave = () => {
+    if (!canHover()) return;
+    if (openTimer.current) clearTimeout(openTimer.current);
+    closeTimer.current = setTimeout(() => setOpen(false), HOVER_CLOSE_DELAY);
+  };
+
   return (
-    <div ref={ref} style={{ position: "relative", display: "flex", alignItems: "center" }}>
+    <div
+      ref={ref}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={{ position: "relative", display: "flex", alignItems: "center" }}
+    >
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => {
+          clearTimers();
+          setOpen((o) => !o);
+        }}
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label="Language"
-        className="hover:opacity-60 transition-opacity duration-200"
+        className="hover:opacity-60 transition-opacity duration-300 ease-out"
         style={{
           display: "inline-flex",
           alignItems: "center",
@@ -100,7 +122,6 @@ function LangSwitcher() {
         }}
       >
         <GlobeIcon />
-        <ChevronIcon open={open} />
       </button>
 
       {open && (
@@ -178,14 +199,10 @@ export default function Nav() {
     >
       <div>
         <Link href={href("/")}>
-          <Image src="/logo.png" alt="Allexis Tsuda" width={140} height={30} priority />
+          <Image src="/logo.png" alt="Allexis Tsuda" width={100} height={21} priority />
         </Link>
       </div>
-      <div className="invisible md:visible" style={{ textAlign: "center" }}>
-        <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: "-0.21px", color: "#8D8D8D" }}>
-          UI/UX Designer
-        </span>
-      </div>
+      <div />
       <div
         style={{
           display: "flex",
@@ -194,10 +211,9 @@ export default function Nav() {
           gap: 16,
         }}
       >
-        <LangSwitcher />
         <Link
           href={href("/#contato")}
-          className="hover:opacity-60 transition-opacity duration-200"
+          className="hover:opacity-60 transition-opacity duration-300 ease-out"
           style={{
             display: "inline-flex",
             alignItems: "center",

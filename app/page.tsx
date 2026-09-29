@@ -1,16 +1,27 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Nav from "./components/Nav";
-import TypingHero from "./components/TypingHero";
+import HeroPhrases from "./components/HeroPhrases";
+import Reveal from "./components/Reveal";
+import ThumbsRow from "./components/ThumbsRow";
+// import LogosCarousel from "./components/LogosCarousel"; // escondido por enquanto
 import { useLang, useHref } from "./i18n/lang";
-import { Segs, type Seg } from "./i18n/render";
+import { type Seg } from "./i18n/render";
 
-const projects = [
-  { title: "Vet Smart", category: "Mobile", href: "/vet-smart" },
-  { title: "Unico You", category: "Mobile", href: "/unico-you" },
-  { title: "Santander Design System", category: "Design System", href: "/santander-design-system" },
-  { title: "Santander Workshops", category: "Design Ops", href: "/santander-workshops" },
-  { title: "Vet Smart TV", category: "Web", href: "/vet-smart-tv" },
+const projects: {
+  title: string;
+  category: string;
+  href: string;
+  thumb?: string;
+  video?: string;
+  bg?: string;
+}[] = [
+  { title: "Vet Smart", category: "Mobile", href: "/vet-smart", thumb: "/thumbs/vet-smart.png" },
+  { title: "Unico You", category: "Mobile", href: "/unico-you", thumb: "/thumbs/unico-you.webp" },
+  { title: "Santander Design System", category: "Design System", href: "/santander-design-system", thumb: "/thumbs/santander-design-system.png", video: "/thumbs/santander-design-system.mp4", bg: "#ED0000" },
+  { title: "Santander Workshops", category: "Design Ops", href: "/santander-workshops", thumb: "/thumbs/santander-workshops.jpg" },
+  { title: "Vet Smart TV", category: "Web", href: "/vet-smart-tv", thumb: "/thumbs/vet-smart-tv.webp" },
 ];
 
 const experiences: {
@@ -73,188 +84,346 @@ const aboutEn: Seg[][] = [
   ],
 ];
 
-function Tag({ label }: { label: string }) {
-  return (
-    <span
-      className="inline-block bg-[#222] text-white uppercase"
-      style={{ fontSize: 10, fontWeight: 600, letterSpacing: 0, padding: "4px 8px" }}
-    >
-      {label}
-    </span>
-  );
-}
-
 export default function Home() {
   const { lang } = useLang();
   const href = useHref();
   const about = lang === "pt" ? aboutPt : aboutEn;
 
+  // "Scroll down..." some conforme o usuário começa a rolar
+  const [scrollY, setScrollY] = useState(0);
+  useEffect(() => {
+    const onScroll = () => setScrollY(window.scrollY);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  const scrollHintOpacity = Math.max(0, 1 - scrollY / 120);
+
   return (
-    <div className="min-h-screen bg-[#F6F6F5]" style={{ color: "#222", fontFamily: "inherit" }}>
+    <div className="min-h-screen bg-[#F6F6F5]" style={{ color: "#222", fontFamily: "inherit", overflowX: "clip" }}>
 
       <Nav />
 
       <div className="px-6 md:px-10" style={{ maxWidth: 1440, margin: "0 auto" }}>
 
-        {/* Hero */}
-        <section style={{ paddingTop: 80, paddingBottom: 100 }}>
-          <TypingHero />
+        {/* Hero — ocupa a tela (abaixo do nav) e centraliza o texto verticalmente, um pouco acima do centro */}
+        <section
+          className="relative flex flex-col items-center justify-center"
+          style={{ minHeight: "calc(100vh - 90px)" }}
+        >
+          <div style={{ transform: "translateY(-28%)" }}>
+            <HeroPhrases />
+          </div>
+
+          {/* aviso de scroll — mesmo peso do antigo "UI/UX Designer", mas em medium.
+              Estático (sem entrada própria), mas some assim que o usuário começa a rolar. */}
+          <span
+            className="absolute left-1/2"
+            style={{
+              bottom: 40,
+              transform: "translateX(-50%)",
+              opacity: scrollHintOpacity,
+              transition: "opacity 0.2s ease",
+              pointerEvents: scrollHintOpacity < 0.1 ? "none" : "auto",
+              fontSize: 14,
+              fontWeight: 500,
+              letterSpacing: "-0.21px",
+              color: "#8D8D8D",
+              textAlign: "center",
+            }}
+          >
+            Explore meus projetos
+          </span>
         </section>
 
-        {/* Projetos */}
-        <section style={{ paddingBottom: 100 }}>
-          <Tag label={LABELS.projects[lang]} />
-          <div style={{ marginTop: 32 }}>
+        {/* Thumbs dos projetos — revela ao rolar.
+            Mobile: grid estático simples (não tem mouse, não faz sentido magnificar).
+            Desktop: fileira com magnificação estilo Dock/geenie (ThumbsRow). */}
+        <section style={{ paddingBottom: 160 }}>
+          <div className="grid grid-cols-2 gap-4 md:hidden">
             {projects.map((p, i) => (
-              <a
-                key={i}
-                href={href(p.href)}
-                className="flex items-center justify-between hover:opacity-60 transition-opacity duration-200"
-                style={{
-                  height: 64,
-                  borderTop: i > 0 ? "1px dashed #4F4F4F" : "none",
-                  textDecoration: "none",
-                }}
-              >
-                <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: "-0.21px", color: "#222" }}>
-                  {p.title}
-                </span>
-                <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: "-0.21px", color: "#999" }}>
-                  {p.category}
-                </span>
-              </a>
+              <Reveal key={i} delay={i * 100}>
+                <a
+                  href={href(p.href)}
+                  className="group block overflow-hidden rounded-[12px] aspect-[4/5]"
+                  style={{ textDecoration: "none" }}
+                >
+                  {p.thumb ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={p.thumb}
+                      alt={p.title}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="h-full w-full bg-[#DADADA]" />
+                  )}
+                </a>
+              </Reveal>
             ))}
+          </div>
+          <div className="hidden md:block">
+            <ThumbsRow items={projects} />
           </div>
         </section>
 
         {/* Sobre */}
-        <section style={{ paddingBottom: 100 }}>
-          <Tag label={LABELS.about[lang]} />
-          <div
-            style={{
-              marginTop: 32,
-              fontSize: 26,
-              fontWeight: 400,
-              letterSpacing: "-0.13px",
-              lineHeight: 1.4,
-              color: "#222",
-            }}
-          >
-            {about.map((segs, i) => (
-              <p key={i} style={{ marginTop: i > 0 ? "1.4em" : 0 }}>
-                <Segs segs={segs} />
-              </p>
-            ))}
-          </div>
+        <section style={{ paddingBottom: 160 }}>
+          <Reveal subtle triggerMargin="-10%">
+            <div className="md:grid" style={{ gridTemplateColumns: "90px 1fr", columnGap: 56, maxWidth: "65%", margin: "0 auto" }}>
+              <div>
+                <span
+                  className="uppercase"
+                  style={{
+                    fontFamily: "var(--font-geist-mono)",
+                    fontSize: 12,
+                    fontWeight: 400,
+                    letterSpacing: "0.02em",
+                    color: "#222",
+                  }}
+                >
+                  {LABELS.about[lang]}
+                </span>
+              </div>
+              <div
+                className="mt-4 md:mt-0"
+                style={{
+                  fontSize: 20,
+                  fontWeight: 400,
+                  letterSpacing: "-0.45px",
+                  lineHeight: "29px",
+                  color: "#222",
+                }}
+              >
+                {about.map((segs, i) => (
+                  <p key={i} style={{ marginTop: i > 0 ? "1.4em" : 0 }}>
+                    {segs.map((s) => (typeof s === "string" ? s : s.h)).join("")}
+                  </p>
+                ))}
+                {/* duas fotos lado a lado fecham o bloco de Sobre: retrato pessoal +
+                    resultado real do que foi construído (loja Vet Smart/Petlove) */}
+                <div className="flex" style={{ marginTop: 48, gap: 8 }}>
+                  <div style={{ width: 208, aspectRatio: "1 / 1", borderRadius: 8, overflow: "hidden" }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/about/allexis.webp"
+                      alt="Allexis Tsuda"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div style={{ width: 208, aspectRatio: "1 / 1", borderRadius: 8, overflow: "hidden" }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/about/vetsmart-store-full.webp"
+                      alt="Loja Vet Smart / Petlove"
+                      className="h-full w-full object-cover"
+                      style={{ transform: "scale(1.03)" }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Reveal>
         </section>
 
         {/* Experiência */}
-        <section style={{ paddingBottom: 100 }}>
-          <Tag label={LABELS.experience[lang]} />
-
-          {/* Desktop: horizontal timeline */}
-          <div className="hidden md:block" style={{ marginTop: 36, position: "relative" }}>
-            <div
-              style={{
-                position: "absolute",
-                top: 3.5,
-                left: 0,
-                right: 0,
-                height: 1,
-                background: "#DDDDDD",
-              }}
-            />
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)" }}>
-              {experiences.map((exp, i) => (
-                <div key={i} style={{ position: "relative" }}>
+        <section style={{ paddingBottom: 160 }}>
+          <Reveal subtle triggerMargin="-10%">
+            <div className="md:grid" style={{ gridTemplateColumns: "90px 1fr", columnGap: 56, maxWidth: "65%", margin: "0 auto" }}>
+              <div>
+                <span
+                  className="uppercase"
+                  style={{
+                    fontFamily: "var(--font-geist-mono)",
+                    fontSize: 12,
+                    fontWeight: 400,
+                    letterSpacing: "0.02em",
+                    color: "#222",
+                  }}
+                >
+                  {LABELS.experience[lang]}
+                </span>
+              </div>
+              <div className="mt-4 md:mt-0">
+                {/* Desktop: fileira horizontal — data | bolinha+linha | empresa | cargo */}
+                <div className="relative hidden md:flex md:flex-col" style={{ gap: 40 }}>
                   <div
                     style={{
-                      width: 7,
-                      height: 7,
-                      borderRadius: "50%",
-                      background: "#fff",
-                      border: "1px solid #7A7A7A",
-                      position: "relative",
-                      zIndex: 1,
+                      position: "absolute",
+                      left: 156,
+                      top: 20,
+                      bottom: 20,
+                      width: 1,
+                      background: "#E6E6E6",
                     }}
                   />
-                  <div style={{ marginTop: 32 }}>
-                    <p style={{ fontSize: 14, fontWeight: 600, letterSpacing: "-0.21px", color: "#222" }}>
-                      {exp.company}
-                    </p>
-                    <p style={{ fontSize: 14, fontWeight: 600, letterSpacing: "-0.21px", color: "#8D8D8D", marginTop: 6 }}>
-                      {exp.role}
-                    </p>
-                    <p style={{ fontSize: 14, fontWeight: 400, letterSpacing: "-0.21px", color: "#8D8D8D", marginTop: 6 }}>
-                      {exp.period[lang]}
-                    </p>
-                  </div>
+                  {experiences.map((exp, i) => (
+                    <div
+                      key={i}
+                      className="relative grid md:grid-cols-[140px_220px_1fr] md:items-center"
+                      style={{ columnGap: 32 }}
+                    >
+                      <div
+                        style={{
+                          position: "absolute",
+                          left: 156,
+                          top: "50%",
+                          transform: "translate(-50%, -50%)",
+                          width: 7,
+                          height: 7,
+                          borderRadius: "50%",
+                          background: "#fff",
+                          border: "1px solid #7A7A7A",
+                          zIndex: 1,
+                        }}
+                      />
+                      <span
+                        style={{ fontSize: 12, fontWeight: 400, letterSpacing: "0.02em", color: "#8D8D8D", whiteSpace: "nowrap" }}
+                      >
+                        {exp.period[lang]}
+                      </span>
+                      <span style={{ fontSize: 20, fontWeight: 400, letterSpacing: "-0.13px", color: "#222", marginLeft: 32, paddingRight: 32 }}>
+                        {exp.company}
+                      </span>
+                      <span style={{ fontSize: 14, fontWeight: 400, letterSpacing: "-0.21px", color: "#8D8D8D" }}>
+                        {exp.role}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
 
-          {/* Mobile: vertical timeline */}
-          <div className="md:hidden" style={{ marginTop: 32 }}>
-            {experiences.map((exp, i) => (
-              <div key={i} style={{ display: "flex", gap: 16 }}>
-                {/* Line + circle column */}
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
-                  <div
-                    style={{
-                      width: 7,
-                      height: 7,
-                      borderRadius: "50%",
-                      background: "#fff",
-                      border: "1px solid #7A7A7A",
-                      flexShrink: 0,
-                      marginTop: 4,
-                      zIndex: 1,
-                    }}
-                  />
-                  {i < experiences.length - 1 && (
-                    <div style={{ width: 1, background: "#DDDDDD", flex: 1, marginTop: 6 }} />
-                  )}
-                </div>
-                {/* Text */}
-                <div style={{ paddingBottom: i < experiences.length - 1 ? 28 : 0 }}>
-                  <p style={{ fontSize: 14, fontWeight: 600, letterSpacing: "-0.21px", color: "#222" }}>
-                    {exp.company}
-                  </p>
-                  <p style={{ fontSize: 14, fontWeight: 600, letterSpacing: "-0.21px", color: "#8D8D8D", marginTop: 4 }}>
-                    {exp.role}
-                  </p>
-                  <p style={{ fontSize: 14, fontWeight: 400, letterSpacing: "-0.21px", color: "#8D8D8D", marginTop: 4 }}>
-                    {exp.period[lang]}
-                  </p>
+                {/* Mobile: timeline vertical */}
+                <div className="md:hidden">
+                  {experiences.map((exp, i) => (
+                    <div key={i} style={{ display: "flex", gap: 16 }}>
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+                        <div
+                          style={{
+                            width: 7,
+                            height: 7,
+                            borderRadius: "50%",
+                            background: "#fff",
+                            border: "1px solid #7A7A7A",
+                            flexShrink: 0,
+                            marginTop: 4,
+                            zIndex: 1,
+                          }}
+                        />
+                        {i < experiences.length - 1 && (
+                          <div style={{ width: 1, background: "#E6E6E6", flex: 1, marginTop: 6 }} />
+                        )}
+                      </div>
+                      <div style={{ paddingBottom: i < experiences.length - 1 ? 28 : 0 }}>
+                        <p
+                          style={{ fontSize: 12, fontWeight: 400, letterSpacing: "0.02em", color: "#8D8D8D" }}
+                        >
+                          {exp.period[lang]}
+                        </p>
+                        <p style={{ fontSize: 20, fontWeight: 400, letterSpacing: "-0.13px", color: "#222", marginTop: 4 }}>
+                          {exp.company}
+                        </p>
+                        <p style={{ fontSize: 14, fontWeight: 400, letterSpacing: "-0.21px", color: "#8D8D8D", marginTop: 4 }}>
+                          {exp.role}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          </Reveal>
         </section>
 
+        {/* Empresas — escondido por enquanto, repensando o layout.
+        <section style={{ paddingTop: 60, paddingBottom: 220 }}>
+          <div style={{ maxWidth: "65%", margin: "0 auto" }}>
+            <div style={{ height: 1, background: "#E6E6E6", marginBottom: 60 }} />
+            <LogosCarousel />
+            <div style={{ height: 1, background: "#E6E6E6", marginTop: 60 }} />
+          </div>
+        </section>
+        */}
+
         {/* Contato */}
-        <section id="contato" style={{ paddingBottom: 96 }}>
-          <Tag label={LABELS.contact[lang]} />
-          <div className="flex items-center" style={{ marginTop: 20, gap: 12 }}>
-            <span className="arrow-animate" style={{ display: "inline-flex", flexShrink: 0 }}>
-              <svg className="w-[20px] h-[20px] md:w-[33px] md:h-[33px]" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4.5 12.5H20.5M20.5 12.5L13.5 5.5M20.5 12.5L13.5 19.5" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </span>
-            <a
-              href="mailto:allexistsuda@gmail.com"
-              className="hover:opacity-60 transition-opacity duration-200 text-[26px] md:text-[60px]"
+        <section id="contato" style={{ paddingBottom: 120 }}>
+          <Reveal subtle triggerMargin="-10%">
+          <div className="md:grid" style={{ gridTemplateColumns: "90px 1fr", columnGap: 56, maxWidth: "65%", margin: "0 auto" }}>
+            <div>
+              <span
+                className="uppercase"
+                style={{
+                  fontFamily: "var(--font-geist-mono)",
+                  fontSize: 12,
+                  fontWeight: 400,
+                  letterSpacing: "0.02em",
+                  color: "#222",
+                }}
+              >
+                {LABELS.contact[lang]}
+              </span>
+            </div>
+            <div
+              className="mt-4 md:mt-0"
               style={{
+                fontSize: 20,
                 fontWeight: 400,
-                letterSpacing: "-0.02em",
+                letterSpacing: "-0.45px",
+                lineHeight: "29px",
                 color: "#222",
-                textDecoration: "none",
               }}
             >
-              allexistsuda@gmail.com
-            </a>
+              {lang === "pt" ? (
+                <>
+                  Quer trabalhar junto ou conversar sobre produto?
+                  <br />
+                  Manda um oi pra{" "}
+                  <a
+                    href="mailto:allexistsuda@gmail.com"
+                    className="hover:opacity-60 transition-opacity duration-300 ease-out"
+                    style={{ color: "#222", textDecoration: "underline", textUnderlineOffset: "3px", textDecorationThickness: "1px" }}
+                  >
+                    allexistsuda@gmail.com
+                  </a>{" "}
+                  ou no{" "}
+                  <a
+                    href="https://www.linkedin.com/in/allexistsuda"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:opacity-60 transition-opacity duration-300 ease-out"
+                    style={{ color: "#222", textDecoration: "underline", textUnderlineOffset: "3px", textDecorationThickness: "1px" }}
+                  >
+                    LinkedIn
+                  </a>
+                  .
+                </>
+              ) : (
+                <>
+                  Want to work together, or talk about product?
+                  <br />
+                  Say hi at{" "}
+                  <a
+                    href="mailto:allexistsuda@gmail.com"
+                    className="hover:opacity-60 transition-opacity duration-300 ease-out"
+                    style={{ color: "#222", textDecoration: "underline", textUnderlineOffset: "3px", textDecorationThickness: "1px" }}
+                  >
+                    allexistsuda@gmail.com
+                  </a>{" "}
+                  or on{" "}
+                  <a
+                    href="https://www.linkedin.com/in/allexistsuda"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:opacity-60 transition-opacity duration-300 ease-out"
+                    style={{ color: "#222", textDecoration: "underline", textUnderlineOffset: "3px", textDecorationThickness: "1px" }}
+                  >
+                    LinkedIn
+                  </a>
+                  .
+                </>
+              )}
+            </div>
           </div>
+          </Reveal>
         </section>
 
       </div>
