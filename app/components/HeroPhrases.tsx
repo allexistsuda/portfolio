@@ -11,7 +11,7 @@ const phrases = [
   "The small interactions are where\na product starts to feel right.",
 ];
 
-const HOLD_MS = 5600; // tempo que cada frase fica visível
+const HOLD_MS = 4200; // tempo que cada frase fica visível
 const TRANSITION_MS = 750; // duração do fade/blur (entrada e saída)
 
 export default function HeroPhrases() {
