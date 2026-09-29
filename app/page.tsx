@@ -163,7 +163,7 @@ export default function Home() {
                 background: "#DDDDDD",
               }}
             />
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: `repeat(${experiences.length}, 1fr)` }}>
               {experiences.map((exp, i) => (
                 <div key={i} style={{ position: "relative" }}>
                   <div
