@@ -178,7 +178,7 @@ export default function Nav() {
     >
       <div>
         <Link href={href("/")}>
-          <Image src="/logo.png" alt="Allexis Tsuda" width={140} height={30} priority />
+          <Image src="/logo.png" alt="Allexis Tsuda" width={110} height={23} priority />
         </Link>
       </div>
       <div className="invisible md:visible" style={{ textAlign: "center" }}>
