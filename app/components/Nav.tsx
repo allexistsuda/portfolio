@@ -178,14 +178,10 @@ export default function Nav() {
     >
       <div>
         <Link href={href("/")}>
-          <Image src="/logo.png" alt="Allexis Tsuda" width={140} height={30} priority />
+          <Image src="/logo.png" alt="Allexis Tsuda" width={100} height={21} priority />
         </Link>
       </div>
-      <div className="invisible md:visible" style={{ textAlign: "center" }}>
-        <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: "-0.21px", color: "#8D8D8D" }}>
-          UI/UX Designer
-        </span>
-      </div>
+      <div />
       <div
         style={{
           display: "flex",
