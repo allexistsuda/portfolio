@@ -184,7 +184,6 @@ function LangSwitcher() {
 }
 
 export default function Nav() {
-  const { lang } = useLang();
   const href = useHref();
   return (
     <nav
@@ -224,7 +223,7 @@ export default function Nav() {
             lineHeight: 1,
           }}
         >
-          {lang === "pt" ? "Contato" : "Contact"}
+          Contact
         </Link>
       </div>
     </nav>
