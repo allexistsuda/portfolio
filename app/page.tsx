@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import Nav from "./components/Nav";
 import HeroPhrases from "./components/HeroPhrases";
 import Reveal from "./components/Reveal";
-import ThumbsRow from "./components/ThumbsRow";
+// import ThumbsRow from "./components/ThumbsRow"; // teste: trocado por ProjectsList
+import ProjectsList from "./components/ProjectsList";
 // import LogosCarousel from "./components/LogosCarousel"; // escondido por enquanto
 import { useLang, useHref } from "./i18n/lang";
 import { type Seg } from "./i18n/render";
@@ -132,7 +133,7 @@ export default function Home() {
               textAlign: "center",
             }}
           >
-            Explore meus projetos
+            See the work
           </span>
         </section>
 
@@ -163,7 +164,7 @@ export default function Home() {
             ))}
           </div>
           <div className="hidden md:block">
-            <ThumbsRow items={projects} />
+            <ProjectsList items={projects} />
           </div>
         </section>
 

@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 
 // 4 frases que se alternam automaticamente (não depende de scroll).
-// Troca de linha manual onde fica melhor visualmente.
+// Cada frase é [linha1, linha2] — a quebra só é forçada no desktop (md+);
+// no mobile o texto flui naturalmente, sem cortar no meio de uma palavra.
 const phrases = [
   "I build design systems, and\nI stick around to keep them useful.",
   "Data first. Then the design\nhas something to stand on.",
@@ -11,7 +12,7 @@ const phrases = [
   "The small interactions are where\na product starts to feel right.",
 ];
 
-const HOLD_MS = 4200; // tempo que cada frase fica visível
+const HOLD_MS = 3800; // tempo que cada frase fica visível
 const TRANSITION_MS = 750; // duração do fade/blur (entrada e saída)
 
 export default function HeroPhrases() {
