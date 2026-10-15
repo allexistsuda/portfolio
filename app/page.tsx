@@ -452,7 +452,14 @@ export default function Home() {
     // encolhe e a tela "cresce" ~80px). Como a margem do conteúdo é calculada a
     // partir dela, o bloco pulava a cada troca. Congelamos a altura e só
     // atualizamos quando a LARGURA muda — ou seja, giro de tela / resize de verdade.
-    let vhEstavel = window.innerHeight;
+    // ...mas congelar o innerHeight do carregamento também erra: com as barras à
+    // mostra ele é ~180px menor que o 100vh do CSS que dimensiona o sticky, e aí
+    // sobra um buraco. Medimos o 100vh do CSS — o mesmo valor que o sticky usa.
+    const sonda = document.createElement("div");
+    sonda.style.cssText = "position:absolute;top:0;left:0;width:0;height:100vh;pointer-events:none;visibility:hidden";
+    document.body.appendChild(sonda);
+    const medirVh = () => sonda.offsetHeight || window.innerHeight;
+    let vhEstavel = medirVh();
     let larguraAnterior = window.innerWidth;
     const update = () => {
       const section = sectionRef.current;
@@ -463,7 +470,7 @@ export default function Home() {
       const vw = window.innerWidth;
       if (vw !== larguraAnterior) {
         larguraAnterior = vw;
-        vhEstavel = window.innerHeight;
+        vhEstavel = medirVh();
       }
       const vh = vhEstavel;
       const cs = getComputedStyle(content);
@@ -484,7 +491,7 @@ export default function Home() {
       block.style.top = `${startTop + (TOP_END - startTop) * e}px`;
       block.style.borderRadius = `${8 * e}px`;
       // no mobile o texto do About sobe mais perto do vídeo
-      content.style.marginTop = `${TOP_END + endH + (vw < 768 ? 44 : 100) - vh}px`;
+      content.style.marginTop = `${TOP_END + endH + (vw < 768 ? 0 : 100) - vh}px`;
     };
     update();
     window.addEventListener("scroll", update, { passive: true });
@@ -492,6 +499,7 @@ export default function Home() {
     return () => {
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
+      sonda.remove();
     };
   }, []);
   // Sobre fica sempre sobre o painel escuro, então as cores são fixas.
@@ -588,7 +596,7 @@ export default function Home() {
             <div style={{ position: "sticky", top: 0, height: "100vh" }}>
               <div
                 ref={imgBlockRef}
-                style={{ position: "absolute", left: "50%", transform: "translateX(-50%) translateZ(0)", width: "100vw", height: "60vh", top: 0, overflow: "hidden", background: "#EC0100", isolation: "isolate", willChange: "width, height, top, border-radius" }}
+                style={{ position: "absolute", left: "50%", transform: "translateX(-50%) translateZ(0)", width: "100vw", height: "60vh", top: 0, overflow: "hidden", background: "#F6F6F5", isolation: "isolate", willChange: "width, height, top, border-radius" }}
               >
                 <video
                   ref={aboutVideoRef}
