@@ -721,7 +721,7 @@ export default function Home() {
                         .hero-hint { bottom: calc(40px + env(safe-area-inset-bottom)); }
                         @media (max-width: 767px) {
                           .hero-frases { transform: translateY(-34%); }
-                          .hero-hint { bottom: calc(72px + env(safe-area-inset-bottom)); }
+                          .hero-hint { bottom: calc(52px + env(safe-area-inset-bottom)); }
                         }
                         /* grid do contato: 1 coluna no mobile, texto + links no desktop */
                         /* minmax(0,1fr): sem isso a coluna cresce até caber o e-mail e corta no mobile */
