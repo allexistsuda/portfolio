@@ -491,7 +491,7 @@ export default function Home() {
       block.style.top = `${startTop + (TOP_END - startTop) * e}px`;
       block.style.borderRadius = `${8 * e}px`;
       // no mobile o texto do About sobe mais perto do vídeo
-      content.style.marginTop = `${TOP_END + endH + (vw < 768 ? 0 : 100) - vh}px`;
+      content.style.marginTop = `${TOP_END + endH + (vw < 768 ? 28 : 100) - vh}px`;
     };
     update();
     window.addEventListener("scroll", update, { passive: true });
