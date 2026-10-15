@@ -448,6 +448,12 @@ export default function Home() {
     const clamp = (n: number) => Math.min(1, Math.max(0, n));
     const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
     const TOP_END = 64;
+    // No Safari do iOS, innerHeight muda durante a rolagem (a barra de endereço
+    // encolhe e a tela "cresce" ~80px). Como a margem do conteúdo é calculada a
+    // partir dela, o bloco pulava a cada troca. Congelamos a altura e só
+    // atualizamos quando a LARGURA muda — ou seja, giro de tela / resize de verdade.
+    let vhEstavel = window.innerHeight;
+    let larguraAnterior = window.innerWidth;
     const update = () => {
       const section = sectionRef.current;
       const track = trackRef.current;
@@ -455,7 +461,11 @@ export default function Home() {
       const content = contentRef.current;
       if (!section || !track || !block || !content) return;
       const vw = window.innerWidth;
-      const vh = window.innerHeight;
+      if (vw !== larguraAnterior) {
+        larguraAnterior = vw;
+        vhEstavel = window.innerHeight;
+      }
+      const vh = vhEstavel;
       const cs = getComputedStyle(content);
       const cw = content.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
       const startH = vw * (9 / 16);
