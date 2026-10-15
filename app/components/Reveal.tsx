@@ -45,23 +45,53 @@ export default function Reveal({
   const ref = useRef<HTMLDivElement>(null);
   const [started, setStarted] = useState(false);
 
-  // dispara quando entra na tela (com o delay de stagger)
+  // dispara quando entra na tela (com o delay de stagger).
+  //
+  // O IntersectionObserver é o caminho principal, mas não é confiável sozinho:
+  // no Safari do iOS ele pode atrasar ou não entregar callback durante rolagem
+  // por inércia, e aí o item fica invisível pra sempre (opacity 0). Por isso vai
+  // junto uma checagem por scroll/timeout, que compara a posição do elemento com
+  // a janela. Quem chegar primeiro dispara; o outro é desligado.
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     let timer: ReturnType<typeof setTimeout> | null = null;
+    let pronto = false;
+
+    const disparar = () => {
+      if (pronto) return;
+      pronto = true;
+      obs.disconnect();
+      window.removeEventListener("scroll", conferir);
+      window.removeEventListener("resize", conferir);
+      if (fallback) clearTimeout(fallback);
+      timer = setTimeout(() => setStarted(true), delay);
+    };
+
+    // mesma régua do rootMargin: triggerMargin é "-30%" ou "0%" da altura da janela
+    const conferir = () => {
+      const r = el.getBoundingClientRect();
+      const margem = (parseFloat(triggerMargin) / 100) * window.innerHeight;
+      if (r.top < window.innerHeight + margem && r.bottom > 0) disparar();
+    };
+
     const obs = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          timer = setTimeout(() => setStarted(true), delay);
-          obs.disconnect();
-        }
+        if (entry.isIntersecting) disparar();
       },
       { threshold: 0, rootMargin: `0px 0px ${triggerMargin} 0px` }
     );
     obs.observe(el);
+    window.addEventListener("scroll", conferir, { passive: true });
+    window.addEventListener("resize", conferir);
+    // se o observer não responder, a checagem manual assume
+    const fallback = setTimeout(conferir, 400);
+
     return () => {
       obs.disconnect();
+      window.removeEventListener("scroll", conferir);
+      window.removeEventListener("resize", conferir);
+      clearTimeout(fallback);
       if (timer) clearTimeout(timer);
     };
   }, [delay, triggerMargin]);
