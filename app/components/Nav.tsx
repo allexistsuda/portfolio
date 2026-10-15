@@ -198,7 +198,7 @@ export default function Nav() {
     >
       <div>
         <Link href={href("/")}>
-          <Image src="/logo.png" alt="Allexis Tsuda" width={100} height={21} priority />
+          <Image src="/logo.png" alt="Allexis Tsuda" width={110} height={23} priority />
         </Link>
       </div>
       <div />
