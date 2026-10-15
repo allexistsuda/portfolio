@@ -728,7 +728,7 @@ export default function Home() {
                         .hero-frases { transform: translateY(-28%); }
                         .hero-hint { bottom: calc(40px + env(safe-area-inset-bottom)); }
                         @media (max-width: 767px) {
-                          .hero-frases { transform: translateY(-34%); }
+                          .hero-frases { transform: translateY(-26%); }
                           .hero-hint { bottom: calc(32px + env(safe-area-inset-bottom)); }
                         }
                         /* grid do contato: 1 coluna no mobile, texto + links no desktop */
