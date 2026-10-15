@@ -558,7 +558,8 @@ export default function Home() {
                 <a
                   href={href(p.href)}
                   className="flex items-baseline justify-between gap-4"
-                  style={{ padding: "24px 0", borderBottom: "1px solid #DEDEDE", textDecoration: "none" }}
+                  // sem régua no último item (igual à ProjectsList do desktop)
+                  style={{ padding: "24px 0", borderBottom: i === projects.length - 1 ? "none" : "1px solid #DEDEDE", textDecoration: "none" }}
                 >
                   <span style={{ fontSize: 20, fontWeight: 400, letterSpacing: "-0.45px", lineHeight: "29px", color: "#222" }}>{p.title}</span>
                   <span style={{ fontSize: 14, fontWeight: 400, letterSpacing: "-0.1px", color: "#8D8D8D", whiteSpace: "nowrap" }}>{p.category}</span>
