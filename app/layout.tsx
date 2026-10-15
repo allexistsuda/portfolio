@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Allexis Tsuda — Product Designer",
   description:
-    "Product Designer focado em produtos digitais complexos, design system e IA aplicada ao processo de produto.",
+    "I'm Allexis, a Product Designer with end-to-end experience, from discovery and user journeys to prototyping and iterating on live products.",
 };
 
 export default function RootLayout({

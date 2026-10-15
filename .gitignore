@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# vídeos pesados que não vão pro site (só render-final.mp4 é usado)
+public/reel/reel.mp4
+public/reel/reel1.mp4
+public/_tmp-ref
+renders

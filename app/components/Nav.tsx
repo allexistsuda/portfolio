@@ -212,6 +212,13 @@ export default function Nav() {
       >
         <Link
           href={href("/#contato")}
+          onClick={(e) => {
+            // se a seção já está nesta página, rola suave em vez de pular pela âncora
+            const alvo = document.getElementById("contato");
+            if (!alvo) return;
+            e.preventDefault();
+            alvo.scrollIntoView({ behavior: "smooth", block: "start" });
+          }}
           className="hover:opacity-60 transition-opacity duration-300 ease-out"
           style={{
             display: "inline-flex",

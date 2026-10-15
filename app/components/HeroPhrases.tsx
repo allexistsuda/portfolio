@@ -50,14 +50,26 @@ export default function HeroPhrases() {
         letterSpacing: "-0.03em",
         lineHeight: 1.05,
         color: "#222",
-        whiteSpace: "pre-line",
+        // balance distribui as linhas por igual (no mobile, sem o <br>, o texto fluía
+        // deixando preposição e artigo pendurados no fim das linhas)
+        textWrap: "balance",
         opacity: visible ? 1 : 0,
         filter: visible ? "blur(0px)" : "blur(14px)",
         transition: `opacity ${TRANSITION_MS}ms ease, filter ${TRANSITION_MS}ms ease`,
         minHeight: "2.6em",
       }}
     >
-      {phrases[index]}
+      {phrases[index].split("\n").map((line, i) => (
+        <span key={i}>
+          {i > 0 && (
+            <>
+              {" "}
+              <br className="hidden md:inline" />
+            </>
+          )}
+          {line}
+        </span>
+      ))}
     </h1>
   );
 }

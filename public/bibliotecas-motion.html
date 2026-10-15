@@ -1,0 +1,240 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>bibliotecas — scroll lateral</title>
+<style>
+  html,body{margin:0;height:100%;background:#0b0b0b;overflow:hidden;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  canvas{position:absolute;image-rendering:auto}
+  #hud{position:absolute;left:12px;bottom:10px;font-size:12px;color:#fff;opacity:.45;pointer-events:none}
+  #bar{position:absolute;right:12px;bottom:8px;display:flex;gap:8px;align-items:center}
+  button{border:0;border-radius:999px;padding:7px 14px;font:500 12px/1 ui-sans-serif,system-ui;background:#f6f6f5;color:#111;cursor:pointer}
+  #msg{font-size:12px;color:#fff;opacity:.6}
+</style>
+<!--
+  Os dois celulares do app da Ourofino. A arte inteira é bitmap e fica PARADA: é captura de
+  tela, qualquer deriva nela amoleceria o texto da interface. Só a fileira das Bibliotecas
+  rola — e rola de verdade, porque com a entrada do card Vacinas a fileira passou a ter
+  conteúdo além da borda da tela.
+
+  Tudo aqui foi MEDIDO na arte, não chutado:
+
+    tela útil do celular da direita   x 1099..1791 (693 px) — primeiro e último pixel branco
+                                      entre as duas colunas do bezel preto
+    faixa limpa da fileira            y 1142..1349 (208 px) — acima dela o título
+                                      "Bibliotecas", abaixo o "Medicamentos"; nas duas
+                                      bordas a linha é branca de ponta a ponta, então dá
+                                      pra repintar a faixa sem tocar em mais nada
+    tile                              158 x 135, pitch 178, primeiro tile em x 1127
+    respiro lateral                   28 px (1127 - 1099)
+
+  A arte está em 1,875x sobre uma tela de 375 pt (tile de 84 x 72 pt). Os PNGs do Vacinas
+  vieram do Figma em 2x, então entraram com fator exato de 0,9375 — encaixe sem resto.
+
+  As células 1..4 são recorte 1:1 do composite, não redesenho: mantêm o canto contínuo e o
+  antialiasing originais. A única costura é o lado direito do tile "Casos", que a borda da
+  tela corta na arte — ali o pedaço que falta é o ESPELHO do lado esquerdo do próprio tile,
+  que é chapado e simétrico. Pixel refletido, não pixel inventado.
+
+  Cada célula é desenhada em x inteiro de propósito: em x fracionário o browser reamostra o
+  bitmap todo quadro e as labels ficam moles. A 5 px por quadro a quantização não aparece.
+-->
+<canvas id="c" width="2000" height="1904"></canvas>
+<div id="hud"></div>
+<div id="bar"><span id="msg"></span><button id="rec">gravar</button></div>
+<script src="/bibliotecas/player.js"></script>
+<script>
+const FPS = 30, TOTAL_FRAMES = 300;          // 10 s
+
+const BAND    = { x: 1099, y: 1142, w: 693, h: 208 };
+const CELL_X0 = 1117, PITCH = 178;           // 1117 = 1127 do tile - 10 de respiro na célula
+const CARDS   = ["estudos","protocolos","racas","casos","vacinas","testes"];
+
+// Curso real do scroll: fim do conteúdo (último tile + os mesmos 28 px de respiro da
+// esquerda) menos a borda direita da tela. Com 4 cards isso dava 55 px e não era motion
+// nenhum; com o Vacinas são 233 px, pouco mais de um card e meio.
+const SCROLL = (CELL_X0 + (CARDS.length - 1) * PITCH + 10 + 158 + 28) - (BAND.x + BAND.w);
+
+// Quanto a fileira passa do batente antes de voltar. Numa lista iOS isso é o rubber-band,
+// e é ele que separa "alguém deslizou" de "uma animação tocou": sem o repique o movimento
+// chega no fim e simplesmente desliga. 14 px aqui ≈ 7,5 pt na tela.
+const OVER_FIM = 18, OVER_INICIO = 8;
+
+// Duas curvas, cada uma para um trabalho diferente:
+//   flick  — o dedo solta e o conteúdo corre sozinho: velocidade máxima no começo e
+//            freada longa. Por isso ease-out puro, sem ease-in: ninguém vê o dedo
+//            acelerando, vê o resultado de já ter acelerado.
+//   mola   — a volta do rubber-band. No ponto de virada a velocidade é ZERO (o conteúdo
+//            parou antes de voltar), então aqui precisa ser ease-in-out. Um ease-out
+//            daria um tranco justamente onde o movimento devia ser mais macio.
+//
+// O flick era ease-out puro (1-(1-t)³). Isso dá velocidade MÁXIMA no primeiro quadro: a
+// fileira saía de parada para 40 px/quadro de um quadro pro outro, e esse degrau é o que
+// fazia o começo parecer um estalo em vez de um deslize. Agora é uma bezier com uma
+// aceleração curta na entrada e uma freada bem longa na saída — o conteúdo pega embalo
+// em vez de aparecer já em velocidade, e ainda assim passa a maior parte do curso rápido.
+//
+// Newton em cima do x da curva; 5 passos convergem bem abaixo de um pixel.
+const BZ = { x1: 0.22, y1: 0, x2: 0.08, y2: 1 };
+function bezier(t, a, b) { return 3*(1-t)*(1-t)*t*a + 3*(1-t)*t*t*b + t*t*t; }
+
+const E = {
+  flick: x => {
+    let t = x;
+    for (let i = 0; i < 5; i++) {
+      const d = 3*(1-t)*(1-t)*BZ.x1 + 6*(1-t)*t*(BZ.x2-BZ.x1) + 3*t*t*(1-BZ.x2);
+      if (Math.abs(d) < 1e-6) break;
+      t = Math.min(1, Math.max(0, t - (bezier(t, BZ.x1, BZ.x2) - x) / d));
+    }
+    return bezier(t, BZ.y1, BZ.y2);
+  },
+  // A volta do batente era um smoothstep: sai do repouso, chega no alvo e PARA, sem nunca
+  // passar dele. Isso é amortecimento crítico — tecnicamente uma volta, mas o olho lê como
+  // borracha dura. Elástico de verdade passa do ponto de descanso e volta: é a ultrapassagem
+  // na contramão que entrega a elasticidade.
+  //
+  // Com oscilação ficou borracha de desenho animado. Sem ela, mas com amortecimento alto,
+  // ficou pior ainda: a mola fazia 90% do caminho em 4 quadros a 5,6 px/quadro e depois
+  // sobravam 10 quadros parados — volta rápida e DURA, com 0,2 s de estalo logo depois de
+  // 1,2 s de deslize. O contraste entre os dois é que entregava o tranco.
+  //
+  // O que vale aqui é amortecimento CRÍTICO e devagar: a massa-mola volta sem passar do
+  // ponto nenhuma vez, mas espalhada pelo trecho inteiro.
+  //
+  //     g(t) = e^(-c·t) · (1 + c·t)        g(0)=1, g'(0)=0
+  //
+  // Velocidade zero nas duas pontas: ela sai do repouso sem estalo (o flick terminou
+  // parado ali) e chega no alvo desacelerando. Pico de 1,1 px/quadro em vez de 5,6.
+  // Normalizado por g(1) pra pousar EXATO no alvo no último quadro — sem isso o repouso
+  // seguinte não bateria mais pixel a pixel com a arte.
+  // A VOLTA não é um flick. Flick é alguém jogando a lista e soltando: energia toda no
+  // começo, freada longa. A volta aqui é a fileira atravessando os 423 px de ponta a ponta
+  // pra reabrir o loop — com curva de flick ela despejava quase tudo nos primeiros quadros
+  // a ~38 px/quadro, rápido demais pro olho acompanhar, e o que sobrava era teletransporte.
+  //
+  // Smootherstep: velocidade E aceleração zero nas duas pontas, a curva mais macia que
+  // existe pra ir de um repouso a outro. Pico de 1,875x a média, contra 5x da bezier.
+  retorno: t => t * t * t * (t * (6 * t - 15) + 10),
+
+  mola: (() => {
+    const c = 3.2;
+    const g = t => Math.exp(-c * t) * (1 + c * t);
+    const g1 = g(1);
+    return t => (1 - g(t)) / (1 - g1);
+  })(),
+};
+
+// A linha do tempo em PIXELS, não em frações: [quadros, de, para, curva].
+// A volta é de propósito mais curta e mais seca que a ida (26 contra 28 quadros) — se as
+// duas tiverem o mesmo compasso, o olho lê a peça como um vídeo tocando de trás pra frente
+// em vez de dois gestos de alguém usando o app.
+//
+// Os 3 s a mais foram quase todos para os REPOUSOS, não para os gestos: o que o loop
+// ganha com mais tempo é tempo de leitura da fileira, e gesto esticado volta a parecer
+// animação em vez de dedo. Ida e volta ganharam só 4 quadros cada, pra não ficarem
+// abruptas ao lado de pausas maiores.
+// O repouso em 0 é partido em dois: o do fim do loop e o do começo. Somados dão o mesmo
+// tempo parado, mas quem assiste o mp4 UMA vez só vê o de cima — por isso ele é o maior
+// dos dois. Com 28 quadros ali o scroll começava 0,9 s depois do play, antes de dar tempo
+// de ler a fileira; com 62 dá uma segurada de 2 s antes de qualquer coisa se mexer.
+const TL = [
+  [62,  0,                 0,                 null],      // segurada antes de começar
+  [36,  0,                 SCROLL + OVER_FIM, "flick"],   // ida
+  [20,  SCROLL + OVER_FIM, SCROLL,            "mola"],    // bate no fim da lista e assenta
+  [86,  SCROLL,            SCROLL,            null],      // repouso com o fim da lista na tela
+  [60,  SCROLL,            -OVER_INICIO,      "retorno"], // volta, quase o dobro do tempo da ida
+  [16,  -OVER_INICIO,      0,                 "mola"],    // bate no começo e assenta
+  [20,  0,                 0,                 null],
+];                                                        // 62+36+20+86+60+16+20 = 300
+
+function offsetAt(f) {
+  let t = f;
+  for (const [len, a, b, curva] of TL) {
+    if (t < len) return curva ? a + (b - a) * E[curva](t / len) : a;
+    t -= len;
+  }
+  return 0;
+}
+
+const load = src => new Promise((res, rej) => {
+  // onload e não decode(): decode() em alguns builds resolve antes do bitmap estar
+  // realmente pronto pro drawImage e o primeiro quadro sai em branco.
+  const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src;
+});
+
+// Obturador. Uma gravação de tela tem borrão: o sensor integra o movimento durante o
+// quadro inteiro. O canvas não tem nada disso — cada quadro é um instante perfeito — e a
+// 30 px por quadro o olho lê isso como tranco, não como velocidade.
+//
+// O número de amostras acompanha a VELOCIDADE, não é fixo: o que importa é o espaçamento
+// entre elas. Com 6 amostras fixas, a 21 px/quadro elas caem a 2,5 px uma da outra e o
+// rastro vira seis fantasmas separados em vez de borrão. Mirando PASSO px de distância
+// entre amostras o rastro fecha em qualquer velocidade, e quadro devagar não paga por
+// amostra que não ia mudar nada.
+const SHUTTER = 0.7, PASSO = 1.2, MAX_AMOSTRAS = 32;
+
+Promise.all([
+  load("/bibliotecas/mockup.png"),
+  ...CARDS.map((n, i) => load(`/bibliotecas/card-${i + 1}-${n}.png`)),
+]).then(([mockup, ...cells]) => {
+  const canvas = document.getElementById("c");
+
+  // Canvas auxiliar do tamanho exato da faixa. Cada amostra é desenhada nele INTEIRA,
+  // fundo incluso, e só depois somada na tela. É isso que faz a média fechar: somando
+  // direto na tela, as pontas da fileira (onde numa amostra tem card e na outra tem o
+  // branco do respiro) ficariam de fora da conta e deixariam um rastro sujo.
+  const band = document.createElement("canvas");
+  band.width = BAND.w; band.height = BAND.h;
+  const bctx = band.getContext("2d");
+
+  function desenhaFaixa(dx, inteiro) {
+    bctx.fillStyle = "#fff";
+    bctx.fillRect(0, 0, BAND.w, BAND.h);
+    for (let i = 0; i < cells.length; i++) {
+      const x = CELL_X0 + i * PITCH - dx - BAND.x;
+      bctx.drawImage(cells[i], inteiro ? Math.round(x) : x, 0);
+    }
+  }
+
+  function drawFrame(c, f) {
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.globalAlpha = 1;
+    c.drawImage(mockup, 0, 0);
+
+    const dx = offsetAt(f);
+    const vel = Math.abs(offsetAt((f + 1) % TOTAL_FRAMES) - dx);
+
+    // Parado: uma amostra só e em x INTEIRO. Em x fracionário o browser reamostra o
+    // bitmap e as labels amolecem — e é justamente parado que dá pra ler a fileira.
+    //
+    // O corte era 0,6 px e essa foi a segunda causa do tranco: na rabeira da freada a
+    // fileira anda ~0,35 px por quadro, caía aqui dentro e ia pro x arredondado — ou seja,
+    // ficava parada três quadros, pulava 1 px inteiro, parava de novo. Movimento lento
+    // tem que andar em x fracionário mesmo; a moleza da reamostragem não se vê andando,
+    // mas o degrau de 1 px se vê. Agora só o repouso de verdade (vel = 0) arredonda.
+    if (vel < 0.02) {
+      desenhaFaixa(dx, true);
+      c.drawImage(band, BAND.x, BAND.y);
+      return;
+    }
+
+    // Em movimento: alfa 1/(k+1) a cada amostra dá a média uniforme EXATA das N — na
+    // k-ésima soma, o que já estava na tela pesa k/(k+1) e a nova pesa 1/(k+1).
+    const n = Math.min(MAX_AMOSTRAS, Math.max(2, Math.ceil(vel * SHUTTER / PASSO)));
+    for (let k = 0; k < n; k++) {
+      desenhaFaixa(offsetAt(f + (k / n) * SHUTTER), false);
+      c.globalAlpha = 1 / (k + 1);
+      c.drawImage(band, BAND.x, BAND.y);
+    }
+    c.globalAlpha = 1;
+  }
+
+  mountPlayer({
+    canvas,
+    hud: document.getElementById("hud"),
+    recBtn: document.getElementById("rec"),
+    msg: document.getElementById("msg"),
+    FPS, TOTAL_FRAMES, drawFrame,
+    name: "bibliotecas-motion",
+    maxScale: 1,
+  });
+});
+</script>

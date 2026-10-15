@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>unico you — reel</title>
+<style>
+  :root { color-scheme: dark; }
+  html,body { margin:0; height:100%; background:#0E0E10; color:#F6F6F5;
+              font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:20px; box-sizing:border-box; }
+  canvas { aspect-ratio:16/9; max-width:100%; max-height:calc(100% - 70px); width:auto; height:auto;
+           border-radius:12px; box-shadow:0 18px 60px rgba(0,0,0,.55); background:#fff; }
+  .bar { display:flex; gap:10px; align-items:center; font-size:13px; }
+  button { border:0; border-radius:999px; padding:9px 16px; font-size:13px; font-weight:500;
+           background:#F6F6F5; color:#111; cursor:pointer; }
+  button.ghost { background:#242428; color:#F6F6F5; }
+  button:disabled { opacity:.45; cursor:default; }
+  .hint { opacity:.55; }
+</style>
+</head>
+<body>
+<main>
+  <canvas id="c" width="1920" height="1080"></canvas>
+  <div class="bar">
+    <button id="replay">Replay</button>
+    <button id="loop" class="ghost">Loop: off</button>
+    <button id="rec" class="ghost">Gravar</button>
+    <span class="hint" id="status">espaço = pausar · R = replay</span>
+  </div>
+</main>
+
+<script>
+// ---------------------------------------------------------------------------
+// Reel do unico you. O conteúdo é o próprio mockup 11.png (2720x1700) fatiado
+// em faixas: cada camada é um recorte da imagem que sobe dentro da própria
+// caixa, então o frame final bate pixel a pixel com a original.
+//   ../11.png   o mockup (sprite de onde saem os recortes)
+//   stage.png   o mesmo mockup com as três telas vazias (molduras, notch e
+//               status bar intactos, fundo de cada tela reconstruído)
+// O aparelho do meio monta primeiro; os laterais saem de trás dele.
+// ---------------------------------------------------------------------------
+const W = 1920, H = 1080, FPS = 60, DUR = 7.4;
+
+// corpo de cada aparelho, raio do canto e tela correspondente
+const PH  = { L:[475,235,605,1226], C:[1018,153,683,1385], R:[1640,235,605,1226] };
+const RAD = { L:88, C:100, R:88 };
+const SCR = { L:[511,271,533,1154], C:[1059,194,601,1303], R:[1676,271,533,1154] };
+const CEN = k => [PH[k][0] + PH[k][2]/2, PH[k][1] + PH[k][3]/2];
+
+// faixas de conteúdo, medidas na imagem (x, y, largura, altura)
+const B = {
+  // ---- centro: Meus dados
+  c_titulo:[1099,295,228,31],  c_div:[1092,358,536,4],    c_sub1:[1098,394,251,31],
+  c_card:[1094,448,531,213],   c_pill:[1094,684,531,48],
+  c_sub2:[1098,779,340,31],    c_sub2b:[1096,831,400,19], c_vertodos:[1534,831,95,19],
+  c_card2:[1089,882,541,262],  c_dots:[1308,1154,90,8],   c_sub3:[1098,1216,412,26],
+  c_cardP:[1108,1278,222,66],  c_cardG:[1390,1278,221,66],
+  // ---- esquerda: Serviços
+  l_titulo:[545,358,143,34],   l_div:[544,412,462,10],     l_sub1:[547,448,185,50],
+  l_card:[541,496,476,249],    l_busca:[544,744,473,76],
+  l_sub2:[545,868,220,27],     l_sub2b:[545,907,302,34],  l_vertodos:[931,907,86,34],
+  l_ic1:[543,948,95,143],      l_ic2:[669,948,93,143],
+  l_ic3:[794,948,93,143],      l_ic4:[917,948,100,143],
+  l_sub3:[545,1129,283,28],    l_cats:[555,1174,462,108],
+  // ---- direita: Notificações
+  r_titulo:[1700,353,222,40],  r_filtro:[2142,353,33,40], r_tabs:[1700,431,466,48],
+  r_n1:[1676,477,533,215],     r_n2:[1676,692,533,204],   r_n3:[1676,896,533,207],
+  r_n4:[1676,1121,533,151],
+};
+
+// ---------------------------------------------------------------- easings
+const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
+const outCubic = t => 1 - Math.pow(1 - t, 3);
+const outQuint = t => 1 - Math.pow(1 - t, 5);
+const inOutCubic = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3)/2;
+const P = (t, at, dur, ease = outQuint) => ease(clamp01((t - at) / dur));
+const mix = (a, b, p) => a + (b - a) * p;
+
+// ----------------------------------------------------------- coreografia
+const T_OPEN = [2.15, 3.35];      // os laterais saem de trás do aparelho do meio
+const LAG = { L: 0, C: 0, R: 0.18 };  // o direito sai logo atrás do esquerdo
+
+// a câmera quase não se mexe: o aparelho do meio já preenche a altura, então é
+// só um recuo curto para caber os três.
+const CAM = [
+  { t: 0.0,  s: 0.663 },
+  { t: 1.90, s: 0.651 },
+  { t: 4.25, s: 0.614 },   // o recuo termina depois da abertura: a câmera assenta por último
+  { t: 7.4,  s: 0.624 },
+];
+const CAM_CX = 1360, CAM_CY = 845.5;
+// Hermite com tangentes Catmull-Rom: a velocidade não zera em cada marca, que é
+// o que fazia o recuo parecer picado entre um trecho e outro.
+function camAt(t) {
+  const n = CAM.length;
+  if (t <= CAM[0].t) return CAM[0].s;
+  if (t >= CAM[n-1].t) return CAM[n-1].s;
+  let i = 1; while (i < n - 1 && t > CAM[i].t) i++;
+  const a = CAM[i-1], b = CAM[i];
+  const prev = CAM[Math.max(0, i-2)], next = CAM[Math.min(n-1, i+1)];
+  const h = b.t - a.t, u = (t - a.t) / h, u2 = u*u, u3 = u2*u;
+  const m1 = (b.s - prev.s) / (b.t - prev.t) * h;
+  const m2 = (next.s - a.s) / (next.t - a.t) * h;
+  return (2*u3 - 3*u2 + 1)*a.s + (u3 - 2*u2 + u)*m1 + (-2*u3 + 3*u2)*b.s + (u3 - u2)*m2;
+}
+
+// pose dos laterais: partem do centro do aparelho da frente (menores, logo
+// totalmente escondidos atrás dele) e abrem até o lugar que ocupam na imagem.
+function poseAt(k, t) {
+  if (k === 'C') return { cx: CEN('C')[0], cy: CEN('C')[1], s: 1 };
+  const p = P(t, T_OPEN[0] + LAG[k], T_OPEN[1] - T_OPEN[0], outQuint);
+  const [fx, fy] = CEN(k), [hx, hy] = CEN('C');
+  return { cx: mix(hx, fx, p), cy: mix(hy, fy, p), s: mix(0.90, 1, p) };
+}
+
+// ------------------------------------------------------------ assets
+const IMG = {};
+const load = src => new Promise((res, rej) => {
+  const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error(src)); i.src = src;
+});
+const cv = document.getElementById('c');
+const ctx = cv.getContext('2d', { alpha: false });
+ctx.imageSmoothingQuality = 'high';
+
+// ---------------------------------------------------------- primitivas
+// entrada "janela": o recorte sobe DENTRO da própria caixa, então o fundo em
+// volta nunca se desloca e a imagem continua fiel.
+function rise(b, p, dist = 26) {
+  if (p <= 0) return;
+  const [x,y,w,h] = b;
+  ctx.save();
+  ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
+  ctx.globalAlpha = p;
+  ctx.drawImage(IMG.sprite, x, y, w, h, x, y + dist * (1 - p), w, h);
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+// bloco que entra deslizando de fora da tela, sem janela própria: o fundo dele
+// cobre o da tela conforme sobe. É o que a barra de abas precisa — com a janela
+// do rise sobrava uma faixa do fundo aparecendo atrás dela.
+function slide(b, p, dist) {
+  if (p <= 0) return;
+  const [x,y,w,h] = b;
+  ctx.drawImage(IMG.sprite, x, y, w, h, x, y + dist * (1 - p), w, h);
+}
+// varredura da esquerda para a direita (divisores)
+function wipe(b, p) {
+  if (p <= 0) return;
+  const [x,y,w,h] = b;
+  ctx.save();
+  ctx.beginPath(); ctx.rect(x, y, w*p, h); ctx.clip();
+  ctx.drawImage(IMG.sprite, x, y, w, h, x, y, w, h);
+  ctx.restore();
+}
+
+// ------------------------------------------------------- conteúdo das telas
+// cada linha: [caixa, instante, distância da subida]
+const SEQ = {
+  C: [
+    [B.c_titulo,  0.55, 30], [B.c_sub1,    0.8, 24],
+    [B.c_card,    0.92, 40], [B.c_pill,    1.18, 26],
+    [B.c_sub2,    1.36, 24], [B.c_sub2b,   1.46, 18], [B.c_vertodos, 1.52, 18],
+    [B.c_card2,   1.62, 38], [B.c_dots,    1.86, 10],
+    [B.c_sub3,    1.94, 24], [B.c_cardP,   2.06, 30], [B.c_cardG, 2.13, 30],
+  ],
+  L: [
+    [B.l_titulo,  2.85, 28], [B.l_sub1, 3.06, 24],
+    [B.l_card,    3.18, 40], [B.l_busca,   3.36, 30],
+    [B.l_sub2,    3.5, 22], [B.l_sub2b,   3.58, 18], [B.l_vertodos, 3.64, 18],
+    [B.l_ic1,     3.72, 26], [B.l_ic2,     3.78, 26], [B.l_ic3, 3.84, 26], [B.l_ic4, 3.9, 26],
+    [B.l_sub3,    4.0, 22], [B.l_cats,    4.1, 30],
+  ],
+  R: [
+    [B.r_titulo,  2.85, 28], [B.r_filtro, 2.97, 20], [B.r_tabs, 3.04, 22],
+    [B.r_n1,      3.2, 34], [B.r_n2,      3.32, 34], [B.r_n3, 3.44, 34], [B.r_n4, 3.56, 34],
+  ],
+};
+const DIV = { C: [B.c_div, 0.72], L: [B.l_div, 2.96] };
+
+// raio da tela = raio do corpo menos o bezel; sem ele a barra de abas branca
+// preenche os cantos de baixo e a borda fica quadrada
+const R_SCR = { L: 52, C: 59, R: 52 };
+// ---------------------------------------------------- barra de abas
+// Montada, não recortada: o fundo é desenhado e os ícones/rótulos vêm da arte
+// em alta (tabbar-hi.png). Só o item aceso ainda sai do print, porque a arte em
+// alta que eu tenho traz o "Início" ligado, não os outros.
+const TAB_HI = {                                   // recortes em tabbar-hi.png
+  ic: [[57,16,99,96], [409,17,90,89], [759,17,90,89], [1109,17,94,89]],
+  tx: [[53,147,111,37], [348,153,217,28], [729,151,151,37], [1044,151,222,37]],
+};
+const TAB = {
+  C: { aceso: 1, fundo: [1059,1344,601,153],
+       ic: [[1113,1368,43,42],[1263,1368,40,42],[1414,1368,40,42],[1565,1368,41,42]],
+       tx: [[1113,1427,43,16],[1233,1427,102,16],[1401,1427,66,16],[1536,1427,97,16]] },
+  L: { aceso: 2, fundo: [511,1282,533,143],
+       ic: [[559,1310,38,37],[692,1310,36,37],[825,1310,36,37],[959,1310,37,37]],
+       tx: [[559,1361,39,16],[669,1361,84,16],[811,1361,65,16],[933,1361,85,16]] },
+  R: { aceso: 3, fundo: [1676,1272,533,153],
+       ic: [[1725,1310,38,37],[1858,1310,36,37],[1992,1310,35,37],[2124,1310,38,37]],
+       tx: [[1725,1361,40,17],[1835,1361,85,17],[1980,1361,59,17],[2096,1361,93,17]] },
+};
+// desenha um recorte da arte em alta sem deformar: a largura manda, a altura
+// acompanha e o que sobrar fica centrado na caixa de destino
+function posto([sx, sy, sw, sh], dx, dy, dw, dh) {
+  const k = dw / sw;
+  const alt = sh * k;
+  // "multiply": o branco da arte não altera o que está embaixo, então o recorte
+  // não desenha um retângulo claro sobre a sombra — e o traço ainda recebe a
+  // sombra do fundo, como no original
+  const antes = ctx.globalCompositeOperation;
+  ctx.globalCompositeOperation = 'multiply';
+  ctx.drawImage(IMG.tabhi, sx, sy, sw, sh, dx, dy + (dh - alt) / 2, dw, alt);
+  ctx.globalCompositeOperation = antes;
+}
+function barraDeAbas(k, t, at) {
+  const B = TAB[k];
+  const pf = P(t, at, 0.55, outCubic);
+  if (pf <= 0) return;
+  ctx.save();
+  ctx.globalAlpha = pf;
+  // o fundo vem pronto com a sombra que o aparelho da frente projeta; pintar
+  // branco chapado deixava a barra mais clara que o resto da tela
+  ctx.drawImage(IMG.tabbg, ...B.fundo, ...B.fundo);
+  for (let i = 0; i < 4; i++) {
+    const p = P(t, at + 0.14 + i * 0.055, 0.5, outCubic);
+    if (p <= 0) continue;
+    const dy = 9 * (1 - p);
+    ctx.globalAlpha = p * pf;
+    const [x,y,w,h] = B.ic[i], [a,b,c,d] = B.tx[i];
+    // a arte em alta serve para os itens apagados dela: o "Início" vem aceso lá,
+    // e o item aceso desta tela também só existe no print
+    // o item aceso e o "Início" saem do próprio print: assim recebem a mesma
+    // sombra que o fundo da barra, e o contraste fica igual ao original
+    if (i === B.aceso || i === 0) {
+      ctx.drawImage(IMG.sprite, x, y, w, h, x, y + dy, w, h);
+      ctx.drawImage(IMG.sprite, a, b, c, d, a, b + dy, c, d);
+    } else {
+      // escala uniforme pela largura e centraliza na altura: forçar a caixa de
+      // destino deformava o desenho, porque as duas caixas não cobrem a mesma
+      // sobra vertical (acentos, antialias do print)
+      posto(TAB_HI.ic[i], x, y + dy, w, h);
+      posto(TAB_HI.tx[i], a, b + dy, c, d);
+    }
+  }
+  ctx.restore();
+}
+
+function drawScreen(k, t) {
+  const [sx,sy,sw,sh] = SCR[k];
+  ctx.save();
+  ctx.beginPath(); ctx.roundRect(sx, sy, sw, sh, R_SCR[k]); ctx.clip();
+  barraDeAbas(k, t, (k === 'C' ? 0.58 : 2.86) + LAG[k]);
+  if (DIV[k]) wipe(DIV[k][0], P(t, DIV[k][1] + LAG[k], 0.6, outCubic));
+  for (const [box, at, dist, modo] of SEQ[k]) {
+    const p = P(t, at + LAG[k], modo === 'sobe' ? 0.95 : 0.8, modo === 'sobe' ? outCubic : outQuint);
+    if (modo === 'sobe') slide(box, p, dist); else rise(box, p, dist);
+  }
+  ctx.restore();
+}
+
+// --------------------------------------------------------------- frame
+function drawPhone(k, t, open) {
+  const [px,py,pw,ph] = PH[k];
+  const pose = poseAt(k, t);
+  const [cx0,cy0] = CEN(k);
+  ctx.save();
+  ctx.globalAlpha = open;
+  ctx.translate(pose.cx, pose.cy); ctx.scale(pose.s, pose.s); ctx.translate(-cx0, -cy0);
+
+  ctx.save();                                     // sombra do aparelho
+  ctx.shadowColor = 'rgba(24,30,50,.13)'; ctx.shadowBlur = 46; ctx.shadowOffsetY = 20;
+  ctx.fillStyle = '#FFFFFF';
+  ctx.beginPath(); ctx.roundRect(px, py, pw, ph, RAD[k]); ctx.fill();
+  ctx.restore();
+
+  ctx.beginPath(); ctx.roundRect(px, py, pw, ph, RAD[k]); ctx.clip();
+  ctx.drawImage(IMG.stage, px, py, pw, ph, px, py, pw, ph);
+  drawScreen(k, t);
+  ctx.restore();
+}
+
+function drawFrame(frame) {
+  const t = frame / FPS;
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, W, H);
+
+  const s = camAt(t);
+  ctx.setTransform(s, 0, 0, s, W/2 - CAM_CX*s, H/2 - CAM_CY*s);
+
+  const open = P(t, 0, 0.5, outCubic);
+  drawPhone('L', t, open);                     // os laterais ficam atrás…
+  drawPhone('R', t, open);
+  drawPhone('C', t, open);                     // …e o do meio na frente
+  ctx.setTransform(1,0,0,1,0,0);
+}
+
+// -------------------------------------------------------------- player
+const TOTAL = Math.round(DUR * FPS);
+let raf = 0, t0 = 0, paused = false, looping = false, pausedAt = 0;
+const status = document.getElementById('status');
+const tick = now => {
+  const t = (now - t0) / 1000;
+  drawFrame(Math.min(TOTAL, Math.round(t * FPS)));
+  if (t < DUR) raf = requestAnimationFrame(tick);
+  else if (looping) play();
+};
+function play(from = 0) {
+  cancelAnimationFrame(raf);
+  paused = false;
+  t0 = performance.now() - from;
+  raf = requestAnimationFrame(tick);
+}
+document.getElementById('replay').onclick = () => play();
+document.getElementById('loop').onclick = e => {
+  looping = !looping;
+  e.target.textContent = `Loop: ${looping ? 'on' : 'off'}`;
+};
+addEventListener('keydown', e => {
+  if (e.code === 'KeyR') play();
+  if (e.code === 'Space') {
+    e.preventDefault();
+    if (paused) play(pausedAt);
+    else { paused = true; pausedAt = performance.now() - t0; cancelAnimationFrame(raf); }
+  }
+});
+
+// ------------------------------------------------------------ gravação
+// O frame vem do ÍNDICE, não do relógio, então nada se perde se a máquina
+// engasgar. Precisa estar servido por http (next dev) — em file:// o canvas
+// fica "tainted" e o MediaRecorder falha.
+document.getElementById('rec').onclick = async (e) => {
+  const btn = e.target;
+  const mime = ['video/mp4;codecs=avc1.640028','video/mp4','video/webm;codecs=vp9','video/webm']
+    .find(m => MediaRecorder.isTypeSupported(m));
+  if (!mime) { status.textContent = 'navegador sem MediaRecorder'; return; }
+  const ext = mime.startsWith('video/mp4') ? 'mp4' : 'webm';
+  btn.disabled = true; cancelAnimationFrame(raf);
+
+  // Os frames são empurrados um a um com o timestamp que eu escolho, em vez de
+  // depender do compositor da aba: assim a gravação sai igual mesmo com a janela
+  // escondida ou em segundo plano. Sem esse recurso, cai no captureStream.
+  const gen = ('MediaStreamTrackGenerator' in window) ? new MediaStreamTrackGenerator({ kind: 'video' }) : null;
+  const stream = gen ? new MediaStream([gen]) : cv.captureStream(0);
+  const track = gen ? null : stream.getVideoTracks()[0];
+  const writer = gen ? gen.writable.getWriter() : null;
+  const chunks = [];
+  const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 24_000_000 });
+  rec.ondataavailable = ev => ev.data.size && chunks.push(ev.data);
+  const done = new Promise(r => rec.onstop = r);
+  rec.start();
+
+  const start = performance.now();
+  for (let f = 0; f <= TOTAL; f++) {
+    drawFrame(f);
+    if (writer) {
+      const vf = new VideoFrame(cv, { timestamp: Math.round(f * 1e6 / FPS), duration: Math.round(1e6 / FPS) });
+      await writer.write(vf); vf.close();
+    } else {
+      track.requestFrame();
+    }
+    // o MediaRecorder carimba pelo relógio, então o laço anda em tempo real
+    const target = start + ((f + 1) / FPS) * 1000;
+    const wait = target - performance.now();
+    if (wait > 0) await new Promise(r => setTimeout(r, wait));
+    status.textContent = `gravando ${Math.round((f/TOTAL)*100)}%`;
+  }
+  if (writer) await writer.close();
+  rec.stop(); await done;
+
+  const blob = new Blob(chunks, { type: mime });
+  const name = `unico-you-reel.${ext}`;
+  try {
+    const res = await fetch(`/api/save-render?name=${name}`, { method: 'POST', body: blob });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || res.status);
+    status.textContent = `salvo em ${json.path} (${(json.bytes/1e6).toFixed(1)} MB)`;
+  } catch {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name; a.click();
+    status.textContent = `baixado ${name} (${(blob.size/1e6).toFixed(1)} MB)`;
+  }
+  btn.disabled = false;
+};
+
+// --------------------------------------------------------------- boot
+(async () => {
+  const [stage, sprite, tabhi, tabbg] = await Promise.all([load('stage.png'), load('../11.png'), load('tabbar-hi.png'), load('tabbg.png')]);
+  Object.assign(IMG, { stage, sprite, tabhi, tabbg });
+  play();
+})();
+</script>
+</body>
+</html>

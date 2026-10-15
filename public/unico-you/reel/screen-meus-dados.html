@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>unico — Meus dados reconstruída</title>
+<style>
+  @font-face { font-family: Unico; src: url('fonts/UnicoDisplay-Light.ttf');   font-weight: 300; }
+  @font-face { font-family: Unico; src: url('fonts/UnicoDisplay-Regular.ttf'); font-weight: 400; }
+  @font-face { font-family: Unico; src: url('fonts/UnicoDisplay-Medium.ttf');  font-weight: 500; }
+  @font-face { font-family: Unico; src: url('fonts/UnicoDisplay-Bold.ttf');    font-weight: 700; }
+
+  :root { --fundo:#F7F7F9; --tinta:#0B0B0D; --cinza:#9F9FA1; --azul:#527EB4; }
+  html,body { margin:0; background:#15151a; color:#eee; font-family:ui-sans-serif,system-ui,sans-serif; }
+  .palco { display:flex; gap:26px; padding:24px; align-items:flex-start; }
+  .rotulo { font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:#8a8a92; margin:0 0 8px; }
+
+  /* a tela tem o tamanho que ela ocupa no mockup; --k escala tudo junto */
+  .tela {
+    width:601px; height:1303px; transform-origin:0 0; transform:scale(var(--k,1));
+    position:relative; overflow:hidden; background:var(--fundo);
+    font-family:Unico, sans-serif; color:var(--tinta);
+    border-radius:59px;
+  }
+  .tela * { position:absolute; margin:0; }
+  .nowrap { white-space:nowrap; }
+
+  /* --- barra de status e notch --- */
+  .notch { left:150px; top:-4px; width:310px; height:51px; background:#000; border-radius:0 0 24px 24px; }
+  .hora  { left:38px; top:11.9px; font-size:23.5px; font-weight:500; letter-spacing:.2px; }
+  .sinal { right:36px; top:22px; width:116px; height:24px;
+           background:url('../11.png') -1517px -215px; }
+
+  /* --- títulos e seções --- */
+  .h1    { left:38px; top:83.3px; font-size:40.8px; font-weight:300; letter-spacing:-.3px; }
+  .regua { left:33px; top:165px; width:535px; height:2px; background:#EBEBEF; }
+  .h2    { left:38px; font-size:30.9px; font-weight:300; letter-spacing:-.2px; }
+
+  /* --- card de identidade --- */
+  .cartao { left:37px; top:256px; width:527px; height:209px; border-radius:20px;
+            background:linear-gradient(68deg, #5344A1 0%, #7C3598 38%, #CF1877 100%);
+            box-shadow:0 10px 26px rgba(90,30,110,.26); }
+  .foto   { left:64px;  top:309px; width:78px; height:78px; border-radius:50%;
+            background:url('../11.png') -1123px -503px; box-shadow:0 2px 8px rgba(0,0,0,.18); }
+  .nome   { left:168px; top:311.6px; width:250px; font-size:25.2px; font-weight:400; line-height:35px;
+            color:#fff; }
+  .qr     { left:461px; top:309px; width:78px; height:78px;
+            background:url('../11.png') -1520px -503px; border-radius:16px; }
+  .link   { left:167px; top:405.5px; font-size:18.1px; font-weight:400; color:#fff; }
+
+  /* --- pílula de consulta --- */
+  .pilula { left:37px; top:491px; width:527px; height:46px; border-radius:23px; background:#F0F0F2; }
+  .pilula-txt { left:58px; top:491px; height:46px; line-height:46px; font-size:18.8px; font-weight:400; color:#828284; }
+
+  /* --- bloco de privacidade --- */
+  .sub    { left:37px; font-size:20.2px; font-weight:400; color:var(--cinza); }
+  .acao   { font-size:20.6px; font-weight:500; color:var(--azul); }
+
+  /* --- card de compartilhamento --- */
+  .cartao2 { left:30px; top:694px; width:540px; height:256px; border-radius:18px; background:#fff;
+             box-shadow:0 6px 22px rgba(60,70,110,.09); }
+  .c2-t  { left:64px; top:708.8px; width:230px; font-size:23.4px; font-weight:400; line-height:35px; color:#4E4E50; }
+  .c2-s  { left:64px; top:788.3px; width:290px; font-size:17.8px; font-weight:400; line-height:27px; color:#A5A5A7; }
+  /* só a área do gráfico: as bordas do recorte caem em branco puro, então não
+     aparece a emenda contra o card */
+  .grafico { left:366px; top:700px; width:180px; height:205px;
+             background:url('../11.png') -1425px -894px; }
+  .c2-l  { left:64px; top:884.9px; font-size:19.4px; font-weight:500; color:#2A63AB; }
+
+  .ponto { top:961px; width:11px; height:6px; border-radius:3px; background:#D3D3D8; }
+  .ponto.on { width:38px; background:#9A9AA0; left:250px; }
+
+  /* --- atalhos coloridos --- */
+  .atalho { top:1085px; width:220px; height:120px; border-radius:18px; }
+  .rosa   { left:50px;  background:#F880AE; }
+  .verde  { left:332px; width:220px; background:#48CC55; }
+  .atalho-ic { top:1103px; width:70px; height:50px; background-repeat:no-repeat; }
+
+  /* --- barra de abas --- */
+  .abas  { left:0; top:1150px; width:601px; height:153px; background:#fff;
+           box-shadow:0 -6px 14px rgba(40,50,80,.05); }
+  .aba-ic { top:1172px; width:46px; height:46px; }
+  .aba-tx { top:1231px; font-size:19px; font-weight:400; color:#9D9BA0; text-align:center; }
+  .aba-tx.on { color:#2D67AE; font-weight:500; }
+
+  /* --- comparação --- */
+  .ref { width:601px; height:1303px; transform-origin:0 0; transform:scale(var(--k,1));
+         background:url('../11.png') -1059px -194px; border-radius:59px; }
+  .coluna { }
+  button { background:#2a2a32; color:#eee; border:0; border-radius:6px; padding:5px 10px; cursor:pointer; font-size:12px; }
+  .palco { overflow:auto; }
+</style>
+</head>
+<body>
+<div style="padding:14px 24px 0; display:flex; gap:8px; align-items:center; font-size:12px">
+  <span style="color:#8a8a92">zoom</span>
+  <button data-z="fit">ajustar</button><button data-z="1">1×</button>
+  <button data-z="2">2×</button><button data-z="3">3×</button>
+  <span style="color:#8a8a92; margin-left:10px">no 1× a tela tem o tamanho do print; ampliando, o texto reconstruído continua nítido</span>
+</div>
+<div class="palco" id="palco">
+  <div class="coluna">
+    <p class="rotulo">original (print)</p>
+    <div style="width:calc(601px * var(--k)); height:calc(1303px * var(--k))"><div class="ref"></div></div>
+  </div>
+  <div class="coluna">
+    <p class="rotulo">reconstruída · Unico Display</p>
+    <div style="width:calc(601px * var(--k)); height:calc(1303px * var(--k))">
+      <div class="tela" id="tela">
+        <div class="notch"></div>
+        <p class="hora" data-ref="38,22,62,24">16:20</p>
+        <div class="sinal"></div>
+
+        <p class="h1 nowrap" data-ref="40,101,228,31">Meus dados</p>
+        <div class="regua"></div>
+        <p class="h2 nowrap" style="top:186.5px" data-ref="39,200,251,31">Identidade digital</p>
+
+        <div class="cartao"></div>
+        <div class="foto"></div>
+        <p class="nome" data-ref="168,321,226,19" data-linha="Fernanda Souza de">Fernanda Souza de Moraes</p>
+        <div class="qr"></div>
+        <p class="link nowrap" data-ref="167,413,121,14">Ver detalhes &nbsp;›</p>
+
+        <div class="pilula"></div>
+        <p class="pilula-txt nowrap" data-ref="58,506,425,16" data-so-largura>Identidade consultada 2 vezes nos últimos 7 dias</p>
+
+        <p class="h2 nowrap" style="top:571.8px" data-ref="39,585,340,31">Privacidade e segurança</p>
+        <p class="sub nowrap" style="top:629.5px" data-ref="37,638,400,19">Transparência e controle sobre seus dados</p>
+        <p class="acao nowrap" style="left:475px; top:629.3px" data-ref="475,638,94,19">Ver todos</p>
+
+        <div class="cartao2" style="left:582px; width:120px"></div>
+        <div class="cartao2"></div>
+        <p class="c2-t" data-ref="64,719,209,41" data-linha="Compartilhamento">Compartilhamento de dados</p>
+        <p class="c2-s" data-ref="64,796,276,36" data-linha="Acompanhe o compartilhamento">Acompanhe o compartilhamento dos seus dados</p>
+        <div class="grafico"></div>
+        <p class="c2-l nowrap" data-ref="64,893,326,26">Gerenciar meus compartilhamentos</p>
+
+        <div class="ponto on"></div>
+        <div class="ponto" style="left:300px"></div>
+        <div class="ponto" style="left:322px"></div>
+
+        <p class="h2 nowrap" style="top:1008.6px" data-ref="39,1022,412,26">Guarde e atualize seus dados</p>
+        <div class="atalho rosa"></div>
+        <div class="atalho verde"></div>
+
+        <div class="abas"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// escala de exibição
+let k = Math.min(1, (window.innerHeight - 150) / 1303);
+const aplicar = v => {
+  k = v === 'fit' ? Math.min(1, (window.innerHeight - 150) / 1303) : Number(v);
+  document.documentElement.style.setProperty('--k', k.toFixed(4));
+  for (const c of document.querySelectorAll('.palco > .coluna > div:last-child')) {
+    c.style.width = (601 * k) + 'px'; c.style.height = (1303 * k) + 'px';
+  }
+};
+aplicar('fit');
+document.querySelectorAll('button[data-z]').forEach(b => b.onclick = () => aplicar(b.dataset.z));
+
+// ícones que seguem vindo do print (foto, QR, gráfico, atalhos e abas)
+const PRINT = '../11.png';
+const recorte = (sel, x, y, w, h) => {
+  const e = document.querySelector(sel); if (!e) return;
+  e.style.background = `url('${PRINT}') ${-x}px ${-y}px`;
+  e.style.width = w + 'px'; e.style.height = h + 'px';
+};
+// atalhos coloridos: só o desenho de dentro
+const ATALHOS = [['.rosa', 125, 1105, 70, 50], ['.verde', 408, 1102, 70, 50]];
+// abas: ícone e rótulo de cada item
+const ABAS = [
+  { ic: [1113, 1366, 46, 46], tx: 'Início',       cx: 75  },
+  { ic: [1262, 1366, 46, 46], tx: 'Meus Dados',   cx: 223, on: true },
+  { ic: [1413, 1366, 46, 46], tx: 'Serviços',     cx: 374 },
+  { ic: [1564, 1366, 46, 46], tx: 'Notificações', cx: 526 },
+];
+const tela = document.getElementById('tela');
+for (const [, rx, ry, w, h] of ATALHOS) {      // rx/ry são relativos à tela
+  const d = document.createElement('div');
+  d.className = 'atalho-ic';
+  d.style.left = rx + 'px'; d.style.top = ry + 'px';
+  d.style.width = w + 'px'; d.style.height = h + 'px';
+  d.style.background = `url('${PRINT}') ${-(1059 + rx)}px ${-(194 + ry)}px`;
+  tela.appendChild(d);
+}
+for (const a of ABAS) {
+  const ic = document.createElement('div');
+  ic.className = 'aba-ic';
+  ic.style.left = (a.cx - 23) + 'px';
+  ic.style.background = `url('${PRINT}') ${-a.ic[0]}px ${-a.ic[1]}px`;
+  const tx = document.createElement('p');
+  tx.className = 'aba-tx' + (a.on ? ' on' : '');
+  tx.textContent = a.tx;
+  tx.style.left = (a.cx - 80) + 'px';
+  tx.style.width = '160px';
+  tela.append(ic, tx);
+}
+
+// calibração: ajusta o corpo de cada texto marcado até casar a largura do print
+if (new URLSearchParams(location.search).has('cal')) {
+  const img = new Image();
+  img.onload = async () => {
+    await document.fonts.ready;
+    const cv = document.createElement('canvas'); const ctx = cv.getContext('2d');
+    const linhas = [];
+    for (const el of document.querySelectorAll('[data-ref]')) {
+      const [rx, ry, rw] = el.dataset.ref.split(',').map(Number);
+      let size = parseFloat(getComputedStyle(el).fontSize);
+      // texto que quebra em mais de uma linha mede só a primeira, num clone solto
+      const linha = el.dataset.linha;
+      const alvo = linha ? (() => {
+        const c = document.createElement('span');
+        c.textContent = linha;
+        c.style.cssText = 'position:absolute;white-space:nowrap;visibility:hidden;left:-9999px';
+        c.style.font = getComputedStyle(el).font;
+        el.parentNode.appendChild(c); return c;
+      })() : el;
+      for (let i = 0; i < 12; i++) {
+        size *= rw / alvo.getBoundingClientRect().width * k;
+        el.style.fontSize = size + 'px';
+        if (linha) alvo.style.fontSize = size + 'px';
+      }
+      if (linha) alvo.remove();
+      // onde a tinta da primeira linha cai hoje, para acertar o top
+      let ajuste = '';
+      if (!el.hasAttribute('data-so-largura')) {
+        const marca = document.createElement('span');
+        // position:static é obrigatório: a tela põe todo descendente em absolute
+        marca.style.cssText = 'position:static;display:inline-block;width:0;height:0;vertical-align:baseline';
+        el.insertBefore(marca, el.firstChild);
+        const baseline = marca.getBoundingClientRect().bottom;
+        marca.remove();
+        const cs = getComputedStyle(el);
+        ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+        // o canvas mede sem a escala do palco, então o ascendente entra multiplicado por k
+        const tinta = baseline - ctx.measureText(linha || el.textContent).actualBoundingBoxAscent * k;
+        const telaTop = document.getElementById('tela').getBoundingClientRect().top;
+        const alvo = telaTop + ry * k;
+        const topAtual = parseFloat(getComputedStyle(el).top);
+        const novoTop = topAtual + (alvo - tinta) / k;
+        el.style.top = novoTop + 'px';
+        ajuste = ` · top ${novoTop.toFixed(1)}px`;
+      }
+      linhas.push(`${el.className.split(' ')[0]} "${el.textContent.slice(0,18)}" → ${size.toFixed(1)}px${ajuste}`);
+    }
+    const pre = document.createElement('pre');
+    pre.style.cssText = 'position:fixed;right:8px;bottom:8px;background:#000c;padding:10px;font-size:11px;max-width:380px';
+    pre.textContent = linhas.join('\n');
+    document.body.appendChild(pre);
+  };
+  img.src = PRINT;
+}
+</script>
+</body>
+</html>

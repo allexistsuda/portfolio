@@ -9,7 +9,7 @@ import Reveal from "./Reveal";
  * Só desktop por enquanto (ver grid mobile separado em page.tsx).
  */
 
-const THUMB_HEIGHT = 36;
+const THUMB_HEIGHT = 60;
 
 export default function ProjectsList({
   items,
@@ -19,6 +19,7 @@ export default function ProjectsList({
     category: string;
     href: string;
     thumb?: string;
+    video?: string;
   }[];
 }) {
   const href = useHref();
@@ -26,51 +27,79 @@ export default function ProjectsList({
   return (
     <div>
       {items.map((p, i) => (
-        <Reveal key={i} delay={i * 80}>
+        <Reveal key={i} delay={i * 35} triggerMargin="0%">
           <a
             href={href(p.href)}
             className="group grid items-center"
             style={{
-              gridTemplateColumns: "1fr 1fr auto",
+              gridTemplateColumns: "1fr 180px 72px",
               columnGap: 24,
-              padding: "22px 12px",
-              borderBottom: "1px solid #E6E6E6",
+              padding: "16px 0",
+              borderBottom: i === items.length - 1 ? "none" : "1px solid #DEDEDE",
               textDecoration: "none",
-              transition: "background-color 0.25s ease",
+              position: "relative",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "#F0F0EF";
+              const title = e.currentTarget.querySelector<HTMLElement>("[data-title]");
+              if (title) title.style.color = "#8D8D8D";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "transparent";
+              const title = e.currentTarget.querySelector<HTMLElement>("[data-title]");
+              if (title) title.style.color = "#222";
             }}
           >
             <span
+              data-title
               style={{
                 fontSize: 20,
                 fontWeight: 400,
-                letterSpacing: "-0.3px",
-                lineHeight: 1.1,
+                letterSpacing: "-0.45px",
+                lineHeight: "29px",
                 color: "#222",
                 textAlign: "left",
+                transition: "color 0.25s ease",
               }}
             >
               {p.title}
             </span>
             <span
               style={{
-                fontSize: 13,
+                fontSize: 14,
                 fontWeight: 400,
+                letterSpacing: "-0.1px",
                 color: "#8D8D8D",
                 textAlign: "center",
+                position: "absolute",
+                left: "50%",
+                transform: "translateX(-50%)",
+                whiteSpace: "nowrap",
               }}
             >
               {p.category}
             </span>
-            <div className="flex items-center justify-end" style={{ gap: 8 }}>
-              {p.thumb ? (
+            <div className="flex items-center justify-end" style={{ gap: 8, gridColumn: 3 }}>
+              {p.video ? (
                 <div
-                  className="overflow-hidden transition-transform duration-300 ease-out group-hover:scale-105"
+                  className="overflow-hidden"
+                  style={{
+                    height: THUMB_HEIGHT,
+                    width: THUMB_HEIGHT * 1.6,
+                    borderRadius: 6,
+                    flexShrink: 0,
+                  }}
+                >
+                  <video
+                    src={p.video}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06]"
+                  />
+                </div>
+              ) : p.thumb ? (
+                <div
+                  className="overflow-hidden"
                   style={{
                     height: THUMB_HEIGHT,
                     width: THUMB_HEIGHT * 1.6,
@@ -82,7 +111,7 @@ export default function ProjectsList({
                   <img
                     src={p.thumb}
                     alt={p.title}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06]"
                   />
                 </div>
               ) : (

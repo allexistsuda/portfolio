@@ -2,6 +2,9 @@
 
 import { useRef, useEffect, useState } from "react";
 
+// Efeito do marca-texto amarelo que "risca" a linha ao rolar: desligado por enquanto (true para voltar).
+const HIGHLIGHT = true;
+
 export default function HighlightText({ children, delay = 0.2 }: { children: React.ReactNode; delay?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [triggered, setTriggered] = useState(false);
@@ -26,6 +29,8 @@ export default function HighlightText({ children, delay = 0.2 }: { children: Rea
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  if (!HIGHLIGHT) return <>{children}</>;
 
   return (
     <span

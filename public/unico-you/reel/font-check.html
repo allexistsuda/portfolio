@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>unico — conferência de fonte</title>
+<style>
+  @font-face { font-family: UnicoDisplay; src: url('fonts/UnicoDisplay-Light.ttf');   font-weight: 300; }
+  @font-face { font-family: UnicoDisplay; src: url('fonts/UnicoDisplay-Regular.ttf'); font-weight: 400; }
+  @font-face { font-family: UnicoDisplay; src: url('fonts/UnicoDisplay-Medium.ttf');  font-weight: 500; }
+  @font-face { font-family: Geist; src: url('fonts/Geist-Regular.woff2')  format('woff2'); font-weight: 400; }
+  @font-face { font-family: Geist; src: url('fonts/Geist-Medium.woff2')   format('woff2'); font-weight: 500; }
+  body { margin:0; padding:24px 28px; background:#fff; color:#111;
+         font-family: ui-sans-serif, system-ui, sans-serif; font-size:13px; }
+  h1 { font-size:14px; font-weight:600; margin:0 0 4px; }
+  .nota { color:#888; margin:0 0 20px; }
+  .caso { border-top:1px solid #eee; padding-top:12px; margin-bottom:20px; }
+  .tag { font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:#999; margin:0 0 6px; }
+  .par { display:flex; gap:22px; flex-wrap:wrap; }
+  canvas { display:block; }
+</style>
+</head>
+<body>
+<h1>Mockup (preto) com a fonte candidata sobreposta (vermelho)</h1>
+<p class="nota">Cada par é alinhado automaticamente pelo contorno do texto. Quanto menos vermelho sobrar à mostra, mais próxima é a fonte.</p>
+<div id="saida"></div>
+
+<script>
+const CASOS = [
+  { box: [1099, 293, 232, 36], txt: 'Meus dados',              peso: 400 },
+  { box: [1096, 392, 256, 36], txt: 'Identidade digital',      peso: 400 },
+  { box: [1096, 777, 345, 36], txt: 'Privacidade e segurança', peso: 400 },
+  { box: [ 543, 356, 210, 40], txt: 'Serviços',                peso: 400 },
+];
+const FAMS = ['UnicoDisplay', 'Geist'];
+const K = 4;                                   // ampliação do recorte
+
+// contorno das formas escuras dentro de um ImageData
+function bbox(d, w, h, limiar = 150) {
+  let x0 = w, y0 = h, x1 = -1, y1 = -1;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = (y*w + x)*4;
+    if (d[i+3] > 30 && (d[i] + d[i+1] + d[i+2]) / 3 < limiar) {
+      if (x < x0) x0 = x; if (x > x1) x1 = x;
+      if (y < y0) y0 = y; if (y > y1) y1 = y;
+    }
+  }
+  return x1 < 0 ? null : { x: x0, y: y0, w: x1-x0+1, h: y1-y0+1 };
+}
+
+const img = new Image();
+img.onload = async () => {
+  await document.fonts.ready;
+  const saida = document.getElementById('saida');
+
+  for (const c of CASOS) {
+    const [bx, by, bw, bh] = c.box;
+    const bloco = document.createElement('div'); bloco.className = 'caso';
+    const t = document.createElement('p'); t.className = 'tag'; t.textContent = `"${c.txt}"`;
+    const par = document.createElement('div'); par.className = 'par';
+    bloco.append(t, par); saida.appendChild(bloco);
+
+    // recorte do mockup, ampliado
+    const base = document.createElement('canvas');
+    base.width = bw*K; base.height = bh*K;
+    const bc = base.getContext('2d');
+    bc.imageSmoothingQuality = 'high';
+    bc.drawImage(img, bx, by, bw, bh, 0, 0, bw*K, bh*K);
+    const alvo = bbox(bc.getImageData(0,0,base.width,base.height).data, base.width, base.height);
+    if (!alvo) continue;
+
+    for (const fam of FAMS) {
+      const cv = document.createElement('canvas');
+      cv.width = base.width; cv.height = base.height;
+      const ctx = cv.getContext('2d');
+      ctx.drawImage(base, 0, 0);
+
+      // acha o corpo em que a palavra fica com a mesma largura do recorte
+      const off = document.createElement('canvas');
+      off.width = base.width * 2; off.height = base.height * 2;
+      const oc = off.getContext('2d');
+      let size = alvo.h * 1.4, bb = null;
+      for (let passo = 0; passo < 14; passo++) {
+        oc.clearRect(0,0,off.width,off.height);
+        oc.fillStyle = '#000'; oc.font = `${c.peso} ${size}px ${fam}`;
+        oc.textBaseline = 'alphabetic';
+        oc.fillText(c.txt, 20, off.height/2);
+        bb = bbox(oc.getImageData(0,0,off.width,off.height).data, off.width, off.height);
+        if (!bb) break;
+        size *= alvo.w / bb.w;
+      }
+      if (!bb) continue;
+      oc.clearRect(0,0,off.width,off.height);
+      oc.fillStyle = '#E8162F'; oc.font = `${c.peso} ${size}px ${fam}`;
+      oc.textBaseline = 'alphabetic';
+      oc.fillText(c.txt, 20, off.height/2);
+      bb = bbox(oc.getImageData(0,0,off.width,off.height).data, off.width, off.height, 200);
+
+      ctx.globalAlpha = 0.55;
+      ctx.drawImage(off, bb.x, bb.y, bb.w, bb.h, alvo.x, alvo.y, alvo.w, alvo.h);
+      ctx.globalAlpha = 1;
+
+      const wrap = document.createElement('div');
+      const lab = document.createElement('p'); lab.className = 'tag';
+      lab.textContent = `${fam} · ${(size/K).toFixed(1)}px no mockup`;
+      wrap.append(lab, cv); par.appendChild(wrap);
+    }
+  }
+};
+img.src = '../11.png';
+</script>
+</body>
+</html>

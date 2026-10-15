@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>dia cinco — reel</title>
+<style>
+  :root { color-scheme: dark; }
+  html,body { margin:0; height:100%; background:#0E0E10; color:#F6F6F5;
+              font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { height:100%; display:flex; flex-direction:column; align-items:center; gap:14px; padding:18px 0 22px; box-sizing:border-box; }
+  canvas { flex:1; min-height:0; aspect-ratio:1080/1920; height:auto; width:auto; max-width:100%;
+           border-radius:14px; box-shadow:0 18px 60px rgba(0,0,0,.55); background:#fff; }
+  .bar { display:flex; gap:10px; align-items:center; font-size:13px; }
+  button { border:0; border-radius:999px; padding:9px 16px; font-size:13px; font-weight:500;
+           background:#F6F6F5; color:#111; cursor:pointer; }
+  button.ghost { background:#242428; color:#F6F6F5; }
+  button:disabled { opacity:.45; cursor:default; }
+  .hint { opacity:.55; }
+</style>
+</head>
+<body>
+<main>
+  <canvas id="c" width="1080" height="1920"></canvas>
+  <div class="bar">
+    <button id="replay">Replay</button>
+    <button id="loop" class="ghost">Loop: off</button>
+    <button id="rec" class="ghost">Gravar</button>
+    <span class="hint" id="status">espaço = pausar · R = replay</span>
+  </div>
+</main>
+
+<script>
+// ---------------------------------------------------------------------------
+// Reel do app dia cinco. Nada é redesenhado: cada camada é um pedaço do próprio
+// mockup (2000x859), então o frame final bate pixel a pixel com a imagem.
+//   sprite.png  o mockup em 2x — de onde saem os recortes de texto/ícone
+//   clean.png   o mesmo, com os cards e o botão esvaziados — base dos cards
+//   stage.png   só as molduras dos celulares + o fundo de cada tela
+// Coordenadas sempre no espaço do mockup original; as imagens são 2x, por isso
+// todo recorte lê x*K, y*K.
+// ---------------------------------------------------------------------------
+const W = 1080, H = 1920, FPS = 60, DUR = 15.5;   // palco do reel (9:16)
+const K = 2;
+
+// corpo de cada celular e a tela dentro dele
+const PH = [[477,113,315,635],[843,113,315,635],[1209,113,314,635]];
+const R_PH = 45;                                   // raio do canto do aparelho
+const SX = [498, 863, 1229], SY = 188, SW = 274, SH = 483;
+const CEN = PH.map(p => [p[0] + p[2]/2, p[1] + p[3]/2]);
+
+// caixas medidas na imagem original
+const B = {
+  s1_burger:[513,199,18,11],   s1_oi:[521,237,75,16],      s1_hoje:[521,260,164,18],
+  s1_card:[511,313,251,145],   s1_info:[741,327,15,13],    s1_lbl:[536,353,94,8],
+  s1_valor:[536,366,141,26],   s1_limite:[536,406,136,11],
+  s1_cardA:[510,493,256,145],  s1_pagar_ic:[528,518,20,20],s1_pagar_tx:[564,522,129,12],
+  s1_pagar_ar:[738,522,9,12],  s1_div:[564,563,202,2],     s1_resg_ic:[530,589,18,14],
+  s1_resg_tx:[564,590,151,12], s1_resg_ar:[738,591,9,12],
+  s2_back:[876,200,19,14],     s2_titulo:[901,236,204,15], s2_sub:[904,259,194,10],
+  s2_valor:[908,357,180,39],   s2_botao:[926,593,147,40],  s2_btn_tx:[984,609,58,10],
+  s3_back:[1242,201,17,13],    s3_jun:[1349,202,30,12],    s3_card:[1239,244,253,136],
+  s3_cal:[1284,265,17,17],     s3_dias:[1311,267,136,14],  s3_div:[1250,302,230,2],
+  s3_acum_lb:[1269,324,55,5],  s3_util_lb:[1387,324,46,5],
+  s3_acum_vl:[1269,338,67,12], s3_util_vl:[1387,338,64,12],
+  s3_line:[1253,407,3,210],
+  s3_L1:[1245,418,247,25], s3_L2:[1245,467,247,24], s3_L3:[1245,516,247,24],
+  s3_L4:[1245,565,247,24], s3_L5:[1245,614,247,24],
+};
+
+// ---------------------------------------------------------------- easings
+const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
+const outCubic = t => 1 - Math.pow(1 - t, 3);
+const outQuint = t => 1 - Math.pow(1 - t, 5);
+const inOutCubic = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3)/2;
+const P = (t, at, dur, ease = outQuint) => ease(clamp01((t - at) / dur));
+const smooth = (t, a, b) => inOutCubic(clamp01((t - a) / (b - a)));
+const mix = (a, b, p) => a + (b - a) * p;
+
+// ----------------------------------------------------------- coreografia
+const T_PAN12 = [3.5, 4.4];      // troca da tela 1 para a 2
+const T_PAN23 = [6.4, 7.2];      // da 2 para a 3
+const T_POSTER = [10.8, 13.0];   // os três se juntam na composição final
+
+// câmera: cada marca mira um ponto do mockup com uma escala
+const CLOSE = 2.10, C1 = 634, C2 = 1000, C3 = 1366, CY = 430;
+const CAM = [
+  { t: 0.0,  cx: C1,   cy: CY,  s: 2.22  },   // abre com um push-in curto
+  { t: 1.3,  cx: C1,   cy: CY,  s: CLOSE },
+  { t: 3.5,  cx: C1,   cy: CY,  s: 2.05  },   // deriva enquanto a tela monta
+  { t: 4.4,  cx: C2,   cy: CY,  s: CLOSE },
+  { t: 6.4,  cx: C2,   cy: CY,  s: 2.05  },
+  { t: 7.2,  cx: C3,   cy: CY,  s: CLOSE },
+  { t: 10.1, cx: C3,   cy: CY,  s: 2.02  },
+  { t: 13.0, cx: 1015, cy: 440, s: 1.34  },   // abre na composição dos três
+  { t: 15.5, cx: 1015, cy: 440, s: 1.375 },   // respiro final
+];
+function camAt(t) {
+  if (t <= CAM[0].t) return CAM[0];
+  for (let i = 1; i < CAM.length; i++) {
+    const a = CAM[i-1], b = CAM[i];
+    if (t <= b.t) {
+      const p = inOutCubic(clamp01((t - a.t) / (b.t - a.t)));
+      return { cx: mix(a.cx,b.cx,p), cy: mix(a.cy,b.cy,p), s: mix(a.s,b.s,p) };
+    }
+  }
+  return CAM[CAM.length-1];
+}
+
+// pose final: os aparelhos saem da fileira e se escalonam na diagonal
+const POSE = [ {cx:820, cy:60, k:0.92, rot:-2.5}, {cx:1020, cy:440, k:1.12, rot:0}, {cx:1210, cy:820, k:0.92, rot:2.5} ];
+function poseAt(i, t) {
+  const p = smooth(t, T_POSTER[0], T_POSTER[1]);
+  return { cx: mix(CEN[i][0], POSE[i].cx, p), cy: mix(CEN[i][1], POSE[i].cy, p),
+           k: mix(1, POSE[i].k, p), rot: mix(0, POSE[i].rot, p) * Math.PI / 180 };
+}
+
+// foco: quem não está em cena recebe um véu branco (e volta no final)
+const VEIL = 0.92;
+function veilAt(i, t) {
+  // na troca, o que entra já clareia na primeira metade e o que sai só apaga na
+  // segunda — assim os dois ficam limpos no meio do movimento, sem lavar a cena.
+  const m12 = (T_PAN12[0] + T_PAN12[1]) / 2, m23 = (T_PAN23[0] + T_PAN23[1]) / 2;
+  const w = [
+    1 - smooth(t, m12, T_PAN12[1]),
+    smooth(t, T_PAN12[0], m12) - smooth(t, m23, T_PAN23[1]),
+    smooth(t, T_PAN23[0], m23),
+  ][i];
+  return VEIL * (1 - clamp01(Math.max(w, smooth(t, T_POSTER[0] - 0.4, T_POSTER[0] + 0.9))));
+}
+
+// ------------------------------------------------------------ assets
+const IMG = {};
+const load = src => new Promise((res, rej) => {
+  const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error(src)); i.src = src;
+});
+const cv = document.getElementById('c');
+const ctx = cv.getContext('2d', { alpha: false });
+ctx.imageSmoothingQuality = 'high';
+
+// ---------------------------------------------------------- primitivas
+function crop(img, b, dx = 0, dy = 0, a = 1) {
+  if (a <= 0) return;
+  const [x,y,w,h] = b;
+  ctx.globalAlpha = a;
+  ctx.drawImage(img, x*K, y*K, w*K, h*K, x+dx, y+dy, w, h);
+  ctx.globalAlpha = 1;
+}
+// entrada "janela": o recorte sobe DENTRO da própria caixa, então o fundo em
+// volta nunca se desloca — é o que mantém a imagem fiel.
+function rise(b, p, dist = 14, img = IMG.sprite) {
+  if (p <= 0) return;
+  const [x,y,w,h] = b;
+  ctx.save();
+  ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
+  crop(img, b, 0, dist * (1 - p), p);
+  ctx.restore();
+}
+// revelação por varredura (divisores e a linha do extrato)
+function wipe(b, p, dir = 'x') {
+  if (p <= 0) return;
+  const [x,y,w,h] = b;
+  ctx.save();
+  ctx.beginPath();
+  dir === 'x' ? ctx.rect(x, y, w*p, h) : ctx.rect(x, y, w, h*p);
+  ctx.clip();
+  crop(IMG.sprite, b);
+  ctx.restore();
+}
+// card: sai do clean.png com canto arredondado e sombra própria, então pode
+// subir e escalar que o fundo por baixo continua certo.
+function card(b, p, { r = 10, dist = 24, shadow = 'rgba(14,38,110,.20)', blur = 18, oy = 7 } = {}) {
+  if (p <= 0) return 0;
+  const [x,y,w,h] = b;
+  const dy = dist * (1 - p), k = 0.975 + 0.025 * p;
+  ctx.save();
+  ctx.globalAlpha = p;
+  ctx.translate(x + w/2, y + h/2 + dy); ctx.scale(k, k); ctx.translate(-(x + w/2), -(y + h/2));
+  ctx.shadowColor = shadow; ctx.shadowBlur = blur; ctx.shadowOffsetY = oy;
+  ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.fill();
+  ctx.shadowColor = 'transparent';
+  ctx.clip();
+  ctx.drawImage(IMG.clean, x*K, y*K, w*K, h*K, x, y, w, h);
+  ctx.globalAlpha = 1;
+  return 1;                                  // quem chamou desenha os filhos e fecha
+}
+const closeCard = () => ctx.restore();
+// toque: anel que abre e some onde o dedo encostaria
+function tap(cx, cy, p) {
+  if (p <= 0 || p >= 1) return;
+  const r = 6 + 26 * outCubic(p);
+  ctx.save();
+  ctx.globalAlpha = (1 - p) * 0.5;
+  ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 2.2;
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+  ctx.globalAlpha = (1 - p) * 0.2;
+  ctx.fillStyle = '#FFFFFF';
+  ctx.beginPath(); ctx.arc(cx, cy, r*0.7, 0, Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+// estado pressionado da linha tocada
+function press(b, p, color = 'rgba(10,40,120,.055)', r = 6) {
+  const a = p <= 0 || p >= 1 ? 0 : (p < .5 ? p/.5 : 1 - (p-.5)/.5);
+  if (a <= 0) return;
+  const [x,y,w,h] = b;
+  ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = color;
+  ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.fill(); ctx.restore();
+}
+const screenClip = i => { ctx.save(); ctx.beginPath(); ctx.rect(SX[i], SY, SW, SH); ctx.clip(); };
+
+// ------------------------------------------------------- conteúdo das telas
+function screen1(t) {
+  screenClip(0);
+  rise(B.s1_burger, P(t, 0.55, .7), 10);
+  rise(B.s1_oi,     P(t, 0.68, .8), 16);
+  rise(B.s1_hoje,   P(t, 0.80, .8), 18);
+
+  if (card(B.s1_card, P(t, 0.95, .9, outCubic), { r:10, dist:26, shadow:'rgba(12,34,110,.28)', blur:22, oy:9 })) {
+    rise(B.s1_info,   P(t, 1.30, .6), 0);
+    rise(B.s1_lbl,    P(t, 1.25, .7), 10);
+    rise(B.s1_valor,  P(t, 1.35, .9), 26);
+    rise(B.s1_limite, P(t, 1.52, .7), 12);
+    closeCard();
+  }
+  if (card(B.s1_cardA, P(t, 1.70, .9, outCubic), { r:8, dist:28, shadow:'rgba(30,45,90,.10)', blur:16, oy:6 })) {
+    press([B.s1_cardA[0]+4, 582, B.s1_cardA[2]-8, 28], P(t, 2.85, .9, x=>x));
+    rise(B.s1_pagar_ic, P(t, 1.92, .7), 12);
+    rise(B.s1_pagar_tx, P(t, 1.96, .7), 12);
+    rise(B.s1_pagar_ar, P(t, 2.02, .6), 8);
+    wipe(B.s1_div, P(t, 2.10, .7, outCubic));
+    rise(B.s1_resg_ic, P(t, 2.18, .7), 12);
+    rise(B.s1_resg_tx, P(t, 2.22, .7), 12);
+    rise(B.s1_resg_ar, P(t, 2.28, .6), 8);
+    closeCard();
+  }
+  tap(645, 596, P(t, 2.90, .75, x=>x));
+  ctx.restore();
+}
+
+function screen2(t) {
+  screenClip(1);
+  rise(B.s2_back,   P(t, 4.35, .7), 10);
+  rise(B.s2_titulo, P(t, 4.50, .8), 18);
+  rise(B.s2_sub,    P(t, 4.64, .8), 14);
+  rise(B.s2_valor,  P(t, 4.85, 1.0), 34);
+  const bp = P(t, 5.25, .9, outCubic);
+  if (bp > 0) {
+    const [bx,by,bw,bh] = B.s2_botao;
+    const pk = 1 - 0.035 * Math.sin(Math.PI * clamp01((t - 5.95) / .45));   // afunda e volta
+    ctx.save();
+    ctx.globalAlpha = bp;
+    ctx.translate(bx+bw/2, by+bh/2 + 24*(1-bp)); ctx.scale(pk, pk); ctx.translate(-(bx+bw/2), -(by+bh/2));
+    ctx.shadowColor = 'rgba(5,20,80,.28)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6;
+    ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, bh/2); ctx.fill();
+    ctx.shadowColor = 'transparent'; ctx.clip();
+    ctx.drawImage(IMG.clean, bx*K, by*K, bw*K, bh*K, bx, by, bw, bh);
+    rise(B.s2_btn_tx, P(t, 5.45, .6), 8);
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+  tap(1000, 613, P(t, 5.95, .75, x=>x));
+  ctx.restore();
+}
+
+function screen3(t) {
+  screenClip(2);
+  rise(B.s3_back, P(t, 7.15, .7), 10);
+  rise(B.s3_jun,  P(t, 7.20, .7), 12);
+  if (card(B.s3_card, P(t, 7.30, .9, outCubic), { r:8, dist:26, shadow:'rgba(20,40,100,.16)', blur:18, oy:7 })) {
+    rise(B.s3_cal,     P(t, 7.55, .7), 10);
+    rise(B.s3_dias,    P(t, 7.60, .8), 14);
+    wipe(B.s3_div,     P(t, 7.75, .8, outCubic));
+    rise(B.s3_acum_lb, P(t, 7.90, .6), 8);
+    rise(B.s3_acum_vl, P(t, 7.98, .8), 16);
+    rise(B.s3_util_lb, P(t, 8.06, .6), 8);
+    rise(B.s3_util_vl, P(t, 8.14, .8), 16);
+    closeCard();
+  }
+  wipe(B.s3_line, P(t, 8.25, 1.1, outCubic), 'y');    // a linha do extrato se desenha
+  rise(B.s3_L1, P(t, 8.40, .8), 18);
+  rise(B.s3_L2, P(t, 8.54, .8), 18);
+  rise(B.s3_L3, P(t, 8.68, .8), 18);
+  rise(B.s3_L4, P(t, 8.82, .8), 18);
+  rise(B.s3_L5, P(t, 8.96, .8), 18);
+  ctx.restore();
+}
+const SCREEN = [screen1, screen2, screen3];
+
+// --------------------------------------------------------------- frame
+function drawPhone(i, t, open) {
+  const [px,py,pw,ph] = PH[i];
+  const pose = poseAt(i, t);
+  ctx.save();
+  ctx.globalAlpha = open;
+  ctx.translate(pose.cx, pose.cy); ctx.rotate(pose.rot); ctx.scale(pose.k, pose.k); ctx.translate(-CEN[i][0], -CEN[i][1]);
+
+  const v = veilAt(i, t);                       // véu de quem está fora de cena
+  ctx.save();                                   // sombra do aparelho
+  ctx.globalAlpha = open * (1 - v);
+  ctx.shadowColor = 'rgba(18,32,70,.20)'; ctx.shadowBlur = 34; ctx.shadowOffsetY = 16;
+  ctx.fillStyle = '#FFFFFF';
+  ctx.beginPath(); ctx.roundRect(px, py, pw, ph, R_PH); ctx.fill();
+  ctx.restore();
+
+  ctx.beginPath(); ctx.roundRect(px, py, pw, ph, R_PH); ctx.clip();
+  ctx.drawImage(IMG.stage, px*K, py*K, pw*K, ph*K, px, py, pw, ph);
+  SCREEN[i](t);
+
+  if (v > 0) { ctx.globalAlpha = v * open; ctx.fillStyle = '#FFFFFF'; ctx.fillRect(px, py, pw, ph); }
+  ctx.restore();
+}
+
+function drawFrame(frame) {
+  const t = frame / FPS;
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, W, H);
+
+  const cam = camAt(t);
+  ctx.setTransform(cam.s, 0, 0, cam.s, W/2 - cam.cx*cam.s, H/2 - cam.cy*cam.s);
+
+  const open = P(t, 0, 0.6, outCubic);
+  for (const i of [0, 2, 1]) drawPhone(i, t, open);   // o do meio fica na frente
+
+  ctx.setTransform(1,0,0,1,0,0);
+}
+
+// -------------------------------------------------------------- player
+const TOTAL = Math.round(DUR * FPS);
+let raf = 0, t0 = 0, paused = false, looping = false, pausedAt = 0;
+const status = document.getElementById('status');
+const tick = now => {
+  const t = (now - t0) / 1000;
+  drawFrame(Math.min(TOTAL, Math.round(t * FPS)));
+  if (t < DUR) raf = requestAnimationFrame(tick);
+  else if (looping) play();
+};
+function play(from = 0) {
+  cancelAnimationFrame(raf);
+  paused = false;
+  t0 = performance.now() - from;
+  raf = requestAnimationFrame(tick);
+}
+document.getElementById('replay').onclick = () => play();
+document.getElementById('loop').onclick = e => {
+  looping = !looping;
+  e.target.textContent = `Loop: ${looping ? 'on' : 'off'}`;
+};
+addEventListener('keydown', e => {
+  if (e.code === 'KeyR') play();
+  if (e.code === 'Space') {
+    e.preventDefault();
+    if (paused) play(pausedAt);
+    else { paused = true; pausedAt = performance.now() - t0; cancelAnimationFrame(raf); }
+  }
+});
+
+// ------------------------------------------------------------ gravação
+// Mesmo esquema das outras páginas: o frame vem do ÍNDICE, não do relógio,
+// então nada se perde se a máquina engasgar. Precisa estar servido por http
+// (next dev) — em file:// o canvas fica "tainted" e o MediaRecorder falha.
+document.getElementById('rec').onclick = async (e) => {
+  const btn = e.target;
+  const mime = ['video/mp4;codecs=avc1.640028','video/mp4','video/webm;codecs=vp9','video/webm']
+    .find(m => MediaRecorder.isTypeSupported(m));
+  if (!mime) { status.textContent = 'navegador sem MediaRecorder'; return; }
+  const ext = mime.startsWith('video/mp4') ? 'mp4' : 'webm';
+  btn.disabled = true; cancelAnimationFrame(raf);
+
+  // Os frames são empurrados um a um com o timestamp que eu escolho, em vez de
+  // depender do compositor da aba: assim a gravação sai igual mesmo com a janela
+  // escondida ou em segundo plano. Sem esse recurso, cai no captureStream.
+  const gen = ('MediaStreamTrackGenerator' in window) ? new MediaStreamTrackGenerator({ kind: 'video' }) : null;
+  const stream = gen ? new MediaStream([gen]) : cv.captureStream(0);
+  const track = gen ? null : stream.getVideoTracks()[0];
+  const writer = gen ? gen.writable.getWriter() : null;
+  const chunks = [];
+  const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 24_000_000 });
+  rec.ondataavailable = ev => ev.data.size && chunks.push(ev.data);
+  const done = new Promise(r => rec.onstop = r);
+  rec.start();
+
+  const start = performance.now();
+  for (let f = 0; f <= TOTAL; f++) {
+    drawFrame(f);
+    if (writer) {
+      const vf = new VideoFrame(cv, { timestamp: Math.round(f * 1e6 / FPS), duration: Math.round(1e6 / FPS) });
+      await writer.write(vf); vf.close();
+    } else {
+      track.requestFrame();
+    }
+    // o MediaRecorder carimba pelo relógio, então o laço anda em tempo real
+    const target = start + ((f + 1) / FPS) * 1000;
+    const wait = target - performance.now();
+    if (wait > 0) await new Promise(r => setTimeout(r, wait));
+    status.textContent = `gravando ${Math.round((f/TOTAL)*100)}%`;
+  }
+  if (writer) await writer.close();
+  rec.stop(); await done;
+
+  const blob = new Blob(chunks, { type: mime });
+  const name = `diacinco-reel.${ext}`;
+  try {                                   // servido pelo next dev: cai em renders/
+    const res = await fetch(`/api/save-render?name=${name}`, { method: 'POST', body: blob });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || res.status);
+    status.textContent = `salvo em ${json.path} (${(json.bytes/1e6).toFixed(1)} MB)`;
+  } catch {                               // fora dele, baixa o arquivo
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name; a.click();
+    status.textContent = `baixado ${name} (${(blob.size/1e6).toFixed(1)} MB)`;
+  }
+  btn.disabled = false;
+};
+
+// --------------------------------------------------------------- boot
+(async () => {
+  const [stage, clean, sprite] = await Promise.all([load('stage.png'), load('clean.png'), load('sprite.png')]);
+  Object.assign(IMG, { stage, clean, sprite });
+  play();
+})();
+</script>
+</body>
+</html>

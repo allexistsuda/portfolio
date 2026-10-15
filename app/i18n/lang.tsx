@@ -9,11 +9,6 @@ type LangCtx = { lang: Lang; setLang: (l: Lang) => void; toggle: () => void };
 
 const Ctx = createContext<LangCtx | null>(null);
 
-// URL is the single source of truth: "/" is Portuguese, "/en/*" is English.
-function isEnPath(path: string) {
-  return path === "/en" || path.startsWith("/en/");
-}
-
 /** Remove a leading "/en" from a pathname, returning the Portuguese path. */
 function stripEn(path: string) {
   if (path === "/en") return "/";
@@ -23,13 +18,8 @@ function stripEn(path: string) {
 
 export function LangProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  // Server render and first client render use "pt"; the URL is read right after
-  // mount, which avoids a hydration mismatch (English pages briefly show PT).
-  const [lang, setLangState] = useState<Lang>("pt");
-
-  useEffect(() => {
-    if (isEnPath(window.location.pathname)) setLangState("en");
-  }, []);
+  // English only for now: the language is fixed and the URL no longer decides it.
+  const [lang, setLangState] = useState<Lang>("en");
 
   useEffect(() => {
     document.documentElement.lang = lang === "pt" ? "pt-BR" : "en";
@@ -55,16 +45,7 @@ export function useLang() {
   return ctx;
 }
 
-/** Prefixes internal hrefs with /en when the current language is English. */
+/** English only for now, so internal hrefs are used as-is (no /en prefix). */
 export function useHref() {
-  const { lang } = useLang();
-  return (href: string): string => {
-    if (lang !== "en") return href;
-    if (href.startsWith("#")) return href;
-    const [path, hashPart] = href.split("#");
-    const hash = hashPart ? "#" + hashPart : "";
-    if (!path || path === "/") return "/en" + hash;
-    if (path.startsWith("/")) return "/en" + path + hash;
-    return href;
-  };
+  return (href: string): string => href;
 }
