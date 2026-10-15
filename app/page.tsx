@@ -473,8 +473,10 @@ export default function Home() {
       block.style.height = `${startH + (endH - startH) * e}px`;
       block.style.top = `${startTop + (TOP_END - startTop) * e}px`;
       block.style.borderRadius = `${8 * e}px`;
-      // no mobile o texto do About sobe mais perto do vídeo
-      content.style.marginTop = `${TOP_END + endH + (vw < 768 ? 44 : 100) - vh}px`;
+      // no mobile o texto do About sobe mais perto do vídeo.
+      // -267 no lugar de 44: medido, o 44 deixava 431px de vazio entre o fim do
+      // vídeo e o texto (a conta não previa a sobra do sticky de 100vh no celular).
+      content.style.marginTop = `${TOP_END + endH + (vw < 768 ? -267 : 100) - vh}px`;
     };
     update();
     window.addEventListener("scroll", update, { passive: true });
@@ -501,11 +503,8 @@ export default function Home() {
       <div className="px-6 md:px-10" style={{ maxWidth: 1440, margin: "0 auto" }}>
 
         {/* Hero — ocupa a tela (abaixo do nav) e centraliza o texto verticalmente, um pouco acima do centro */}
-        <section
-          className="relative flex flex-col items-center justify-center"
-          style={{ minHeight: "calc(100vh - 90px)" }}
-        >
-          <div style={{ transform: "translateY(-28%)" }}>
+        <section className="hero-sec relative flex flex-col items-center justify-center">
+          <div className="hero-frases">
             <HeroPhrases />
           </div>
 
@@ -513,11 +512,10 @@ export default function Home() {
               Estático — seta à direita do texto, sem animação própria
               (evita competir com o motion do Hero). */}
           <div
-            className="flex items-center"
+            className="hero-hint flex items-center"
             style={{
               position: "absolute",
               left: "50%",
-              bottom: 40,
               transform: "translateX(-50%)",
               opacity: scrollHintOpacity,
               transition: "opacity 0.2s ease",
@@ -581,7 +579,7 @@ export default function Home() {
             <div style={{ position: "sticky", top: 0, height: "100vh" }}>
               <div
                 ref={imgBlockRef}
-                style={{ position: "absolute", left: "50%", transform: "translateX(-50%) translateZ(0)", width: "100vw", height: "60vh", top: 0, overflow: "hidden", background: "#F6F6F5", isolation: "isolate", willChange: "width, height, top, border-radius" }}
+                style={{ position: "absolute", left: "50%", transform: "translateX(-50%) translateZ(0)", width: "100vw", height: "60vh", top: 0, overflow: "hidden", background: "#EC0100", isolation: "isolate", willChange: "width, height, top, border-radius" }}
               >
                 <video
                   ref={aboutVideoRef}
@@ -682,6 +680,36 @@ export default function Home() {
                         @media (min-width: 768px) { .about-texto { padding-bottom: 120px; } }
                         /* mesmos valores do .about-texto: 19/29/-0.19 → 24/36/-0.24 */
                         .contato-frase { font-size: 19px; line-height: 29px; letter-spacing: -0.19px; }
+                        /* Timeline. No mobile as três colunas somavam 370px em 327 disponíveis:
+                           a empresa colapsava pra zero e o cargo vazava. Vira duas linhas. */
+                        .exp-linha {
+                          display: grid; align-items: center;
+                          grid-template-columns: minmax(0, 1fr) auto;
+                          grid-template-areas: "empresa data" "cargo cargo";
+                          column-gap: 16px; row-gap: 2px;
+                        }
+                        .exp-data { grid-area: data; text-align: right; }
+                        .exp-empresa { grid-area: empresa; }
+                        .exp-cargo { grid-area: cargo; }
+                        @media (min-width: 768px) {
+                          .exp-linha {
+                            grid-template-columns: 110px minmax(0, 1fr) 180px;
+                            grid-template-areas: "data empresa cargo";
+                            column-gap: 40px;
+                          }
+                          .exp-data { text-align: left; }
+                          .exp-cargo { text-align: right; white-space: nowrap; }
+                        }
+                        /* Hero. 100vh no Safari do iOS inclui a área atrás da barra de baixo,
+                           então o aviso de scroll ficava embaixo dela. dvh mede só o visível. */
+                        .hero-sec { min-height: calc(100vh - 90px); }
+                        @supports (height: 100dvh) { .hero-sec { min-height: calc(100dvh - 90px); } }
+                        .hero-frases { transform: translateY(-28%); }
+                        .hero-hint { bottom: calc(40px + env(safe-area-inset-bottom)); }
+                        @media (max-width: 767px) {
+                          .hero-frases { transform: translateY(-34%); }
+                          .hero-hint { bottom: calc(72px + env(safe-area-inset-bottom)); }
+                        }
                         /* grid do contato: 1 coluna no mobile, texto + links no desktop */
                         /* minmax(0,1fr): sem isso a coluna cresce até caber o e-mail e corta no mobile */
                         .contato-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
@@ -779,16 +807,17 @@ export default function Home() {
                                 <Reveal key={exp.company} delay={i * 35} triggerMargin="0%">
                                   <div
                                     // larguras fixas (cada linha é um grid próprio: com "auto" o cargo começaria num x diferente por linha)
-                                    // cargo com largura fixa (180 > os 150 de "Head of Product Design"): alinha pela esquerda e nunca quebra
-                                    style={{ display: "grid", gridTemplateColumns: "110px minmax(0, 1fr) 180px", columnGap: 40, alignItems: "center", padding: "26px 0", borderBottom: i === experiences.length - 1 ? "none" : "1px solid #DEDEDE" }}
+                                    // colunas e ordem vêm do .exp-linha: no mobile empresa+data em cima e cargo embaixo
+                                    className="exp-linha"
+                                    style={{ padding: "26px 0", borderBottom: i === experiences.length - 1 ? "none" : "1px solid #DEDEDE" }}
                                   >
                                     {/* mesma escala e mesma régua da lista de projetos (20px/-0,45px/29px, 14px/-0,1px/21px, #DEDEDE) */}
                                     {/* data com tracking largo (escolha visual, destoa do 0,02em que o site usa noutros lugares); tabular pra os dígitos alinharem */}
-                                    <div style={{ fontSize: 12, fontWeight: 400, letterSpacing: "0.08em", lineHeight: "21px", color: "#8D8D8D", fontVariantNumeric: "tabular-nums" }}>
+                                    <div className="exp-data" style={{ fontSize: 12, fontWeight: 400, letterSpacing: "0.08em", lineHeight: "21px", color: "#8D8D8D", fontVariantNumeric: "tabular-nums" }}>
                                       {anos(exp.period[lang])}
                                     </div>
-                                    <div style={{ fontSize: 20, fontWeight: 400, letterSpacing: "-0.45px", lineHeight: "29px", color: "#222" }}>{exp.company}</div>
-                                    <div style={{ fontSize: 14, fontWeight: 400, letterSpacing: "-0.1px", lineHeight: "21px", color: "#8D8D8D", whiteSpace: "nowrap", textAlign: "right" }}>{exp.role}</div>
+                                    <div className="exp-empresa" style={{ fontSize: 20, fontWeight: 400, letterSpacing: "-0.45px", lineHeight: "29px", color: "#222" }}>{exp.company}</div>
+                                    <div className="exp-cargo" style={{ fontSize: 14, fontWeight: 400, letterSpacing: "-0.1px", lineHeight: "21px", color: "#8D8D8D" }}>{exp.role}</div>
                                   </div>
                                 </Reveal>
                               ))}

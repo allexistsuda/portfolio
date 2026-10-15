@@ -7,7 +7,8 @@ import { useEffect, useState } from "react";
 // no mobile o texto flui naturalmente, sem cortar no meio de uma palavra.
 const phrases = [
   "I build design systems, and\nI stick around to keep them useful.",
-  "Data first. Then the design\nhas something to stand on.",
+  // o | quebra só no mobile (no desktop vira um espaço); o \n quebra só no desktop
+  "Data first.|Then the design\nhas something to stand on.",
   "AI raises the ceiling on the thinking,\nnot just the pace of shipping.",
   "The small interactions are where\na product starts to feel right.",
 ];
@@ -43,6 +44,11 @@ export default function HeroPhrases() {
   }, [visible]);
 
   return (
+    <>
+    <style>{`
+      .quebra-mobile { display: inline; }
+      @media (min-width: 768px) { .quebra-mobile { display: none; } }
+    `}</style>
     <h1
       className="text-[30px] md:text-[46px] text-center"
       style={{
@@ -67,9 +73,20 @@ export default function HeroPhrases() {
               <br className="hidden md:inline" />
             </>
           )}
-          {line}
+          {line.split("|").map((pedaco, j) => (
+            <span key={j}>
+              {j > 0 && (
+                <>
+                  {" "}
+                  <br className="quebra-mobile" />
+                </>
+              )}
+              {pedaco}
+            </span>
+          ))}
         </span>
       ))}
     </h1>
+    </>
   );
 }
