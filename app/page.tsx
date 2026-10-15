@@ -473,10 +473,8 @@ export default function Home() {
       block.style.height = `${startH + (endH - startH) * e}px`;
       block.style.top = `${startTop + (TOP_END - startTop) * e}px`;
       block.style.borderRadius = `${8 * e}px`;
-      // no mobile o texto do About sobe mais perto do vídeo.
-      // -267 no lugar de 44: medido, o 44 deixava 431px de vazio entre o fim do
-      // vídeo e o texto (a conta não previa a sobra do sticky de 100vh no celular).
-      content.style.marginTop = `${TOP_END + endH + (vw < 768 ? -267 : 100) - vh}px`;
+      // no mobile o texto do About sobe mais perto do vídeo
+      content.style.marginTop = `${TOP_END + endH + (vw < 768 ? 44 : 100) - vh}px`;
     };
     update();
     window.addEventListener("scroll", update, { passive: true });
@@ -575,7 +573,7 @@ export default function Home() {
 
         {/* Sobre + Experiência — seção preta; a imagem abre em tela cheia, fica presa e fecha as laterais ao rolar */}
         <section ref={sectionRef} style={{ position: "relative", marginLeft: "calc(50% - 50vw)", width: "100vw", background: "#F6F6F5", paddingBottom: 100 }}>
-          <div ref={trackRef} style={{ position: "relative", height: "140vh" }}>
+          <div ref={trackRef} className="reel-track" style={{ position: "relative" }}>
             <div style={{ position: "sticky", top: 0, height: "100vh" }}>
               <div
                 ref={imgBlockRef}
@@ -700,6 +698,10 @@ export default function Home() {
                           .exp-data { text-align: left; }
                           .exp-cargo { text-align: right; white-space: nowrap; }
                         }
+                        /* Pista do vídeo do About: 140vh no desktop dá 325px de scroll
+                           pro efeito. No mobile 122vh dá 179px — o mesmo efeito, mais rápido. */
+                        .reel-track { height: 140vh; }
+                        @media (max-width: 767px) { .reel-track { height: 122vh; } }
                         /* Hero. 100vh no Safari do iOS inclui a área atrás da barra de baixo,
                            então o aviso de scroll ficava embaixo dela. dvh mede só o visível. */
                         .hero-sec { min-height: calc(100vh - 90px); }
