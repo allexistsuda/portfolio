@@ -1,0 +1,227 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>logo vetsmart — final verde</title>
+<style>
+  html,body{margin:0;height:100%;background:#111;overflow:hidden;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  canvas{position:absolute}
+  #hud{position:absolute;left:12px;bottom:10px;font-size:12px;color:#fff;opacity:.45;pointer-events:none}
+  #bar{position:absolute;right:12px;bottom:8px;display:flex;gap:8px;align-items:center}
+  button{border:0;border-radius:999px;padding:7px 14px;font:500 12px/1 ui-sans-serif,system-ui;background:#f6f6f5;color:#111;cursor:pointer}
+  #msg{font-size:12px;color:#fff;opacity:.6}
+</style>
+<canvas id="c" width="1920" height="1080"></canvas>
+<div id="hud"></div>
+<div id="bar"><span id="msg"></span><button id="rec">gravar</button></div>
+<script>
+// Logo Vet Smart montando + final verde. Porte em canvas da rota /logo-motion, pra conseguir
+// gravar quadro a quadro (o conteúdo vem do índice do quadro, não do relógio).
+//
+//   0,00 – 0,50  o símbolo estoura no centro da tela, crescendo de trás
+//   0,30 – 0,95  vai pro lado, na posição final
+//   0,50 – 1,51  o nome sai da máscara, por baixo, letra a letra
+//   1,00 – 1,80  a cena inteira dá zoom out de 20% e encaixa
+//   2,10 – 3,00  o verde sobe por baixo com a borda inclinada (direita na frente, esquerda atrás).
+//                A palavra branca JÁ ESTÁ no lugar final e recebe o MESMO recorte — ela não anda
+//                nem cresce, quem a revela é a subida.
+//   3,60         fim
+
+// gerado a partir de public/logos/vetsmart-full.svg (viewBox 0 0 1503.13 238.03)
+const VIEWBOX = "0 0 1503.13 238.03";
+const LETTERS = ["M1503.13,60.54v41.83l-29.65.08-.69,9.89.1,23.88,2.61,14.47c1.64,9.13,9.33,13.84,18.7,13.04l8.94-.61v35.85l-6.42,2.31c-12.57,3.42-24.92,1.53-37.08-1.52-30.53-7.65-38.49-33.07-39.01-62.52l-.6-34.34-11.07-.42c-2.38-.09-6.2-1.45-7.34-3.18-2.88-4.37-3.72-23.19.14-32.27,2.76-6.49,9.38-8.25,16.52-7.34l-1.16-17.05c-.74-10.94-3.11-29.44,5.24-34.74,8.63-5.48,18.81-6.76,29.19-7.8,4.55-.45,10.15.7,14.7,1.41,5.22.81,8.32,3.96,8.18,9.23l-.6,22.51-.41,26.56,29.72.73Z", "M1031.48,121.32l1.5,46.31.3,20.41c.07,5.07-5.72,8.36-10.13,9.72-13.1,4.03-26.38,2.45-39.43-2.04-1.37-2.88-3.15-6.57-3.07-9.74l.73-31.82c.38-16.84,3.81-47.81-6.83-56.71-4.94-4.13-12.54-2.04-17.51,1.75-15.17,11.59-10.02,44.17-8.46,63.89l1.65,20.8c.25,3.11-.01,8.07-2.56,10.2-3.06,2.55-8.14,4.85-12.03,4.82l-24.96-.15c-7.76-.05-14.06-6.48-14-13.93l.19-23.24c1.46-31.18-.56-61.86-3.76-92.99-1.33-12.93,11.91-16.82,25.43-17.59,13.02-.13,24.55,1.77,27.3,14.89,23.91-20.04,61.01-21.48,78.63,5.98,14.66-17.35,37.62-24.35,59.28-18.7,12.45,3.25,23.36,11.51,28.24,23.65,3.89,9.68,4.86,20.38,5.01,30.87l.51,37.5c.17,12.78,2.22,24.93,5.54,37.13,1.43,5.24.11,9.98-4.95,12.55-7.11,3.61-15.46,4.89-23.64,4.28l-15.94-1.19c-3.3-.25-7.79-2.79-8.89-6.01-1.28-3.75-3.05-8.21-3.02-11.92l.22-30.45.87-19.1c.4-8.79-.69-18.53-3.66-26.45-2.89-7.69-10.41-10-17.42-7.34-10.05,3.82-15.46,13.85-15.11,24.6Z", "M1285.47,186.01c2.08,12.07-23.88,18.1-42.41,8.41-4.02-2.1-6.78-5.51-9.05-9.61-24.21,19.24-56.81,18.47-82.4.99-15.98-10.92-25.68-28.33-27.48-47.54-1.21-12.93-1.17-24.5,3.45-36.89,8.22-22.06,26.39-39.17,48.93-46.6,21.08-6.95,43.06-3.41,60.62,9.79,2.88-8.15,9.74-13.02,18.15-12.17l13.56,1.38c4.69,1.14,11.42,3.13,12.28,9l-.4,17.14-.76,45.36c-.35,20.67,2,40.38,5.5,60.73ZM1215.29,152.78c7.61-4.75,10.65-11.22,12.51-19.36,2.55-11.12,1.17-23.53-7.83-31.79-6.7-6.14-16.94-8.8-25.5-7.34-16.3,2.79-26.29,15-27.2,30.97-.72,12.54,4.39,24.4,16.19,29.66,10.42,4.65,22.1,3.93,31.83-2.15Z", "M352.92,102.22c-5-6.51-19.67-6.4-19.12-19.78,1.13-27.52,35.44-38.26,60.62-30.53l5.87,4.24c6.7,7.42,10.96,16.98,13.1,26.74l9.02,41.18,4.48,14.88c.25.83,1.91,2.96,2.49,2.48l2.61-2.17c7.07-16.75,9.33-34.62,7.05-52.8l-.98-20.59c-.21-4.48,2.34-10.24,6.71-12.62,24.5-13.37,56.05-1.36,56.89,11.46.36,5.42-2.06,10.74-3.48,15.77l-6.44,22.84c-8.16,28.95-17.92,61.83-37.06,84.45-10.76,12.72-28.91,16.3-44.83,13.48-14.22-2.52-23.21-11.79-27.25-25.12l-10.4-34.24c-4.34-14.29-10.08-27.67-19.28-39.65Z", "M603.89,154.76l13.99-4.67c5.93-1.98,11.44-.47,14.74,5.38,5.96,10.56,2.67,26.46-7.24,32.38-30.34,18.11-72.8,18.41-101.26-4.04-18.48-14.58-27.72-36.2-26.57-59.5l1.72-14.08c6.79-43.26,48.39-70.77,91.06-59.19,24.78,6.73,41.73,29.47,40.63,55.27-.89,20.75-19.45,29.97-39.1,32.42l-16.51,2.06-23.96,2.49c1.2,6.96,6.73,10.93,13.14,13.16,12.83,4.47,26.13,2.74,39.35-1.67ZM585.55,106.97c2.47-8.04,1.37-15.05-3.78-20.53-5.15-2.71-11.12-2.76-16.62-.39-9.7,4.19-15.45,13.45-16.24,24.45l36.64-3.54Z", "M747.42,164.34c6.92,6.64,7.75,19.57,2.16,27.5-3.69,5.24-9.87,7.66-15.97,9.18-14.48,3.61-29.5,1.9-43.39-3.48-22.38-8.66-31.8-31.4-32.11-54.59l-.55-40.3-11.88-.13c-5-.05-7.98-3.32-8.37-8.06-.93-11.19-2.02-26.58,5.01-31.93,3.74-2.85,8.58-3.11,13.4-2.93l-1.65-20.69.05-19.57c.01-4.72,3-10.47,7.55-12.59,17.44-8.13,51.12-11.11,50.68,3.93l-1.05,35.95-.56,12.83,21.85.7,17.61.34c3.81,9.79,3.9,30.2-1.23,37.44-2.91,4.1-10.7,5.03-15.57,4.92l-22.39-.49-.64,17.94c-.33,9.29-.61,18.26,1.7,27.3,4.08,15.98,18.16,18.81,35.33,16.73Z", "M880.69,182.19c-15.23,16.85-43.04,20.28-65.71,18.49-12.68-1-25.24-3.33-35.95-9.93-10.27-6.33-16.82-17.45-15.01-29.12.73-4.69,4.09-9.15,7.14-10.77,4.63-2.46,10.25-2.62,14.65,0l11.87,7.07c18.24,10.86,40.17,10.32,39.83-.03-.13-3.93-5.02-7.49-9.03-8.61l-25.65-7.19c-13.21-3.7-28.05-9.75-33.88-22.31-5.28-11.37-5.45-24.95-.97-37.16,4.02-10.95,13.43-18.68,24.04-23.82,20.64-10,44.75-12,66.62-5.57,17.14,5.04,28.7,16.96,25.85,35-1.08,6.85-5.69,12.01-12.98,12.4-7.74.42-14.54-2.88-20.6-7.43-15.03-11.28-33.54-5.28-33.96,1.27-.38,5.91,5.1,9.19,10.12,10.46l27.84,7.05c7.31,1.85,14.52,4.77,20.64,9.41,19.27,14.63,21.34,42.88,5.14,60.8Z", "M1360.81,109.97c-14.36,7.34-10.3,35.16-8.56,51.11l1.62,14.81c.58,5.35.77,12.14-1.68,16.99-2.91,5.77-10,7.81-15.87,7.51l-24.99-1.29c-7.59-.39-12.78-5.5-12.7-13.4l.24-24.24-3.75-92.87c-.17-4.12-.1-10.33,3.72-12.29,13.19-6.75,38.26-7.95,43.66,2.96,2.35,4.75,2.84,10.88,3.95,16.27,6.4-8.11,12.89-16.59,22.93-20.75,7.05-2.93,17.59-4.37,23.14,1.5,5.6,8.4,1.99,33.96-2.35,44.07-3.68,8.56-18.14,3.89-29.36,9.63Z"];
+const SYMBOL = ["M264.96,193.48c13.86,5.66-3.13,31.94-23.44,39.02-17.82,6.22-36.66.65-51.15-11.2-15.39,8.31-32.05,15.28-50.35,16.21-10.3.52-20.63.89-30.9-.04-24.5-2.23-46.88-12.51-65.63-27.91C11.94,183.62-4.17,144.2.93,103.28,7.72,48.76,52.76,5.12,108.02.92c8.98-.68,18.24-.9,26.65-.14,72.58,6.56,122.17,73.84,108.64,144.74-4.52,23.69-15.99,44.88-34.52,61.65,7.66,6.86,18.09,9.84,27.79,6.06,16.5-6.43,16.17-24.74,28.38-19.76ZM225.06,119.34c0-55.97-45.53-101.34-101.7-101.34S21.67,63.37,21.67,119.34s45.53,101.34,101.7,101.34,101.7-45.37,101.7-101.34Z", "M135.99,171.41c-.02,7.39-6.26,11.81-12.4,11.35-6.64-.49-11.03-5.63-11.02-12.67l.06-41.07-41.55-.05c-7.2,0-12.2-5.42-12.14-12.09.06-6.29,5.12-11.67,12.31-11.69l41.47-.1-.06-40.59c0-6.59,5.03-11.15,10.98-11.62,5.35-.42,12.25,3.68,12.28,10.08l.18,42.11,42.62.19c6.68.03,11.58,5.94,11.7,11.58s-4.69,12.04-11.37,12.05l-42.95.13-.11,42.39Z"];
+
+const W = 1920, H = 1080, FPS = 60, DUR_S = 3.6;
+const TOTAL_FRAMES = Math.round(DUR_S * FPS);
+
+const GREEN = "#3CAA5E";     // verde do ícone
+const INK = "#111111";
+const BRAND = "#48B46C";     // verde do fundo final
+const WHITE = "#FFFFFF";
+
+const LOGO_W = 783;
+const S = LOGO_W / 1503.13;
+const LOGO_H = 238.03 * S;
+const LEFT = 961 - LOGO_W / 2;
+const TOP = 553 - LOGO_H / 2;
+const SYMBOL_CX = 135 * S;
+const SYMBOL_CY = 119 * S;
+const START_DX = 960 - LEFT - SYMBOL_CX;
+const START_DY = 540 - TOP - SYMBOL_CY;
+const ZOOM = 1.2;
+const RANK = [7, 4, 5, 0, 1, 2, 3, 6];   // v e t s m a r t, da esquerda pra direita
+const T = { grow: 0.0, move: 0.3, rise: 0.5, stagger: 0.045, zoom: 1.0 };
+
+// final
+const LETTERS_X0 = 333.8 * S;
+const LETTERS_W = (1503.13 - 333.8) * S;
+const LETTERS_H = 203.1 * S;
+const END_SCALE = 1.18;
+const END_W = LOGO_W * END_SCALE;
+const END_S = END_W / 1503.13;
+const END_LEFT = W / 2 - (LETTERS_X0 + LETTERS_W / 2) * END_SCALE;
+const END_TOP = H / 2 - (LETTERS_H / 2) * END_SCALE;
+
+const RISE_AT = 2.1, RISE_DUR = 0.9;
+const BLEED = 2;
+const clamp = n => n < 0 ? 0 : n > 1 ? 1 : n;
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+const easeInOut = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+const clipY = v => (1 - v) * (100 + BLEED * 2) - BLEED;
+
+function bezier(x1, y1, x2, y2) {
+  const ax = 3*x1 - 3*x2 + 1, bx = 3*x2 - 6*x1, cx = 3*x1;
+  const ay = 3*y1 - 3*y2 + 1, by = 3*y2 - 6*y1, cy = 3*y1;
+  const fx = t => ((ax*t + bx)*t + cx)*t, dfx = t => (3*ax*t + 2*bx)*t + cx;
+  return x => { let t = clamp(x);
+    for (let i = 0; i < 6; i++) { const d = dfx(t); if (Math.abs(d) < 1e-6) break; t -= (fx(t) - x) / d; }
+    t = clamp(t); return ((ay*t + by)*t + cy)*t; };
+}
+const E_GROW = bezier(0.1, 1, 0.3, 1);
+const E_MOVE = bezier(0.25, 0.1, 0.1, 1);
+const E_RISE = bezier(0.44, 0, 0.34, 0.98);   // a mesma do Fuel
+const E_ZOOM = bezier(0.4, 0, 0.1, 1);
+
+const P_LETTERS = LETTERS.map(d => new Path2D(d));
+const P_SYMBOL = SYMBOL.map(d => new Path2D(d));
+
+function drawFrame(ctx, t) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = WHITE;
+  ctx.fillRect(0, 0, W, H);
+
+  // cena: zoom out de 20% até encaixar
+  const zs = ZOOM + (1 - ZOOM) * E_ZOOM(clamp((t - T.zoom) / 0.8));
+  ctx.save();
+  ctx.translate(LEFT + LOGO_W / 2, TOP + LOGO_H / 2);
+  ctx.scale(zs, zs);
+  ctx.translate(-LOGO_W / 2, -LOGO_H / 2);
+
+  // símbolo: cresce no centro e desliza pro lugar
+  const mp = E_MOVE(clamp((t - T.move) / 0.65));
+  const gLin = clamp((t - T.grow) / 0.5);
+  const gp = E_GROW(gLin);
+  ctx.save();
+  ctx.translate(START_DX * (1 - mp), START_DY * (1 - mp));
+  ctx.translate(SYMBOL_CX, SYMBOL_CY);
+  const sc = 0.2 + 0.8 * gp;
+  ctx.scale(sc, sc);
+  ctx.translate(-SYMBOL_CX, -SYMBOL_CY);
+  ctx.globalAlpha = clamp(gLin / 0.4);
+  ctx.scale(S, S);
+  ctx.fillStyle = GREEN;
+  for (const p of P_SYMBOL) ctx.fill(p);
+  ctx.restore();
+  ctx.globalAlpha = 1;
+
+  // nome: sai da máscara (a caixa do logo corta o que passa por baixo)
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0, 0, LOGO_W, LOGO_H);
+  ctx.clip();
+  ctx.scale(S, S);
+  ctx.fillStyle = INK;
+  for (let i = 0; i < P_LETTERS.length; i++) {
+    const rp = E_RISE(clamp((t - (T.rise + RANK[i] * T.stagger)) / 0.65));
+    ctx.save();
+    ctx.translate(0, 300 * (1 - rp));   // 300 em unidades do viewBox, como no SVG
+    ctx.fill(P_LETTERS[i]);
+    ctx.restore();
+  }
+  ctx.restore();
+  ctx.restore();
+
+  // subida do verde: direita na frente, esquerda atrás, equalizando no topo
+  const p = clamp((t - RISE_AT) / RISE_DUR);
+  if (p <= 0) return;
+  const right = easeOut(clamp(p * 1.25));
+  const left = easeInOut(clamp((p - 0.12) / 0.88));
+  const poly = new Path2D();
+  poly.moveTo(-BLEED / 100 * W, clipY(left) / 100 * H);
+  poly.lineTo((100 + BLEED) / 100 * W, clipY(right) / 100 * H);
+  poly.lineTo((100 + BLEED) / 100 * W, clipY(0) / 100 * H);
+  poly.lineTo(-BLEED / 100 * W, clipY(0) / 100 * H);
+  poly.closePath();
+
+  ctx.save();
+  ctx.clip(poly);
+  ctx.fillStyle = BRAND;
+  ctx.fillRect(0, 0, W, H);
+  // a palavra branca, parada no lugar final, com o MESMO recorte
+  ctx.translate(END_LEFT, END_TOP);
+  ctx.scale(END_S, END_S);
+  ctx.fillStyle = WHITE;
+  for (const pa of P_LETTERS) ctx.fill(pa);
+  ctx.restore();
+}
+
+/* ---------- preview ---------- */
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+const hud = document.getElementById("hud");
+const msg = document.getElementById("msg");
+
+function fit() {
+  const s = Math.min(innerWidth / W, innerHeight / H);
+  canvas.style.width = W * s + "px"; canvas.style.height = H * s + "px";
+  canvas.style.left = (innerWidth - W * s) / 2 + "px";
+  canvas.style.top = (innerHeight - H * s) / 2 + "px";
+}
+fit(); addEventListener("resize", fit);
+
+const q = new URLSearchParams(location.search);
+let frame = q.has("f") ? +q.get("f") : q.has("t") ? Math.round(+q.get("t") * FPS) : 0;
+let playing = !(q.has("f") || q.has("t"));
+let anchorFrame = frame, anchorTime = performance.now();
+let recording = false;
+
+function paint() {
+  const f = ((frame % TOTAL_FRAMES) + TOTAL_FRAMES) % TOTAL_FRAMES;
+  drawFrame(ctx, f / FPS);
+  hud.textContent = `${f}/${TOTAL_FRAMES}  ${(f/FPS).toFixed(2)}s  ${playing ? "" : "⏸"}  ·  ${DUR_S}s @ ${FPS}fps · ␣ pausa · ←/→ quadro`;
+}
+(function tick() {
+  if (!recording) { if (playing) frame = anchorFrame + Math.round((performance.now() - anchorTime) / 1000 * FPS); paint(); }
+  requestAnimationFrame(tick);
+})();
+addEventListener("keydown", e => {
+  if (e.key === " ") { e.preventDefault(); playing = !playing; anchorFrame = frame; anchorTime = performance.now(); }
+  if (e.key === "ArrowRight") { playing = false; frame += e.shiftKey ? 10 : 1; }
+  if (e.key === "ArrowLeft") { playing = false; frame -= e.shiftKey ? 10 : 1; }
+});
+
+/* ---------- gravação ---------- */
+document.getElementById("rec").onclick = async () => {
+  if (recording) return;
+  recording = true; playing = false;
+  try {
+    const stream = canvas.captureStream(0);
+    const track = stream.getVideoTracks()[0];
+    const mime = MediaRecorder.isTypeSupported("video/mp4;codecs=avc1.640034")
+      ? "video/mp4;codecs=avc1.640034" : "video/webm;codecs=vp9";
+    const ext = mime.startsWith("video/mp4") ? "mp4" : "webm";
+    const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 24e6 });
+    const chunks = []; rec.ondataavailable = e => e.data.size && chunks.push(e.data);
+    const done = new Promise(r => rec.onstop = r);
+    rec.start();
+    const t0 = performance.now();
+    for (let f = 0; f < TOTAL_FRAMES; f++) {
+      drawFrame(ctx, f / FPS);
+      track.requestFrame();
+      msg.textContent = `gravando ${Math.round((f+1)/TOTAL_FRAMES*100)}%`;
+      const wait = t0 + (f+1)/FPS*1000 - performance.now();
+      if (wait > 0) await new Promise(r => setTimeout(r, wait));
+    }
+    rec.stop(); await done;
+    const blob = new Blob(chunks, { type: mime });
+    msg.textContent = `enviando ${(blob.size/1e6).toFixed(1)} MB…`;
+    let saved = false;
+    try {
+      const res = await fetch(`/api/save-render?name=logo-vetsmart-verde.${ext}`, { method: "POST", body: blob });
+      if (res.ok) { const j = await res.json(); msg.textContent = `salvo em ${j.path} (${(j.bytes/1e6).toFixed(1)} MB)`; saved = true; }
+    } catch {}
+    if (!saved) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `logo-vetsmart-verde.${ext}`; a.click(); msg.textContent = "baixado"; }
+  } catch (e) { msg.textContent = "erro: " + e.message; }
+  finally { recording = false; anchorFrame = frame = 0; anchorTime = performance.now(); playing = true; }
+};
+</script>

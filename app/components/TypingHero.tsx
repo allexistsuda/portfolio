@@ -66,7 +66,7 @@ export default function TypingHero() {
 
   return (
     <h1
-      className="text-[32px] md:text-[49px]"
+      className="text-[32px] md:text-[49px] text-center"
       style={{
         fontWeight: 500,
         letterSpacing: "-0.05em",

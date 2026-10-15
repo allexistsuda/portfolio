@@ -1,0 +1,31 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>acaro motion</title>
+<style>
+  html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  canvas{position:absolute;image-rendering:auto}
+  #hud{position:absolute;left:12px;bottom:10px;font-size:12px;color:#fff;opacity:.45;pointer-events:none}
+  #bar{position:absolute;right:12px;bottom:8px;display:flex;gap:8px;align-items:center}
+  button{border:0;border-radius:999px;padding:7px 14px;font:500 12px/1 ui-sans-serif,system-ui;background:#f6f6f5;color:#111;cursor:pointer}
+  #msg{font-size:12px;color:#fff;opacity:.6}
+</style>
+<!-- O ácaro sozinho, no tamanho nativo da foto. O motor está em /acaro/motion.js. -->
+<canvas id="c" width="686" height="596"></canvas>
+<div id="hud"></div>
+<div id="bar"><span id="msg"></span><button id="rec">gravar</button></div>
+<script src="/acaro/motion.js"></script>
+<script src="/acaro/player.js"></script>
+<script>
+AcaroMotion.load().then(motion => {
+  mountPlayer({
+    canvas: document.getElementById("c"),
+    hud: document.getElementById("hud"),
+    recBtn: document.getElementById("rec"),
+    msg: document.getElementById("msg"),
+    FPS: AcaroMotion.FPS,
+    TOTAL_FRAMES: AcaroMotion.TOTAL_FRAMES,
+    drawFrame: motion.drawFrame,
+    name: "acaro-motion",
+  });
+});
+</script>

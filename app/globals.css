@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+html,
+body {
+  /* evita o "elástico" horizontal do trackpad (Mac) quando o mouse
+     desliza um pouco na diagonal durante um scroll vertical normal */
+  overscroll-behavior-x: none;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
 @keyframes arrow-nudge {
   0%, 40%, 100% { transform: translateX(0); }
   20%            { transform: translateX(10px); }

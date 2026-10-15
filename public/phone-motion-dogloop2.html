@@ -1,0 +1,139 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>phone motion — dog loop</title>
+<style>
+  html,body{margin:0;height:100%;background:#111;overflow:hidden;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  canvas{position:absolute}
+  #hud{position:absolute;left:12px;bottom:10px;font-size:12px;color:#fff;opacity:.45;pointer-events:none}
+  #bar{position:absolute;right:12px;bottom:8px;display:flex;gap:8px;align-items:center}
+  button{border:0;border-radius:999px;padding:7px 14px;font:500 12px/1 ui-sans-serif,system-ui;background:#f6f6f5;color:#111;cursor:pointer}
+  button[disabled]{opacity:.4;cursor:default}
+  #msg{font-size:12px;color:#fff;opacity:.6}
+</style>
+<canvas id="c" width="2000" height="1316"></canvas>
+<div id="hud">carregando…</div>
+<div id="bar"><span id="msg"></span><button id="rec" disabled>gravar</button></div>
+<script>
+// O mockup pronto (dogloop-base.webp, a arte do Allexis em 2000x1317) + o cachorro em loop.
+// Nada é remontado por camadas: o fundo é a imagem final, e a única coisa que muda é o vídeo.
+// Por isso o loop fecha sozinho — a peça dura exatamente o pet.mp4.
+//
+// O desenho estático do gato+cachorro (traço em x 150..619, y 516..861) fica INTEIRO dentro da
+// caixa do vídeo, então um retângulo branco por cima o apaga antes do vídeo entrar. Sem isso o
+// multiply deixaria os dois desenhos sobrepostos.
+
+const W = 2000, STAGE_H = 1317, H = 1316;   // H par: exigência do H.264
+const FPS = 30;
+
+const SCREEN1 = { x: 143, y: 138, w: 482, h: 1040, r: 52 };
+const VIDEO = { x: 119, y: 513.33, w: 530, h: 353.33 };
+
+const base = new Image();
+const video = document.createElement("video");
+video.src = "/mockup3/tela1/pet.mp4";
+video.muted = true; video.loop = true; video.playsInline = true; video.preload = "auto";
+
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+const hud = document.getElementById("hud");
+const msg = document.getElementById("msg");
+const recBtn = document.getElementById("rec");
+let frames = 0, recording = false;
+
+function drawFrame() {
+  ctx.globalCompositeOperation = "source-over";
+  ctx.drawImage(base, 0, 0, W, STAGE_H);
+  if (video.readyState < 2) return;
+  ctx.save();
+  // recorte da tela do celular 1 (cantos de baixo arredondados): a caixa do vídeo passa das
+  // laterais da tela, então sem isso o branco e o vídeo vazariam por cima da moldura.
+  ctx.beginPath();
+  ctx.roundRect(SCREEN1.x, SCREEN1.y, SCREEN1.w, SCREEN1.h, [0, 0, SCREEN1.r, SCREEN1.r]);
+  ctx.clip();
+  ctx.fillStyle = "#FFFFFF";
+  ctx.fillRect(VIDEO.x, VIDEO.y, VIDEO.w, VIDEO.h);
+  ctx.globalCompositeOperation = "multiply";   // o branco do vídeo some contra a tela branca
+  ctx.drawImage(video, VIDEO.x, VIDEO.y, VIDEO.w, VIDEO.h);
+  ctx.restore();
+  ctx.globalCompositeOperation = "source-over";
+}
+
+function fit() {
+  const s = Math.min(innerWidth / W, innerHeight / H);
+  canvas.style.width = W * s + "px"; canvas.style.height = H * s + "px";
+  canvas.style.left = (innerWidth - W * s) / 2 + "px";
+  canvas.style.top = (innerHeight - H * s) / 2 + "px";
+}
+fit(); addEventListener("resize", fit);
+
+(async function boot() {
+  try {
+    await new Promise((res, rej) => {
+      base.onload = res; base.onerror = () => rej(new Error("falhou: dogloop-base.webp"));
+      base.src = "/mockup3/dogloop-base.webp";
+    });
+    // readyState antes do evento: com preload="auto" o loadeddata costuma disparar antes daqui.
+    if (video.readyState < 2) {
+      await new Promise((res, rej) => {
+        video.onloadeddata = res;
+        video.onerror = () => rej(new Error("falhou: pet.mp4"));
+      });
+    }
+    frames = Math.round(video.duration * FPS);
+    hud.textContent = `${video.duration.toFixed(3)}s · ${frames} quadros @ ${FPS}fps · ${W}x${H}`;
+    recBtn.disabled = false;
+    video.play();
+    (function tick() { if (!recording) drawFrame(); requestAnimationFrame(tick); })();
+  } catch (e) { hud.textContent = "erro: " + e.message; }
+})();
+
+// Gravação: busca quadro a quadro (currentTime + seeked) em vez de gravar em tempo real, então o
+// conteúdo vem do índice e não da carga da máquina. Os N quadros cobrem exatamente a duração do
+// vídeo, então o último emenda no primeiro.
+const seek = t => new Promise(res => { video.onseeked = res; video.currentTime = t; });
+
+recBtn.onclick = async () => {
+  if (recording) return;
+  recording = true; recBtn.disabled = true;
+  video.pause();
+  try {
+    const stream = canvas.captureStream(0);
+    const track = stream.getVideoTracks()[0];
+    const mime = MediaRecorder.isTypeSupported("video/mp4;codecs=avc1.640034")
+      ? "video/mp4;codecs=avc1.640034" : "video/webm;codecs=vp9";
+    const ext = mime.startsWith("video/mp4") ? "mp4" : "webm";
+    const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 32e6 });
+    const chunks = [];
+    rec.ondataavailable = e => e.data.size && chunks.push(e.data);
+    const done = new Promise(r => rec.onstop = r);
+
+    rec.start();
+    const t0 = performance.now();
+    for (let f = 0; f < frames; f++) {
+      await seek(f * video.duration / frames);
+      drawFrame();
+      track.requestFrame();
+      msg.textContent = `gravando ${Math.round((f + 1) / frames * 100)}%`;
+      const wait = t0 + (f + 1) / FPS * 1000 - performance.now();
+      if (wait > 0) await new Promise(r => setTimeout(r, wait));
+    }
+    rec.stop(); await done;
+
+    const blob = new Blob(chunks, { type: mime });
+    msg.textContent = `enviando ${(blob.size / 1e6).toFixed(1)} MB…`;
+    let saved = false;
+    try {
+      const res = await fetch(`/api/save-render?name=phone-motion-dogloop2.${ext}`, { method: "POST", body: blob });
+      if (res.ok) { const j = await res.json(); msg.textContent = `salvo em ${j.path} (${(j.bytes / 1e6).toFixed(1)} MB)`; saved = true; }
+    } catch {}
+    if (!saved) {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `phone-motion-dogloop2.${ext}`;
+      a.click();
+      msg.textContent = `baixado (${(blob.size / 1e6).toFixed(1)} MB)`;
+    }
+  } catch (e) { msg.textContent = "erro: " + e.message; }
+  finally { recording = false; recBtn.disabled = false; video.currentTime = 0; video.play(); }
+};
+</script>

@@ -1,0 +1,43 @@
+# fora do deploy: renders, testes e arquivos pesados que não são usados no site
+renders
+.claude
+public/_tmp-ref
+
+# vídeos do reel que não são usados (só render-final.mp4 entra)
+public/reel/reel.mp4
+public/reel/reel1.mp4
+
+# rotas de experimento / motion
+app/motion-test
+app/motion2
+app/motion3
+app/type-test
+app/reel-test
+app/slide-experience
+app/slides
+app/logo-motion
+app/strip-motion
+app/phone-motion
+app/design-slide-motion
+app/dosagem-motion
+app/dosagem-select
+app/dosagem-states
+app/invest-motion
+
+# assets desses experimentos
+public/motion-test
+public/motion2
+public/motion3
+public/mockup3
+public/dosagem
+public/diacinco
+public/design-slide-motion
+public/invest-motion
+public/acaro
+public/bibliotecas
+public/unico-motion.html
+public/phone-motion-dogloop2.html
+public/logo-vetsmart-verde.html
+public/acaro-motion.html
+public/acaro-mockup.html
+public/bibliotecas-motion.html

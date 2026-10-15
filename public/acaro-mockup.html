@@ -1,0 +1,74 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>acaro mockup</title>
+<style>
+  html,body{margin:0;height:100%;background:#0b0b0b;overflow:hidden;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  canvas{position:absolute;image-rendering:auto}
+  #hud{position:absolute;left:12px;bottom:10px;font-size:12px;color:#fff;opacity:.45;pointer-events:none}
+  #bar{position:absolute;right:12px;bottom:8px;display:flex;gap:8px;align-items:center}
+  button{border:0;border-radius:999px;padding:7px 14px;font:500 12px/1 ui-sans-serif,system-ui;background:#f6f6f5;color:#111;cursor:pointer}
+  #msg{font-size:12px;color:#fff;opacity:.6}
+</style>
+<!--
+  Os três celulares da busca do Vetsmart, com o ácaro do artigo VIVO no celular do meio.
+
+  O mockup entra como bitmap e fica parado: é foto de produto, qualquer deriva nele ia
+  amolecer o texto da interface. Só a foto do artigo anima.
+
+  O retângulo da foto foi MEDIDO na arte, não chutado — varredura procurando o único bloco
+  âmbar denso dentro do celular do meio: x 780..1220, y 587..968, raio de canto ~9 px.
+  Esse retângulo é 441 x 382, aspect 1,154; a foto original é 686 x 596, aspect 1,151.
+  É a mesma proporção — a arte usa a foto inteira, sem corte. Então é só reduzir, sem
+  cover nem recorte, e nada desalinha.
+-->
+<canvas id="c" width="2000" height="1316"></canvas>
+<div id="hud"></div>
+<div id="bar"><span id="msg"></span><button id="rec">gravar</button></div>
+<script src="/acaro/motion.js"></script>
+<script src="/acaro/player.js"></script>
+<script>
+// Medidos na arte (ver comentário acima).
+const SLOT = { x: 780, y: 587, w: 441, h: 382, r: 9 };
+
+Promise.all([
+  AcaroMotion.load(),
+  // onload e não decode(), pelo mesmo motivo de /acaro/motion.js.
+  new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = "/acaro/mockup.webp"; }),
+]).then(([motion, mockup]) => {
+  // O motion é desenhado no tamanho nativo e só depois reduzido pro slot: desenhar
+  // direto em 441 px mudaria a escala do blur, do grão e do bokeh em relação ao que
+  // foi ajustado na peça solta.
+  const stage = document.createElement("canvas");
+  stage.width = AcaroMotion.W; stage.height = AcaroMotion.H;
+  const sctx = stage.getContext("2d");
+
+  const canvas = document.getElementById("c");
+
+  function drawFrame(c, f) {
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.clearRect(0, 0, canvas.width, canvas.height);
+    c.drawImage(mockup, 0, 0);
+
+    motion.drawFrame(sctx, f);
+
+    c.save();
+    c.beginPath();
+    c.roundRect(SLOT.x, SLOT.y, SLOT.w, SLOT.h, SLOT.r);
+    c.clip();
+    c.drawImage(stage, SLOT.x, SLOT.y, SLOT.w, SLOT.h);
+    c.restore();
+  }
+
+  mountPlayer({
+    canvas,
+    hud: document.getElementById("hud"),
+    recBtn: document.getElementById("rec"),
+    msg: document.getElementById("msg"),
+    FPS: AcaroMotion.FPS,
+    TOTAL_FRAMES: AcaroMotion.TOTAL_FRAMES,
+    drawFrame,
+    name: "acaro-mockup",
+    maxScale: 1,
+  });
+});
+</script>
