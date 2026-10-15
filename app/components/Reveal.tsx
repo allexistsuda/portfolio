@@ -58,6 +58,15 @@ export default function Reveal({
     let timer: ReturnType<typeof setTimeout> | null = null;
     let pronto = false;
 
+    // No celular a rolagem é rápida e a tela é curta: com a margem original o
+    // item só começa a animar quando encosta na borda de baixo, e a mola (~600ms)
+    // não termina antes de ele passar. Antecipamos o gatilho em 18% da altura da
+    // janela, então ele chega na tela já animando. No desktop fica como está.
+    const ehMobile = window.innerWidth < 768;
+    const margemBase = parseFloat(triggerMargin) || 0;
+    const margemEfetiva = ehMobile ? Math.max(margemBase, 18) : margemBase;
+    const margemCss = `${margemEfetiva}%`;
+
     const disparar = () => {
       if (pronto) return;
       pronto = true;
@@ -71,7 +80,7 @@ export default function Reveal({
     // mesma régua do rootMargin: triggerMargin é "-30%" ou "0%" da altura da janela
     const conferir = () => {
       const r = el.getBoundingClientRect();
-      const margem = (parseFloat(triggerMargin) / 100) * window.innerHeight;
+      const margem = (margemEfetiva / 100) * window.innerHeight;
       if (r.top < window.innerHeight + margem && r.bottom > 0) disparar();
     };
 
@@ -79,7 +88,7 @@ export default function Reveal({
       ([entry]) => {
         if (entry.isIntersecting) disparar();
       },
-      { threshold: 0, rootMargin: `0px 0px ${triggerMargin} 0px` }
+      { threshold: 0, rootMargin: `0px 0px ${margemCss} 0px` }
     );
     obs.observe(el);
     window.addEventListener("scroll", conferir, { passive: true });
