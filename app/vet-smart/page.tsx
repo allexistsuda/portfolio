@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useSyncExternalStore } from "react";
 import BottomNav from "../components/BottomNav";
+import VideoNaTela from "../components/VideoNaTela";
 import Nav from "../components/Nav";
 import Reveal from "../components/Reveal";
 import { useLang } from "../i18n/lang";
@@ -58,57 +58,6 @@ function Img({ src, alt }: { src: string; alt: string }) {
  * O primeiro quadro é branco, igual ao fundo do card, então não há salto ao começar.
  * Com prefers-reduced-motion nem monta o vídeo: entrega o PNG do quadro final.
  */
-const MENOS_MOVIMENTO = "(prefers-reduced-motion: reduce)";
-
-function assinarMovimento(aoMudar: () => void) {
-  const mq = window.matchMedia(MENOS_MOVIMENTO);
-  mq.addEventListener("change", aoMudar);
-  return () => mq.removeEventListener("change", aoMudar);
-}
-
-function VideoNaTela({ src, estatico, alt, repetir = false }:
-  { src: string; estatico: string; alt: string; repetir?: boolean }) {
-  const ref = useRef<HTMLVideoElement>(null);
-  // a preferência pode mudar durante a sessão, então aqui a assinatura é de verdade
-  const semMovimento = useSyncExternalStore(
-    assinarMovimento,
-    () => window.matchMedia(MENOS_MOVIMENTO).matches,
-    () => false,
-  );
-
-  useEffect(() => {
-    const v = ref.current;
-    if (!v) return;
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (!e.isIntersecting) return;
-        obs.disconnect(); // uma vez só: depois de tocar, não observa mais
-        v.play().catch(() => {});
-      },
-      // 0.6 e não 0.35: o bloco tem 713px numa tela de 900, então a 35% ele dispara
-      // ainda entrando pela borda de baixo. A 60% a montagem começa com ele já na tela.
-      { threshold: 0.6 },
-    );
-    obs.observe(v);
-    return () => obs.disconnect();
-  }, [semMovimento]);
-
-  if (semMovimento) return <Img src={estatico} alt={alt} />;
-
-  return (
-    <video
-      ref={ref}
-      src={src}
-      muted
-      playsInline
-      loop={repetir}
-      preload="auto"
-      aria-label={alt}
-      style={{ width: "100%", height: "auto", display: "block", borderRadius: 16, background: "#FFFFFF" }}
-    />
-  );
-}
-
 type Section = { heading: string; blocks: Block[] };
 type Content = {
   intro: Section;
@@ -382,21 +331,14 @@ export default function VetSmart() {
           <Blocks cascata blocks={c.role.blocks} />
         </TwoCol>
 
-        {/* Final gifs */}
+
+        {/* tipografia e cor fecham a página */}
         <div className="mt-8 md:mt-[100px]" style={{ marginBottom: 32 }}>
           <div className="md:hidden space-y-8">
-            <Img src="/vet-smart/07-mobile-a.png" alt="Vet Smart" />
-            <Img src="/vet-smart/07-mobile-b.gif" alt="Vet Smart" />
+            <Img src="/vet-smart/07-mobile-a.png" alt="Vet Smart typeface" />
+            <Img src="/vet-smart/07-mobile-b.gif" alt="Vet Smart color" />
           </div>
-          <div className="hidden md:block"><Img src="/vet-smart/07.gif" alt="Vet Smart color" /></div>
-        </div>
-        <div>
-          <div className="md:hidden space-y-8">
-            <Img src="/vet-smart/08-mobile-a.gif" alt="Vet Smart" />
-            <Img src="/vet-smart/08-mobile-b.png" alt="Vet Smart" />
-            <Img src="/vet-smart/08-mobile-c.png" alt="Vet Smart" />
-          </div>
-          <div className="hidden md:block"><Img src="/vet-smart/08.gif" alt="Vet Smart estudos" /></div>
+          <div className="hidden md:block"><Img src="/vet-smart/07.gif" alt="Vet Smart typeface e cor" /></div>
         </div>
 
         <BottomNav prev={{ label: c.back, href: "/" }} next={{ label: "Unico You", href: "/unico-you" }} />

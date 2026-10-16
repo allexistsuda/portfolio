@@ -3,6 +3,7 @@
 import Nav from "../components/Nav";
 import Reveal from "../components/Reveal";
 import BottomNav from "../components/BottomNav";
+import VideoNaTela from "../components/VideoNaTela";
 import { useLang } from "../i18n/lang";
 import { Blocks, type Block } from "../i18n/render";
 
@@ -263,7 +264,7 @@ export default function VetSmartTV() {
         </TwoCol>
 
         <div className="my-8 md:my-[100px]">
-          <Img src="/vet-smart-tv/03.gif" alt="Vet Smart TV" />
+          <VideoNaTela src="/vet-smart-tv/03-motion.mp4" estatico="/vet-smart-tv/03-poster.jpg" alt="Vet Smart TV" repetir />
         </div>
 
         {/* Resultados */}
