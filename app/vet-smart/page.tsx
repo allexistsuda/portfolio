@@ -361,7 +361,10 @@ export default function VetSmart() {
           <Blocks cascata blocks={c.gap.blocks} />
         </TwoCol>
 
-        {/* A calculadora — sem linha acima: ela é a resposta ao que a seção anterior achou */}
+        {/* A calculadora — sem linha acima: ela é a resposta ao que a seção anterior achou.
+            Mas sem linha também não há respiro, porque é o Divider que carrega a margem
+            entre seções: metade do que ele daria, para separar sem desligar uma da outra. */}
+        <div className="mt-8 md:mt-[100px]" />
         <TwoCol heading={c.calc.heading}>
           <Blocks cascata blocks={c.calc.blocks} />
         </TwoCol>
