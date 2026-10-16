@@ -77,7 +77,7 @@ const pt: Content = {
       "Cofundei o Vet Smart, um app para veterinários, com amigos desenvolvedores e sem investimento externo",
     blocks: [
       { p: ["Quando o Vet Smart surgiu, não existiam aplicativos para veterinários. Fomos os ", { h: "primeiros a construir um produto para esse público", d: 0.2 }, ", e eu era o único designer do time."] },
-      { p: ["Ele se tornou o ", { h: "principal aplicativo de veterinária do mercado", d: 0.4 }, ", usado por metade dos veterinários de pequenos animais do Brasil. Foi adquirido pela Petlove."] },
+      { p: ["Ele se tornou o ", { h: "principal aplicativo de veterinária do Brasil", d: 0.4 }, ", usado por metade dos veterinários de pequenos animais, e foi adquirido pela Petlove."] },
     ],
   },
   pain: {
@@ -150,7 +150,7 @@ const en: Content = {
       "I co-founded Vet Smart, an app for vets, with developer friends and no outside investment",
     blocks: [
       { p: ["When Vet Smart came along, there were no apps for vets. We were the ", { h: "first to build a product for them", d: 0.2 }, ", and I was the only designer on the team."] },
-      { p: ["It became the ", { h: "leading veterinary app on the market", d: 0.4 }, ", used by half the small-animal vets in Brazil. It was acquired by Petlove."] },
+      { p: ["It became the ", { h: "leading veterinary app in Brazil", d: 0.4 }, ", used by half of all small-animal vets, and was acquired by Petlove."] },
     ],
   },
   pain: {
