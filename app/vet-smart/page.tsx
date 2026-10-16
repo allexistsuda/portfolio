@@ -141,7 +141,7 @@ const pt: Content = {
     blocks: [
       { p: ["Levamos essa informação para um aplicativo, que o veterinário usa ", { h: "durante o próprio atendimento.", d: 0.2 }] },
       { p: ["Durante a consulta o veterinário não tinha tempo de navegar muito. Por isso a ", { h: "busca tinha peso grande na navegação", d: 0.4 }, ", era o caminho mais direto para chegar na informação. Ela funcionava por nome, princípio ativo, empresa ou doença."] },
-      { p: ["As bulas vinham cada uma de um jeito e traziam tudo em texto corrido. Organizei o conteúdo em ", { h: "seções fixas", d: 0.6 }, ": Doses, Indicações, Apresentações e Interações medicamentosas, consistentes em todos os produtos, ", { h: "mais de 4 mil no total.", d: 0.8 }] },
+      { p: ["As bulas vinham cada uma de um jeito e traziam tudo em texto corrido. Organizei o conteúdo em ", { h: "seções fixas", d: 0.6 }, ": doses, indicações, apresentações e interações medicamentosas, consistentes em todos os produtos, ", { h: "mais de 4 mil no total.", d: 0.8 }] },
       { p: ["Também transformei o texto corrido em módulos, que organizavam a informação de um jeito mais visual e rápido de entender."] },
     ],
   },
@@ -212,7 +212,7 @@ const en: Content = {
     blocks: [
       { p: ["We brought that information into an app the vet uses ", { h: "during the appointment itself.", d: 0.2 }] },
       { p: ["There was no time to browse during a consult, so ", { h: "search did most of the work", d: 0.4 }, ". It was the most direct route to the information, and it ran on name, active ingredient, company or disease."] },
-      { p: ["Every package insert was laid out differently, all of it running text. I organized the content into ", { h: "fixed sections", d: 0.6 }, ": Doses, Indications, Formats and Drug interactions, consistent across every product, ", { h: "more than 4,000 of them.", d: 0.8 }] },
+      { p: ["Every package insert was laid out differently, all of it running text. I organized the content into ", { h: "fixed sections", d: 0.6 }, ": doses, indications, formats and drug interactions, consistent across every product, ", { h: "more than 4,000 of them.", d: 0.8 }] },
       { p: ["I also broke the running text into modules, which made the information more visual and faster to take in."] },
     ],
   },
