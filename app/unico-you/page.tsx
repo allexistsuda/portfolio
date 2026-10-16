@@ -22,7 +22,9 @@ function TwoCol({ heading, children }: { heading: string; children: React.ReactN
     <div className="md:px-5">
       {/* entra como na home: um reveal por seção, título e texto juntos — são uma
           unidade de leitura, separar os dois só faria o olho esperar duas vezes */}
-      <Reveal>
+      {/* triggerMargin 0%, igual a home: o padrao do componente e -30%, que adia o
+          gatilho em quase um terco da tela e faz o texto aparecer tarde demais */}
+      <Reveal triggerMargin="0%">
       <div className="grid grid-cols-1 md:grid-cols-[42%_1fr] gap-y-6 gap-x-16 lg:gap-x-24">
         <h2
           className="text-[29px] md:text-[36px] leading-[38px] md:leading-[44px] tracking-[-0.58px] md:tracking-[-0.72px]"
