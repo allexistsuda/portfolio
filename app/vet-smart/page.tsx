@@ -74,7 +74,7 @@ type Content = {
 const pt: Content = {
   intro: {
     heading:
-      "Cofundei o Vet Smart, um app para veterinários, com amigos desenvolvedores e sem investimento externo",
+      "Cofundei o Vet Smart, um app para veterinários. Construí com amigos desenvolvedores e sem investimento externo.",
     blocks: [
       { p: ["Quando o Vet Smart surgiu, não existiam aplicativos para veterinários. Fomos os ", { h: "primeiros a construir um produto para esse público", d: 0.2 }, ", e eu era o único designer do time."] },
       { p: ["Ele se tornou o ", { h: "principal aplicativo de veterinária do Brasil", d: 0.4 }, ", usado por metade dos veterinários de pequenos animais, e foi adquirido pela Petlove."] },
@@ -147,7 +147,7 @@ const pt: Content = {
 const en: Content = {
   intro: {
     heading:
-      "I co-founded Vet Smart, an app for vets, with developer friends and no outside investment",
+      "I co-founded Vet Smart, an app for vets. Built it with developer friends and no outside investment.",
     blocks: [
       { p: ["When Vet Smart came along, there were no apps for vets. We were the ", { h: "first to build a product for them", d: 0.2 }, ", and I was the only designer on the team."] },
       { p: ["It became the ", { h: "leading veterinary app in Brazil", d: 0.4 }, ", used by half of all small-animal vets, and was acquired by Petlove."] },
