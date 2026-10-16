@@ -148,10 +148,8 @@ const pt: Content = {
   evolution: {
     heading: "Recorrência",
     blocks: [
-      { p: ["Tínhamos bons números de cadastro, ", { h: "75 mil", d: 0.2 }, ", sendo metade deles usuários ativos. Mas a frequência de uso era baixa, uma média de ", { h: "cinco acessos por mês.", d: 0.4 }] },
-      { p: ["Esse dado importava porque a maior parte da nossa receita vinha da venda de anúncios dentro do app, e sem ela a empresa não crescia."] },
-      { p: ["Fui investigar o motivo, começando de forma aberta, com uma pesquisa para toda a base, depois aprofundando em entrevistas. Surgiu um padrão: o veterinário queria ", { h: "conteúdo para se atualizar", d: 0.6 }, ", estudos recentes, protocolos e casos reais."] },
-      { p: ["Testamos diferentes tipos de conteúdo e formatos de apresentação. Organizei em categorias: estudos, protocolos, informações por raça e casos de uso. Em vez de manter o texto corrido do estudo original, criei uma ", { h: "hierarquia visual", d: 0.8 }, " com pesos de fonte, destaques e imagens, para guiar a leitura."] },
+      { p: ["Tínhamos bons números de cadastro, ", { h: "75 mil", d: 0.2 }, ", sendo metade deles usuários ativos. Mas a frequência de uso era baixa, uma média de ", { h: "cinco acessos por mês", d: 0.4 }, ". Esse dado importava porque a maior parte da nossa receita vinha da venda de anúncios dentro do app, e sem ela a empresa não crescia."] },
+      { p: ["Fui investigar o motivo, começando de forma bem aberta, com uma pesquisa para toda a base, depois aprofundando em entrevistas. Surgiu um padrão: o veterinário queria ", { h: "conteúdo para se atualizar", d: 0.6 }, ", estudos recentes, protocolos e casos reais. Testamos diferentes tipos de conteúdo e formatos de apresentação. Organizei em categorias: estudos, protocolos, informações por raça e casos de uso. E, em vez de manter o texto corrido do estudo original, criei uma ", { h: "hierarquia visual", d: 0.8 }, " com pesos de fonte, destaques e imagens, para guiar a leitura."] },
     ],
   },
   calc: {
@@ -217,10 +215,8 @@ const en: Content = {
   evolution: {
     heading: "Retention",
     blocks: [
-      { p: ["Sign-ups were good, ", { h: "75,000", d: 0.2 }, ", half of them active. But people came back rarely, an average of ", { h: "five visits a month.", d: 0.4 }] },
-      { p: ["That mattered because most of our revenue came from ads sold inside the app, and without it the company would not grow."] },
-      { p: ["I went looking for the reason, starting wide with a survey to the whole base, then going deeper in interviews. A pattern came up: vets wanted ", { h: "content to keep current", d: 0.6 }, ", recent studies, protocols and real cases."] },
-      { p: ["We tested different kinds of content and ways of presenting it. I organized them into categories: studies, protocols, breed information and use cases. Instead of keeping the running text of the original study, I built a ", { h: "visual hierarchy", d: 0.8 }, " with font weights, highlights and images to guide the reading."] },
+      { p: ["Sign-ups were good, ", { h: "75,000", d: 0.2 }, ", half of them active. But people came back rarely, an average of ", { h: "five visits a month", d: 0.4 }, ". That mattered because most of our revenue came from ads sold inside the app, and without it the company would not grow."] },
+      { p: ["I went looking for the reason, starting very wide with a survey to the whole base, then going deeper in interviews. A pattern came up: vets wanted ", { h: "content to keep current", d: 0.6 }, ", recent studies, protocols and real cases. We tested different kinds of content and ways of presenting it. I organized them into categories: studies, protocols, breed information and use cases. And instead of keeping the running text of the original study, I built a ", { h: "visual hierarchy", d: 0.8 }, " with font weights, highlights and images to guide the reading."] },
     ],
   },
   calc: {
