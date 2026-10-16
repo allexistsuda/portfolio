@@ -140,7 +140,7 @@ const SHOW_CONTACT_LINKS = false;
 // Chips soltos embaixo da frase do Contato (Email / LinkedIn / Resume).
 const SHOW_CONTACT_CHIPS = false;
 // Slider de depoimentos entre a timeline e o Contato (teste).
-const SHOW_DEPOIMENTOS = false;
+const SHOW_DEPOIMENTOS = true;
 // Reel rodando apagado atrás do Contato: testado e descartado — ver comentário no JSX.
 const SHOW_CONTACT_REEL = false;
 
@@ -377,16 +377,22 @@ export default function Home() {
       if (!sec || !dark || !text) return;
       const vh = window.innerHeight;
       const rect = sec.getBoundingClientRect();
-      // 0 quando o topo da seção entra pela base da janela; 1 quando ele chega a ~15% do topo
-      const p = clamp((vh - rect.top) / (vh * 0.85));
-      const right = easeOut(clamp(p * 1.25));
-      const left = easeInOut(clamp((p - 0.12) / 0.88));
+      // dianteira de 10%: começa antes de o topo encostar na base da janela, mas
+      // sem terminar fora da tela. Com 25% o preto completava a 40% de distância
+      // e você só via o estado final — o impacto vem de ver a subida acontecendo.
+      const p = clamp((vh * 1.1 - rect.top) / (vh * 0.85));
+      // a diagonal é a diferença entre os dois cantos. Defasagem maior (direito
+      // termina em p=0.69, esquerdo só começa em 0.30) = inclinado por mais tempo
+      // antes de deitar. Antes: 1.25 e atraso de 0.12, que achatava cedo.
+      const right = easeOut(clamp(p * 1.45));
+      const left = easeInOut(clamp((p - 0.3) / 0.7));
       dark.style.clipPath = `polygon(0% ${(1 - left) * 100}%, 100% ${(1 - right) * 100}%, 100% 100%, 0% 100%)`;
-      text.style.opacity = String(clamp((p - 0.55) / 0.35));
+      // 0.72, não 0.55: o texto estava aparecendo com o preto ainda subindo
+      text.style.opacity = String(clamp((p - 0.72) / 0.28));
       if (contactFooterRef.current) contactFooterRef.current.style.opacity = String(clamp((p - 0.7) / 0.3));
-      text.style.transform = `translateY(${(1 - clamp((p - 0.55) / 0.35)) * 24}px)`;
+      text.style.transform = `translateY(${(1 - clamp((p - 0.72) / 0.28)) * 24}px)`;
       // os chips caem logo depois que a frase já está quase toda visível
-      if (p > 0.82 && !chipsFiredRef.current) {
+      if (p > 0.92 && !chipsFiredRef.current) {
         chipsFiredRef.current = true;
         setChipsIn(true);
       }
@@ -485,6 +491,17 @@ export default function Home() {
       section.style.background = `rgb(${mix(246, 17)}, ${mix(246, 17)}, ${mix(245, 17)})`;
       // a entrada do conteúdo agora é feita só pelos Reveals (mola); antes o bloco inteiro aparecia com fade preso ao scroll do vídeo
       content.style.opacity = "1";
+      if (vw < 768) {
+        // celular: sem efeito de scroll. O CSS deixa o vídeo como card estático
+        // (16:9, raio 8) e aqui só damos o respiro até o texto — sem margem
+        // negativa calculada, que era a origem do texto aparecendo torto.
+        block.style.width = "";
+        block.style.height = "";
+        block.style.top = "";
+        block.style.borderRadius = "";
+        content.style.marginTop = "52px";
+        return;
+      }
       const startTop = 0;
       block.style.width = `${vw + (cw - vw) * e}px`;
       block.style.height = `${startH + (endH - startH) * e}px`;
@@ -593,9 +610,10 @@ export default function Home() {
         {/* Sobre + Experiência — seção preta; a imagem abre em tela cheia, fica presa e fecha as laterais ao rolar */}
         <section ref={sectionRef} style={{ position: "relative", marginLeft: "calc(50% - 50vw)", width: "100vw", background: "#F6F6F5", paddingBottom: 100 }}>
           <div ref={trackRef} className="reel-track" style={{ position: "relative" }}>
-            <div style={{ position: "sticky", top: 0, height: "100vh" }}>
+            <div className="reel-sticky" style={{ position: "sticky", top: 0, height: "100vh" }}>
               <div
                 ref={imgBlockRef}
+                className="reel-bloco"
                 style={{ position: "absolute", left: "50%", transform: "translateX(-50%) translateZ(0)", width: "100vw", height: "60vh", top: 0, overflow: "hidden", background: "#F6F6F5", isolation: "isolate", willChange: "width, height, top, border-radius" }}
               >
                 <video
@@ -699,6 +717,8 @@ export default function Home() {
                         .contato-frase { font-size: 19px; line-height: 29px; letter-spacing: -0.19px; }
                         /* Timeline. No mobile as três colunas somavam 370px em 327 disponíveis:
                            a empresa colapsava pra zero e o cargo vazava. Vira duas linhas. */
+                        /* celular: empresa à esquerda com a data na mesma linha, à
+                           direita; cargo embaixo ocupando a largura toda */
                         .exp-linha {
                           display: grid; align-items: center;
                           grid-template-columns: minmax(0, 1fr) auto;
@@ -708,7 +728,10 @@ export default function Home() {
                         .exp-data { grid-area: data; text-align: right; }
                         .exp-empresa { grid-area: empresa; }
                         .exp-cargo { grid-area: cargo; }
-                        @media (min-width: 768px) {
+                        /* 1100, não 768: as três colunas somam 370px fixos (110 + 180
+                           + 80 de intervalo). Abaixo disso a coluna da empresa chegava a
+                           18px e o nome transbordava. Até lá vale o layout de 2 linhas. */
+                        @media (min-width: 1100px) {
                           .exp-linha {
                             grid-template-columns: 110px minmax(0, 1fr) 180px;
                             grid-template-areas: "data empresa cargo";
@@ -716,6 +739,24 @@ export default function Home() {
                           }
                           .exp-data { text-align: left; }
                           .exp-cargo { text-align: right; white-space: nowrap; }
+                        }
+                        /* No celular o vídeo não anima: vira card estático. Sem pista,
+                           sem sticky, sem posicionamento absoluto. */
+                        @media (max-width: 767px) {
+                          .reel-track { height: auto !important; }
+                          .reel-sticky { position: static !important; height: auto !important; }
+                          .reel-bloco {
+                            position: static !important;
+                            /* recua até a guia de 24px em vez de sangrar na borda */
+                            width: calc(100% - 48px) !important;
+                            margin: 0 24px;
+                            height: auto !important;
+                            aspect-ratio: 16 / 9;
+                            transform: none !important;
+                            border-radius: 8px !important;
+                          }
+                          /* o 1.012 existia pra disfarçar a borda durante o efeito */
+                          .reel-bloco video { transform: none !important; }
                         }
                         /* Pista do vídeo do About: 140vh no desktop dá 325px de scroll
                            pro efeito. No mobile 122vh dá 179px — o mesmo efeito, mais rápido. */
@@ -845,7 +886,6 @@ export default function Home() {
                                   </div>
                                 </Reveal>
                               ))}
-                              {SHOW_DEPOIMENTOS && <Depoimentos />}
                             </div>
                           )}
                           {/* Referência B: ano à esquerda + cargo grande (hierarquia por escala) e empresa miúda embaixo; sem réguas */}
@@ -1282,6 +1322,8 @@ export default function Home() {
           </div>
         </section>
         */}
+
+        {SHOW_DEPOIMENTOS && <Depoimentos />}
 
         {SHOW_CONTACT && (
           <>
