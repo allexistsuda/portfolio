@@ -12,22 +12,21 @@ const title: React.CSSProperties = { fontWeight: 500, color: "#222" };
 function TwoCol({ heading, children }: { heading: string; children: React.ReactNode }) {
   return (
     <div className="md:px-5">
-      {/* entra como na home: um reveal por seção, título e texto juntos — são uma
-          unidade de leitura, separar os dois só faria o olho esperar duas vezes */}
-      {/* triggerMargin 0%, igual a home: o padrao do componente e -30%, que adia o
-          gatilho em quase um terco da tela e faz o texto aparecer tarde demais */}
-      <Reveal triggerMargin="0%">
       <div className="grid grid-cols-1 md:grid-cols-[42%_1fr] gap-y-6 gap-x-16 lg:gap-x-24">
-        <h2
-          className="text-[29px] md:text-[36px] leading-[38px] md:leading-[44px] tracking-[-0.58px] md:tracking-[-0.72px]"
-          style={title}
-        >{heading}</h2>
+        {/* o título abre a cascata e os parágrafos vêm atrás, escalonados dentro do
+            Blocks — mesmo ritmo do About na home. triggerMargin 0% porque o padrão do
+            componente, -30%, adia o gatilho em quase um terço da tela. */}
+        <Reveal triggerMargin="0%">
+          <h2
+            className="text-[29px] md:text-[36px] leading-[38px] md:leading-[44px] tracking-[-0.58px] md:tracking-[-0.72px]"
+            style={title}
+          >{heading}</h2>
+        </Reveal>
         <div
           className="text-[19px] md:text-[24px] leading-[29px] md:leading-[36px] tracking-[-0.19px] md:tracking-[-0.24px]"
           style={body}
         >{children}</div>
       </div>
-      </Reveal>
     </div>
   );
 }
@@ -236,21 +235,21 @@ export default function VetSmartTV() {
 
         {/* Intro */}
         <TwoCol heading={c.intro.heading}>
-          <Blocks blocks={c.intro.blocks} />
+          <Blocks cascata blocks={c.intro.blocks} />
         </TwoCol>
 
         <Divider />
 
         {/* Onde identificamos */}
         <TwoCol heading={c.opportunity.heading}>
-          <Blocks blocks={c.opportunity.blocks} />
+          <Blocks cascata blocks={c.opportunity.blocks} />
         </TwoCol>
 
         <Divider />
 
         {/* Como viabilizamos */}
         <TwoCol heading={c.enable.heading}>
-          <Blocks blocks={c.enable.blocks} />
+          <Blocks cascata blocks={c.enable.blocks} />
         </TwoCol>
 
         {/* Image before Solução */}
@@ -260,7 +259,7 @@ export default function VetSmartTV() {
 
         {/* Solução e evoluções */}
         <TwoCol heading={c.solution.heading}>
-          <Blocks blocks={c.solution.blocks} />
+          <Blocks cascata blocks={c.solution.blocks} />
         </TwoCol>
 
         <div className="my-8 md:my-[100px]">
@@ -269,14 +268,14 @@ export default function VetSmartTV() {
 
         {/* Resultados */}
         <TwoCol heading={c.results.heading}>
-          <Blocks blocks={c.results.blocks} />
+          <Blocks cascata blocks={c.results.blocks} />
         </TwoCol>
 
         <Divider />
 
         {/* Meu papel */}
         <TwoCol heading={c.role.heading}>
-          <Blocks blocks={c.role.blocks} />
+          <Blocks cascata blocks={c.role.blocks} />
         </TwoCol>
 
         <BottomNav prev={{ label: "Santander Workshops", href: "/santander-workshops" }} next={{ label: "Home", href: "/" }} />

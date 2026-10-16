@@ -1,4 +1,5 @@
 import HighlightText from "../components/HighlightText";
+import Reveal from "../components/Reveal";
 
 // A segment is either plain text or a highlighted span (yellow marker).
 export type Seg = string | { h: string; d?: number };
@@ -32,14 +33,28 @@ export function Segs({ segs }: { segs: Seg[] }) {
   return <>{renderSegs(segs)}</>;
 }
 
-/** Renders an array of content blocks with the portfolio's usual spacing. */
-export function Blocks({ blocks }: { blocks: Block[] }) {
+/**
+ * Renders an array of content blocks with the portfolio's usual spacing.
+ *
+ * Com `cascata`, cada bloco entra por conta própria, escalonado — o mesmo ritmo do About
+ * na home (80ms de atraso inicial, 70 por item). `base` é quantos itens já entraram antes
+ * no mesmo bloco de texto, para o título contar como o primeiro da sequência.
+ */
+export function Blocks({ blocks, cascata = false, base = 0 }: { blocks: Block[]; cascata?: boolean; base?: number }) {
+  const envolver = (i: number, no: React.ReactNode) =>
+    cascata ? (
+      <Reveal key={i} delay={80 + (base + i) * 70} triggerMargin="0%">
+        {no}
+      </Reveal>
+    ) : (
+      no
+    );
   return (
     <>
       {blocks.map((b, i) => {
         const mt = b.mt ?? (i === 0 ? 0 : 32);
         if ("ul" in b) {
-          return (
+          return envolver(i,
             <ul
               key={i}
               style={{
@@ -56,7 +71,7 @@ export function Blocks({ blocks }: { blocks: Block[] }) {
             </ul>
           );
         }
-        return (
+        return envolver(i,
           <p key={i} style={{ marginTop: mt }}>
             {renderSegs(b.p)}
           </p>

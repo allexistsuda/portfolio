@@ -20,22 +20,21 @@ const title: React.CSSProperties = {
 function TwoCol({ heading, children }: { heading: string; children: React.ReactNode }) {
   return (
     <div className="md:px-5">
-      {/* entra como na home: um reveal por seção, título e texto juntos — são uma
-          unidade de leitura, separar os dois só faria o olho esperar duas vezes */}
-      {/* triggerMargin 0%, igual a home: o padrao do componente e -30%, que adia o
-          gatilho em quase um terco da tela e faz o texto aparecer tarde demais */}
-      <Reveal triggerMargin="0%">
       <div className="grid grid-cols-1 md:grid-cols-[42%_1fr] gap-y-6 gap-x-16 lg:gap-x-24">
-        <h2
-          className="text-[29px] md:text-[36px] leading-[38px] md:leading-[44px] tracking-[-0.58px] md:tracking-[-0.72px]"
-          style={title}
-        >{heading}</h2>
+        {/* o título abre a cascata e os parágrafos vêm atrás, escalonados dentro do
+            Blocks — mesmo ritmo do About na home. triggerMargin 0% porque o padrão do
+            componente, -30%, adia o gatilho em quase um terço da tela. */}
+        <Reveal triggerMargin="0%">
+          <h2
+            className="text-[29px] md:text-[36px] leading-[38px] md:leading-[44px] tracking-[-0.58px] md:tracking-[-0.72px]"
+            style={title}
+          >{heading}</h2>
+        </Reveal>
         <div
           className="text-[19px] md:text-[24px] leading-[29px] md:leading-[36px] tracking-[-0.19px] md:tracking-[-0.24px]"
           style={body}
         >{children}</div>
       </div>
-      </Reveal>
     </div>
   );
 }
@@ -134,8 +133,7 @@ const pt: Content = {
   pain: {
     heading: "O problema durante a consulta",
     blocks: [
-      { p: ["Os veterinários não tinham um lugar onde buscar, de forma fácil e rápida, ", { h: "informações sobre medicamentos", d: 0.2 }, ", como dosagens, indicações de uso e interações."] },
-      { p: ["Muitas vezes, precisavam recorrer a ", { h: "livros ou a vários PDFs.", d: 0.4 }] },
+      { p: ["Os veterinários não tinham um lugar onde buscar, de forma fácil e rápida, ", { h: "informações sobre medicamentos", d: 0.2 }, ", como dosagens, indicações de uso e interações. Muitas vezes, precisavam recorrer a ", { h: "livros ou a vários PDFs.", d: 0.4 }] },
     ],
   },
   solution: {
@@ -148,13 +146,12 @@ const pt: Content = {
     ],
   },
   evolution: {
-    heading: "Evolução",
+    heading: "Recorrência",
     blocks: [
-      { p: ["Apesar de o aplicativo ser bem aceito, identificamos um ", { h: "problema de recorrência.", d: 0.2 }] },
-      { p: [{ h: "O veterinário consultava quando precisava, mas não havia um motivo constante para voltar", d: 0.4 }, " após ter domínio sobre o produto."] },
-      { p: ["Com isso, fomos observar a consulta e o uso do aplicativo na prática e vimos que havia um ", { h: "cálculo recorrente de dosagem de medicamentos.", d: 0.6 }] },
-      { p: [{ h: "A dose dependia do peso do animal e de regras específicas de cada medicamento.", d: 0.8 }, " ", { h: "Todo esse cálculo era feito manualmente durante a consulta.", d: 1.0 }] },
-      { p: ["Isso evidenciou uma ", { h: "oportunidade de evolução.", d: 1.2 }] },
+      { p: ["Tínhamos bons números de cadastro, ", { h: "75 mil", d: 0.2 }, ", sendo metade deles usuários ativos. Mas a frequência de uso era baixa, uma média de ", { h: "cinco acessos por mês.", d: 0.4 }] },
+      { p: ["Esse dado importava porque a maior parte da nossa receita vinha da venda de anúncios dentro do app, e sem ela a empresa não crescia."] },
+      { p: ["Fui investigar o motivo, começando de forma aberta, com uma pesquisa para toda a base, depois aprofundando em entrevistas. Surgiu um padrão: o veterinário queria ", { h: "conteúdo para se atualizar", d: 0.6 }, ", estudos recentes, protocolos e casos reais."] },
+      { p: ["Testamos diferentes tipos de conteúdo e formatos de apresentação. Organizei em categorias: estudos, protocolos, informações por raça e casos de uso. Em vez de manter o texto corrido do estudo original, criei uma ", { h: "hierarquia visual", d: 0.8 }, " com pesos de fonte, destaques e imagens, para guiar a leitura."] },
     ],
   },
   calc: {
@@ -205,8 +202,7 @@ const en: Content = {
   pain: {
     heading: "The problem during the consult",
     blocks: [
-      { p: ["Vets had nowhere to look up ", { h: "drug information", d: 0.2 }, " quickly and easily, such as dosages, indications and interactions."] },
-      { p: ["More often than not, they fell back on ", { h: "books or a pile of PDFs.", d: 0.4 }] },
+      { p: ["Vets had nowhere to look up ", { h: "drug information", d: 0.2 }, " quickly and easily, such as dosages, indications and interactions. More often than not, they fell back on ", { h: "books or a pile of PDFs.", d: 0.4 }] },
     ],
   },
   solution: {
@@ -219,13 +215,12 @@ const en: Content = {
     ],
   },
   evolution: {
-    heading: "Evolution",
+    heading: "Retention",
     blocks: [
-      { p: ["Although the app was well received, we identified a ", { h: "retention problem.", d: 0.2 }] },
-      { p: [{ h: "Vets looked things up when they needed to, but there was no constant reason to come back", d: 0.4 }, " once they had mastered the product."] },
-      { p: ["So we went to observe the consult and real-world app use, and saw there was a ", { h: "recurring calculation of drug dosages.", d: 0.6 }] },
-      { p: [{ h: "The dose depended on the animal's weight and rules specific to each drug.", d: 0.8 }, " ", { h: "All of it was calculated by hand during the consult.", d: 1.0 }] },
-      { p: ["This revealed an ", { h: "opportunity to evolve.", d: 1.2 }] },
+      { p: ["Sign-ups were good, ", { h: "75,000", d: 0.2 }, ", half of them active. But people came back rarely, an average of ", { h: "five visits a month.", d: 0.4 }] },
+      { p: ["That mattered because most of our revenue came from ads sold inside the app, and without it the company would not grow."] },
+      { p: ["I went looking for the reason, starting wide with a survey to the whole base, then going deeper in interviews. A pattern came up: vets wanted ", { h: "content to keep current", d: 0.6 }, ", recent studies, protocols and real cases."] },
+      { p: ["We tested different kinds of content and ways of presenting it. I organized them into categories: studies, protocols, breed information and use cases. Instead of keeping the running text of the original study, I built a ", { h: "visual hierarchy", d: 0.8 }, " with font weights, highlights and images to guide the reading."] },
     ],
   },
   calc: {
@@ -290,7 +285,7 @@ export default function VetSmart() {
 
         {/* Intro */}
         <TwoCol heading={c.intro.heading}>
-          <Blocks blocks={c.intro.blocks} />
+          <Blocks cascata blocks={c.intro.blocks} />
         </TwoCol>
 
         {/* Images grouped */}
@@ -311,7 +306,7 @@ export default function VetSmart() {
 
         {/* O problema durante a consulta */}
         <TwoCol heading={c.pain.heading}>
-          <Blocks blocks={c.pain.blocks} />
+          <Blocks cascata blocks={c.pain.blocks} />
         </TwoCol>
 
 
@@ -319,7 +314,7 @@ export default function VetSmart() {
 
         {/* Solução */}
         <TwoCol heading={c.solution.heading}>
-          <Blocks blocks={c.solution.blocks} />
+          <Blocks cascata blocks={c.solution.blocks} />
         </TwoCol>
 
         {/* Image after Solução */}
@@ -332,9 +327,9 @@ export default function VetSmart() {
           <div className="hidden md:block"><Img src="/vet-smart/frame41.png" alt="Vet Smart" /></div>
         </div>
 
-        {/* Evolução */}
+        {/* Recorrência */}
         <TwoCol heading={c.evolution.heading}>
-          <Blocks blocks={c.evolution.blocks} />
+          <Blocks cascata blocks={c.evolution.blocks} />
         </TwoCol>
 
         {/* As bibliotecas: o que a Evolução descreve, mostrado.
@@ -351,7 +346,7 @@ export default function VetSmart() {
 
         {/* O cálculo dentro do fluxo */}
         <TwoCol heading={c.calc.heading}>
-          <Blocks blocks={c.calc.blocks} />
+          <Blocks cascata blocks={c.calc.blocks} />
         </TwoCol>
 
         {/* Image before Resultado */}
@@ -362,14 +357,14 @@ export default function VetSmart() {
 
         {/* Resultado */}
         <TwoCol heading={c.results.heading}>
-          <Blocks blocks={c.results.blocks} />
+          <Blocks cascata blocks={c.results.blocks} />
         </TwoCol>
 
         <Divider />
 
         {/* Meu papel */}
         <TwoCol heading={c.role.heading}>
-          <Blocks blocks={c.role.blocks} />
+          <Blocks cascata blocks={c.role.blocks} />
         </TwoCol>
 
         {/* Final gifs */}

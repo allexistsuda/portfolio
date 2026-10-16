@@ -13,22 +13,21 @@ const title: React.CSSProperties = { fontWeight: 500, color: "#222" };
 function TwoCol({ heading, children }: { heading: string; children: React.ReactNode }) {
   return (
     <div className="md:px-5">
-      {/* entra como na home: um reveal por seção, título e texto juntos — são uma
-          unidade de leitura, separar os dois só faria o olho esperar duas vezes */}
-      {/* triggerMargin 0%, igual a home: o padrao do componente e -30%, que adia o
-          gatilho em quase um terco da tela e faz o texto aparecer tarde demais */}
-      <Reveal triggerMargin="0%">
       <div className="grid grid-cols-1 md:grid-cols-[42%_1fr] gap-y-6 gap-x-16 lg:gap-x-24">
-        <h2
-          className="text-[29px] md:text-[36px] leading-[38px] md:leading-[44px] tracking-[-0.58px] md:tracking-[-0.72px]"
-          style={title}
-        >{heading}</h2>
+        {/* o título abre a cascata e os parágrafos vêm atrás, escalonados dentro do
+            Blocks — mesmo ritmo do About na home. triggerMargin 0% porque o padrão do
+            componente, -30%, adia o gatilho em quase um terço da tela. */}
+        <Reveal triggerMargin="0%">
+          <h2
+            className="text-[29px] md:text-[36px] leading-[38px] md:leading-[44px] tracking-[-0.58px] md:tracking-[-0.72px]"
+            style={title}
+          >{heading}</h2>
+        </Reveal>
         <div
           className="text-[19px] md:text-[24px] leading-[29px] md:leading-[36px] tracking-[-0.19px] md:tracking-[-0.24px]"
           style={body}
         >{children}</div>
       </div>
-      </Reveal>
     </div>
   );
 }
@@ -60,7 +59,7 @@ export default function SantanderDesignSystem() {
 
         {/* Flame */}
         <TwoCol heading="Flame">
-          <Blocks blocks={flame} />
+          <Blocks cascata blocks={flame} />
         </TwoCol>
 
         <BottomNav prev={{ label: "Unico You", href: "/unico-you" }} next={{ label: "Santander Workshops", href: "/santander-workshops" }} />
