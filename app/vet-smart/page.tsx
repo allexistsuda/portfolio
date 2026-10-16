@@ -115,6 +115,7 @@ type Content = {
   pain: Section;
   solution: Section;
   evolution: Section;
+  gap: Section;
   calc: Section;
   results: Section;
   role: Section;
@@ -153,12 +154,17 @@ const pt: Content = {
       { p: ["Testamos diferentes tipos de conteúdo e formatos de apresentação. Organizei em categorias: estudos, protocolos, informações por raça e casos de uso. E, em vez de manter o texto corrido do estudo original, criei uma ", { h: "hierarquia visual", d: 0.8 }, " com pesos de fonte, destaques e imagens, para guiar a leitura."] },
     ],
   },
-  calc: {
-    heading: "O cálculo dentro do fluxo",
+  gap: {
+    heading: "O que pediram não era o que precisavam",
     blocks: [
-      { p: ["Nossa resposta foi ", { h: "trazer o cálculo para dentro do aplicativo", d: 0.2 }, ", ", { h: "transformando esse passo manual em uma ação rápida dentro do fluxo.", d: 0.4 }] },
-      { ul: [[{ h: "o veterinário informa o peso do animal", d: 0.6 }], [{ h: "cruzamos com os dados do medicamento automaticamente", d: 0.8 }], [{ h: "o cálculo da dosagem já vem pronto", d: 1.0 }]] },
-      { p: ["Com essa solução, ", { h: "o uso deixou de ser pontual e passou a ser recorrente.", d: 1.2 }] },
+      { p: ["Perguntar não foi o suficiente. Então fiz um ", { h: "shadowing durante as consultas", d: 0.2 }, ", para ver como o trabalho era feito na prática, e aí apareceu o que nenhuma entrevista tinha mostrado: o veterinário calculava a dose com base no peso do animal, às vezes com uma regra de três, e repetia isso várias vezes por dia."] },
+      { p: ["O app já mostrava a dose recomendada, mas ", { h: "não calculava a dose", d: 0.4 }, ". Era algo que nenhum veterinário tinha apontado antes, porque já tinha virado automático para ele."] },
+    ],
+  },
+  calc: {
+    heading: "A calculadora",
+    blocks: [
+      { p: ["Criamos uma ", { h: "calculadora de dosagem", d: 0.2 }, " dentro da página do medicamento. A apresentação e a espécie já vinham preenchidas, então o veterinário só digitava o peso e a dose aparecia na hora, em mg e ml, ", { h: "sem precisar apertar nenhum botão.", d: 0.4 }] },
     ],
   },
   results: {
@@ -221,12 +227,17 @@ const en: Content = {
       { p: ["We tested different kinds of content and ways of presenting it. I organized them into categories: studies, protocols, breed information and use cases. And instead of keeping the running text of the original study, I built a ", { h: "visual hierarchy", d: 0.8 }, " with font weights, highlights and images to guide the reading."] },
     ],
   },
-  calc: {
-    heading: "The calculation inside the flow",
+  gap: {
+    heading: "What they asked for was not what they needed",
     blocks: [
-      { p: ["Our answer was to ", { h: "bring the calculation into the app", d: 0.2 }, ", ", { h: "turning that manual step into a quick action within the flow.", d: 0.4 }] },
-      { ul: [[{ h: "the vet enters the animal's weight", d: 0.6 }], [{ h: "we cross-reference the drug data automatically", d: 0.8 }], [{ h: "the dosage comes out ready to use", d: 1.0 }]] },
-      { p: ["With this solution, ", { h: "use went from occasional to recurring.", d: 1.2 }] },
+      { p: ["Asking was not enough. So I ", { h: "shadowed appointments", d: 0.2 }, ", to see how the work actually got done, and what no interview had surfaced showed up: the vet worked the dose out from the animal's weight, sometimes with a rule of three, and did it several times a day."] },
+      { p: ["The app already showed the recommended dose, but it ", { h: "did not work the dose out", d: 0.4 }, ". No vet had ever raised it, because by then it had become automatic for them."] },
+    ],
+  },
+  calc: {
+    heading: "The calculator",
+    blocks: [
+      { p: ["We built a ", { h: "dosage calculator", d: 0.2 }, " into the drug's page. The format and the species came prefilled, so the vet only typed the weight and the dose appeared right there, in mg and ml, ", { h: "without pressing anything.", d: 0.4 }] },
     ],
   },
   results: {
@@ -345,7 +356,12 @@ export default function VetSmart() {
 
         <Divider />
 
-        {/* O cálculo dentro do fluxo */}
+        {/* O que pediram não era o que precisavam */}
+        <TwoCol heading={c.gap.heading}>
+          <Blocks cascata blocks={c.gap.blocks} />
+        </TwoCol>
+
+        {/* A calculadora — sem linha acima: ela é a resposta ao que a seção anterior achou */}
         <TwoCol heading={c.calc.heading}>
           <Blocks cascata blocks={c.calc.blocks} />
         </TwoCol>
