@@ -339,7 +339,10 @@ export default function VetSmart() {
               ja e pequena demais pro movimento somar, entao la fica parada */}
           <div className="md:hidden"><Img src="/vet-smart/bibliotecas-01.jpg" alt="Vet Smart bibliotecas" /></div>
           <div className="hidden md:block"><VideoNaTela src="/vet-smart/bibliotecas-01-motion.mp4" estatico="/vet-smart/bibliotecas-01.jpg" alt="Vet Smart bibliotecas" repetir /></div>
-          <Img src="/vet-smart/bibliotecas-02.jpg" alt="Vet Smart estudos e protocolos" />
+          {/* a foto do ácaro ganha vida dentro do celular do meio; no celular a arte
+              inteira e pequena demais pro movimento somar, entao la fica parada */}
+          <div className="md:hidden"><Img src="/vet-smart/bibliotecas-02.jpg" alt="Vet Smart estudos e protocolos" /></div>
+          <div className="hidden md:block"><VideoNaTela src="/vet-smart/bibliotecas-02-motion.mp4" estatico="/vet-smart/bibliotecas-02.jpg" alt="Vet Smart estudos e protocolos" repetir /></div>
         </div>
 
         <Divider />
