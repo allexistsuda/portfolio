@@ -725,6 +725,9 @@ export default function Home() {
                            então o aviso de scroll ficava embaixo dela. dvh mede só o visível. */
                         .hero-sec { min-height: calc(100vh - 90px); }
                         @supports (height: 100dvh) { .hero-sec { min-height: calc(100dvh - 90px); } }
+                        /* foto do About: o gap-8 da coluna deixava 32px até a frase.
+                           (o md:mt-5 que estava aqui computava 0 — classe não gerada) */
+                        @media (min-width: 768px) { .about-foto { margin-top: -4px; } }
                         .hero-frases { transform: translateY(-28%); }
                         .hero-hint { bottom: calc(40px + env(safe-area-inset-bottom)); }
                         @media (max-width: 767px) {
@@ -792,7 +795,7 @@ export default function Home() {
                               {about[0].map((s) => (typeof s === "string" ? s : s.h)).join("")}
                             </h2>
                           </Reveal>
-                          <Reveal delay={0} triggerMargin="0%" className="md:mt-5">
+                          <Reveal delay={0} triggerMargin="0%" className="about-foto">
                             {/* círculo de 198px com a allexis2 (foto casual em preto e branco); o flip com o kanji está desligado por enquanto (FlipPhoto + public/about/kanji.png guardados) */}
                             <div
                               className="relative h-[153px] w-[153px] overflow-hidden md:h-[198px] md:w-[198px]"
