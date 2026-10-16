@@ -341,24 +341,7 @@ export default function VetSmart() {
           <Blocks cascata blocks={c.evolution.blocks} />
         </TwoCol>
 
-        <Divider />
-
-        {/* O que pediram não era o que precisavam */}
-        <TwoCol heading={c.gap.heading}>
-          <Blocks cascata blocks={c.gap.blocks} />
-        </TwoCol>
-
-        {/* A calculadora — sem linha acima: ela é a resposta ao que a seção anterior achou.
-            Mas sem linha também não há respiro, porque é o Divider que carrega a margem
-            entre seções: metade do que ele daria, para separar sem desligar uma da outra. */}
-        <div className="mt-8 md:mt-[100px]" />
-        <TwoCol heading={c.calc.heading}>
-          <Blocks cascata blocks={c.calc.blocks} />
-        </TwoCol>
-
-        {/* As bibliotecas e os artigos. Ficam aqui, e não logo após a Recorrência, para a
-            linha cair direto entre um texto e o outro — as imagens no meio a faziam parecer
-            fechamento das imagens em vez de divisa entre as duas seções. */}
+        {/* As bibliotecas e os artigos: é o que a Recorrência acabou de descrever. */}
         <div className="my-8 md:my-[100px]" style={{ display: "flex", flexDirection: "column", gap: 32 }}>
           {/* a fileira das Bibliotecas rola; no celular a arte ja e pequena demais
               pro movimento somar, entao la fica parada */}
@@ -368,6 +351,18 @@ export default function VetSmart() {
           <div className="md:hidden"><Img src="/vet-smart/bibliotecas-02.jpg" alt="Vet Smart estudos e protocolos" /></div>
           <div className="hidden md:block"><VideoNaTela src="/vet-smart/bibliotecas-02-motion.mp4" estatico="/vet-smart/bibliotecas-02.jpg" alt="Vet Smart estudos e protocolos" repetir /></div>
         </div>
+
+        {/* O que pediram não era o que precisavam */}
+        <TwoCol heading={c.gap.heading}>
+          <Blocks cascata blocks={c.gap.blocks} />
+        </TwoCol>
+
+        <Divider />
+
+        {/* A calculadora */}
+        <TwoCol heading={c.calc.heading}>
+          <Blocks cascata blocks={c.calc.blocks} />
+        </TwoCol>
 
         {/* Image before Resultado */}
         <div className="my-8 md:my-[100px]">
