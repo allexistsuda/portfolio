@@ -10,12 +10,19 @@ import ImageIO
 
 let args = CommandLine.arguments
 guard args.count >= 4 else {
-    FileHandle.standardError.write("uso: codificar <pastaDeQuadros> <saida.mp4> <fps>\n".data(using: .utf8)!)
+    FileHandle.standardError.write("uso: codificar <pastaDeQuadros> <saida.mp4> <fps> [quadrosPorKeyframe]\n".data(using: .utf8)!)
     exit(1)
 }
 let pasta = URL(fileURLWithPath: args[1])
 let saida = URL(fileURLWithPath: args[2])
 let fps = Int32(args[3]) ?? 30
+// Intervalo entre keyframes, em quadros. O padrão é 1 por segundo, que serve pra vídeo
+// que alguém arrasta. Peça em loop na página não é arrastada: cada keyframe é um quadro
+// inteiro recomprimido, e numa arte detalhada e quase parada eles viram o peso do arquivo.
+let gop = args.count >= 5 ? (Int(args[4]) ?? Int(fps)) : Int(fps)
+// Taxa de bits alvo. 14 Mbps serve pra captura de tela com muito movimento; peça em loop
+// com a maior parte do quadro parada gasta muito menos e o teto só infla o arquivo.
+let bitrate = args.count >= 6 ? (Int(args[5]) ?? 14_000_000) : 14_000_000
 
 let fm = FileManager.default
 let quadros = (try fm.contentsOfDirectory(at: pasta, includingPropertiesForKeys: nil))
@@ -37,9 +44,9 @@ let entrada = AVAssetWriterInput(mediaType: .video, outputSettings: [
     AVVideoWidthKey: L,
     AVVideoHeightKey: A,
     AVVideoCompressionPropertiesKey: [
-        AVVideoAverageBitRateKey: 14_000_000,
+        AVVideoAverageBitRateKey: bitrate,
         AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
-        AVVideoMaxKeyFrameIntervalKey: Int(fps),
+        AVVideoMaxKeyFrameIntervalKey: gop,
     ],
 ])
 entrada.expectsMediaDataInRealTime = false

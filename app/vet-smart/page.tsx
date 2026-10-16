@@ -337,6 +337,16 @@ export default function VetSmart() {
           <Blocks blocks={c.evolution.blocks} />
         </TwoCol>
 
+        {/* As bibliotecas: o que a Evolução descreve, mostrado.
+            Mesmo padrão dos outros grupos: 100px por fora, 32 entre as imagens. */}
+        <div className="my-8 md:my-[100px]" style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+          {/* a fileira das Bibliotecas rola; no celular a arte de tres telefones
+              ja e pequena demais pro movimento somar, entao la fica parada */}
+          <div className="md:hidden"><Img src="/vet-smart/bibliotecas-01.jpg" alt="Vet Smart bibliotecas" /></div>
+          <div className="hidden md:block"><VideoNaTela src="/vet-smart/bibliotecas-01-motion.mp4" estatico="/vet-smart/bibliotecas-01.jpg" alt="Vet Smart bibliotecas" repetir /></div>
+          <Img src="/vet-smart/bibliotecas-02.jpg" alt="Vet Smart estudos e protocolos" />
+        </div>
+
         <Divider />
 
         {/* O cálculo dentro do fluxo */}
