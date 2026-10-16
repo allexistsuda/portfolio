@@ -14,8 +14,9 @@ import path from "node:path";
 const SEGUNDOS = Number(process.argv[2] ?? 15);
 const FPS = Number(process.argv[3] ?? 30);
 const URL_ALVO = process.argv[4] ?? "http://localhost:3100/invest-motion?render=1";
-const W = 1920;
-const H = 1080;
+// o quadro deixou de ser fixo: o logo do /vet-smart sai em 2720x1426, a medida do 02.png
+const W = Number(process.argv[5] ?? 1920);
+const H = Number(process.argv[6] ?? 1080);
 const PORTA = 9333;
 const SAIDA = path.join(process.cwd(), "renders", "frames");
 
@@ -106,11 +107,24 @@ try {
 
   const total = Math.round(SEGUNDOS * FPS);
   for (let n = 0; n < total; n++) {
-    const t = n / FPS;
-    await cdp.enviar("Runtime.evaluate", { expression: `window.__t = ${t};` });
-    // dois rAF: um pro React reagir ao novo relógio, outro pra garantir que já pintou
+    // meio do intervalo, não a fronteira: pedir exatamente n/FPS cai em cima da divisa entre
+    // dois quadros e o decodificador arredonda pra qualquer um dos lados — em página com vídeo
+    // isso produzia quadros repetidos num padrão regular, parecendo fonte de taxa menor.
+    const t = (n + 0.5) / FPS;
+    // __pronto vai a false junto com o relógio: sem isso a página ainda não reagiu quando
+    // perguntamos, e o primeiro teste passaria com o valor do quadro anterior
+    await cdp.enviar("Runtime.evaluate", { expression: `window.__t = ${t}; if (typeof window.__pronto === "boolean") window.__pronto = false;` });
+    // dois rAF: um pro React reagir ao novo relógio, outro pra garantir que já pintou.
+    // Páginas que precisam de mais tempo por quadro (um seek de vídeo, por exemplo)
+    // declaram window.__pronto e avisam quando terminaram.
     await cdp.enviar("Runtime.evaluate", {
-      expression: "new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))",
+      expression: `(async () => {
+        if (typeof window.__pronto === "boolean") {
+          const limite = Date.now() + 5000;
+          while (!window.__pronto && Date.now() < limite) await new Promise(r => setTimeout(r, 8));
+        }
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      })()`,
       awaitPromise: true,
     });
     const { data } = await cdp.enviar("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });

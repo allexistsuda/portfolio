@@ -3,6 +3,7 @@
 import Carousel from "../components/Carousel";
 import BottomNav from "../components/BottomNav";
 import Nav from "../components/Nav";
+import Reveal from "../components/Reveal";
 import { useLang } from "../i18n/lang";
 import { Blocks, type Block } from "../i18n/render";
 
@@ -19,6 +20,9 @@ const title: React.CSSProperties = {
 function TwoCol({ heading, children }: { heading: string; children: React.ReactNode }) {
   return (
     <div className="md:px-5">
+      {/* entra como na home: um reveal por seção, título e texto juntos — são uma
+          unidade de leitura, separar os dois só faria o olho esperar duas vezes */}
+      <Reveal>
       <div className="grid grid-cols-1 md:grid-cols-[42%_1fr] gap-y-6 gap-x-16 lg:gap-x-24">
         <h2
           className="text-[29px] md:text-[36px] leading-[38px] md:leading-[44px] tracking-[-0.58px] md:tracking-[-0.72px]"
@@ -29,6 +33,7 @@ function TwoCol({ heading, children }: { heading: string; children: React.ReactN
           style={body}
         >{children}</div>
       </div>
+      </Reveal>
     </div>
   );
 }

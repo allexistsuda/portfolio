@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 
 export type Lang = "pt" | "en";
@@ -18,8 +18,19 @@ function stripEn(path: string) {
 
 export function LangProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  // English only for now: the language is fixed and the URL no longer decides it.
-  const [lang, setLangState] = useState<Lang>("en");
+  // O site é publicado em inglês. ?lang=pt abre a mesma página no conteúdo em português,
+  // para revisar os textos antes de traduzir — não muda nada para quem chega pela URL limpa.
+  // useSyncExternalStore e não useState+useEffect: evita o descompasso de hidratação
+  // (o servidor não tem a query) e a renderização em cascata.
+  const daUrl = useSyncExternalStore<Lang>(
+    () => () => {},
+    () => (new URLSearchParams(window.location.search).get("lang") === "pt" ? "pt" : "en"),
+    () => "en",
+  );
+  // escolha feita em tempo de execução (o seletor do Nav) tem prioridade sobre a query
+  const [escolha, setEscolha] = useState<Lang | null>(null);
+  const lang = escolha ?? daUrl;
+  const setLangState = setEscolha;
 
   useEffect(() => {
     document.documentElement.lang = lang === "pt" ? "pt-BR" : "en";

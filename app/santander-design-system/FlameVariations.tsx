@@ -26,7 +26,9 @@ type Variant = {
   color: string; // cor do pulso que chega nela
 };
 
-const BASE: Variant = { key: "base", fill: "#EC0000", text: "#FFFFFF", rx: 999, shadow: true, color: "#EC0000" };
+// sem shadow: a sombra vermelha marcava o base como origem, mas entre botões chapados
+// ela lia como outro nível de elevação — ou como estado de foco. shadow: true a traz de volta.
+const BASE: Variant = { key: "base", fill: "#EC0000", text: "#FFFFFF", rx: 999, color: "#EC0000" };
 
 // 2ª coluna: o mesmo botão com outro raio / outra intenção
 const COL2: Variant[] = [
@@ -107,18 +109,21 @@ function Wire({ d, color, id, delay, area }: { d: string; color: string; id: str
 
 /* ---------------------------------------------------------------- desktop */
 
-const W = 1360;
-const H = 820;
+// Sem o título em cima, a altura passa a ser só a da árvore: 40 de respiro, o desenho,
+// 40 de respiro. O botão base fica no centro vertical exato (H / 2).
+const W = 1340; // 60 de margem dos dois lados (antes sobrava 80 na direita)
+const H = 600;
 const BW = 300;
 const BH = 70;
 const BASE_X = 60;
-const BASE_Y = 430;
+const BASE_Y = 300;
 const C2_X = 520;
 const C3_X = 980;
 const S1 = 440; // dobra entre a base e a 2ª coluna
 const S2 = 900; // dobra entre a 2ª e a 3ª coluna
-const C2_Y = [430, 580, 730];
-const C3_Y = [280, 430, 580, 730];
+// as duas colunas seguem a mesma grade de 150 — é isso que mantém retos os fios entre elas
+const C2_Y = [225, 375, 525];
+const C3_Y = [75, 225, 375, 525];
 
 // do botão base até cada item da 2ª coluna (ortogonal, como no quadro do vídeo)
 const wire1 = (y: number) =>
@@ -139,15 +144,6 @@ const LINKS: { from: number; to: number; color: string }[] = [
 function Desktop() {
   return (
     <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: "block", overflow: "visible" }} aria-hidden="true">
-      <g className="fv-item" style={{ animationDelay: "0s" }}>
-        <text x={BASE_X} y={140} fontSize={64} fontWeight={300} fill="#8A8A8A">
-          one experience
-        </text>
-        <text x={BASE_X - 4} y={234} fontSize={86} fontWeight={700} fill="#990000" className="fv-head">
-          multiple variations
-        </text>
-      </g>
-
       {COL2.map((v, i) => (
         <Wire key={v.key} d={wire1(C2_Y[i])} color={v.color} id={`fvd-w1-${i}`} delay={i * 0.12} area={[W, H]} />
       ))}
@@ -173,9 +169,9 @@ const M_BW = 262;
 const M_BH = 52;
 const M_X = 84; // botões à direita, dobra da árvore à esquerda
 const M_SPINE = 30;
-const M_BASE_Y = 130;
+const M_BASE_Y = 50; // subiu 80 junto com o resto, agora que não há título em cima
 const M_LIST = [...COL2, ...COL3];
-const M_FIRST = 250;
+const M_FIRST = 170;
 const M_GAP = 84;
 const M_Y = M_LIST.map((_, i) => M_FIRST + i * M_GAP);
 const MH = M_Y[M_Y.length - 1] + 50;
@@ -185,15 +181,6 @@ const mWire = (y: number) => `M ${M_X + M_BW / 2} ${M_BASE_Y + M_BH / 2} V ${M_B
 function Mobile() {
   return (
     <svg viewBox={`0 0 ${MW} ${MH}`} width="100%" style={{ display: "block", overflow: "visible" }} aria-hidden="true">
-      <g className="fv-item" style={{ animationDelay: "0s" }}>
-        <text x={14} y={36} fontSize={27} fontWeight={300} fill="#8A8A8A">
-          one experience
-        </text>
-        <text x={12} y={76} fontSize={36} fontWeight={700} fill="#990000" className="fv-head">
-          multiple variations
-        </text>
-      </g>
-
       {M_LIST.map((v, i) => (
         <Wire key={v.key} d={mWire(M_Y[i])} color={v.color} id={`fvm-w-${i}`} delay={i * 0.14} area={[MW, MH]} />
       ))}

@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import BottomNav from "../components/BottomNav";
 import Nav from "../components/Nav";
+import Reveal from "../components/Reveal";
 import { useLang } from "../i18n/lang";
 import { Blocks, type Block } from "../i18n/render";
 
@@ -18,6 +20,9 @@ const title: React.CSSProperties = {
 function TwoCol({ heading, children }: { heading: string; children: React.ReactNode }) {
   return (
     <div className="md:px-5">
+      {/* entra como na home: um reveal por seção, título e texto juntos — são uma
+          unidade de leitura, separar os dois só faria o olho esperar duas vezes */}
+      <Reveal>
       <div className="grid grid-cols-1 md:grid-cols-[42%_1fr] gap-y-6 gap-x-16 lg:gap-x-24">
         <h2
           className="text-[29px] md:text-[36px] leading-[38px] md:leading-[44px] tracking-[-0.58px] md:tracking-[-0.72px]"
@@ -28,6 +33,7 @@ function TwoCol({ heading, children }: { heading: string; children: React.ReactN
           style={body}
         >{children}</div>
       </div>
+      </Reveal>
     </div>
   );
 }
@@ -43,11 +49,69 @@ function Img({ src, alt }: { src: string; alt: string }) {
   );
 }
 
+/**
+ * A montagem do logo, uma vez só. Sem autoplay: o bloco está no alto de uma página de
+ * 17.000px, então disparar no load faria a animação acontecer antes de alguém ver.
+ * Sem loop também — é um movimento com fim, e repetir a cada 2,3s vira tique.
+ *
+ * O primeiro quadro é branco, igual ao fundo do card, então não há salto ao começar.
+ * Com prefers-reduced-motion nem monta o vídeo: entrega o PNG do quadro final.
+ */
+const MENOS_MOVIMENTO = "(prefers-reduced-motion: reduce)";
+
+function assinarMovimento(aoMudar: () => void) {
+  const mq = window.matchMedia(MENOS_MOVIMENTO);
+  mq.addEventListener("change", aoMudar);
+  return () => mq.removeEventListener("change", aoMudar);
+}
+
+function VideoNaTela({ src, estatico, alt, repetir = false }:
+  { src: string; estatico: string; alt: string; repetir?: boolean }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  // a preferência pode mudar durante a sessão, então aqui a assinatura é de verdade
+  const semMovimento = useSyncExternalStore(
+    assinarMovimento,
+    () => window.matchMedia(MENOS_MOVIMENTO).matches,
+    () => false,
+  );
+
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        obs.disconnect(); // uma vez só: depois de tocar, não observa mais
+        v.play().catch(() => {});
+      },
+      // 0.6 e não 0.35: o bloco tem 713px numa tela de 900, então a 35% ele dispara
+      // ainda entrando pela borda de baixo. A 60% a montagem começa com ele já na tela.
+      { threshold: 0.6 },
+    );
+    obs.observe(v);
+    return () => obs.disconnect();
+  }, [semMovimento]);
+
+  if (semMovimento) return <Img src={estatico} alt={alt} />;
+
+  return (
+    <video
+      ref={ref}
+      src={src}
+      muted
+      playsInline
+      loop={repetir}
+      preload="auto"
+      aria-label={alt}
+      style={{ width: "100%", height: "auto", display: "block", borderRadius: 16, background: "#FFFFFF" }}
+    />
+  );
+}
+
 type Section = { heading: string; blocks: Block[] };
 type Content = {
   intro: Section;
   pain: Section;
-  opportunity: Section;
   solution: Section;
   evolution: Section;
   calc: Section;
@@ -59,37 +123,26 @@ type Content = {
 const pt: Content = {
   intro: {
     heading:
-      "Criamos um aplicativo que mudou o comportamento da consulta veterinária, reduzindo o tempo de tomada de decisão durante o atendimento",
+      "Cofundei o Vet Smart, um app para médicos veterinários, junto de amigos desenvolvedores e sem investimento externo",
     blocks: [
-      { p: ["O Vet Smart surgiu em um momento em que não existiam aplicativos para médicos veterinários. Fomos os ", { h: "primeiros a construir um produto voltado para esse público." }] },
-      { p: ["Desde o início, atuei como Product Designer conduzindo pesquisas e participando da definição do produto, mapeando problemas e oportunidades no dia a dia de veterinários de pequenos animais."] },
-      { p: ["Como resultado, o Vet Smart alcançou 80 mil usuários ativos e 2,5 milhões de pageviews mensais, sendo posteriormente adquirido pela Petlove."] },
+      { p: ["O Vet Smart surgiu em um momento em que não existiam aplicativos para médicos veterinários. Fomos os ", { h: "primeiros a construir um produto voltado para esse público" }, ", e eu era o único designer do time."] },
+      { p: ["Como resultado, o Vet Smart se tornou o principal aplicativo de veterinária do Brasil, usado por 1 a cada 2 veterinários de pequenos animais, e foi adquirido pela Petlove."] },
     ],
   },
   pain: {
-    heading: "Onde identificamos uma dor",
+    heading: "O problema durante a consulta",
     blocks: [
-      { p: ["Acompanhamos diversas consultas veterinárias e observamos que, durante o atendimento, o veterinário ", { h: "alternava entre livros e memória", d: 0.2 }, " para buscar informações, ", { h: "incluindo dosagens de medicamentos.", d: 0.4 }] },
-      { p: ["Esse processo não apenas consumia tempo, como também era suscetível a falhas: a informação podia estar desatualizada e a memória não era confiável. Isso ocorria justamente no ", { h: "momento mais crítico da consulta.", d: 0.6 }] },
-    ],
-  },
-  opportunity: {
-    heading: "Oportunidade",
-    blocks: [
-      { p: [{ h: "A informação já existia em algum lugar, mas não estava acessível de forma rápida", d: 0.2 }, " e, muitas vezes, estava desatualizada."] },
+      { p: ["Os veterinários não tinham um lugar onde buscar, de forma fácil e rápida, ", { h: "informações sobre medicamentos", d: 0.2 }, ", como dosagens, indicações de uso e interações."] },
+      { p: ["Muitas vezes, precisavam recorrer a ", { h: "livros ou a vários PDFs.", d: 0.4 }] },
     ],
   },
   solution: {
     heading: "Solução",
     blocks: [
-      { p: [{ h: "O problema acontecia durante a consulta, então a solução precisava existir nesse mesmo contexto.", d: 0.2 }] },
-      { p: ["Levamos essa informação para um aplicativo, disponível na mão do veterinário durante o atendimento."] },
-      { p: ["Começamos reorganizando o conteúdo para acesso rápido, estruturando a informação para ser compreendida sem necessidade de leitura completa."] },
-      { p: ["Priorizamos ", { h: "escaneabilidade em vez de profundidade", d: 0.4 }, ", ", { h: "reduzindo a quantidade de informação visível", d: 0.6 }, " e organizando tudo em um padrão consistente."] },
-      { p: ["Essa decisão veio da observação de que ", { h: "a leitura completa não acontecia durante a consulta.", d: 0.8 }] },
-      { p: ["Adotamos, então, algumas premissas de estrutura para o aplicativo:"] },
-      { ul: [[{ h: "busca direta", d: 1.0 }], [{ h: "listas simples", d: 1.2 }], [{ h: "informação sempre no mesmo formato", d: 1.4 }]], mt: 16 },
-      { p: ["Com isso, o foco do veterinário passou para o acesso rápido à informação durante a consulta."] },
+      { p: ["Levamos essa informação para um aplicativo, que o veterinário usa ", { h: "durante o próprio atendimento.", d: 0.2 }] },
+      { p: ["Durante a consulta o veterinário não tinha tempo de navegar muito. Por isso a ", { h: "busca tinha peso grande na navegação", d: 0.4 }, ", era o caminho mais direto para chegar na informação. Ela funcionava por nome, princípio ativo, empresa ou doença."] },
+      { p: ["As bulas vinham cada uma de um jeito e traziam tudo em texto corrido. Organizei o conteúdo em ", { h: "seções fixas", d: 0.6 }, ": Doses, Indicações, Apresentações e Interações medicamentosas, consistentes em todos os produtos, ", { h: "mais de 4 mil no total.", d: 0.8 }] },
+      { p: ["Também transformei o texto corrido em módulos, que organizavam a informação de um jeito mais visual e rápido de entender."] },
     ],
   },
   evolution: {
@@ -141,37 +194,26 @@ const pt: Content = {
 const en: Content = {
   intro: {
     heading:
-      "We built an app that changed how vets work during appointments, cutting decision-making time in the consult",
+      "I co-founded Vet Smart, an app for veterinarians, with developer friends and no outside investment",
     blocks: [
-      { p: ["Vet Smart came about at a time when there were no apps for veterinarians. We were the ", { h: "first to build a product for this audience." }] },
-      { p: ["From the start, I worked as Product Designer, leading research and helping define the product, mapping problems and opportunities in the daily routine of small-animal vets."] },
-      { p: ["As a result, Vet Smart reached 80,000 active users and 2.5 million monthly pageviews, and was later acquired by Petlove."] },
+      { p: ["Vet Smart came about at a time when there were no apps for veterinarians. We were the ", { h: "first to build a product for this audience" }, ", and I was the only designer on the team."] },
+      { p: ["As a result, Vet Smart became the leading veterinary app in Brazil, used by 1 in every 2 small-animal vets, and was acquired by Petlove."] },
     ],
   },
   pain: {
-    heading: "Where we spotted a pain point",
+    heading: "The problem during the consult",
     blocks: [
-      { p: ["We followed many vet appointments and noticed that, during the consult, the vet ", { h: "switched between books and memory", d: 0.2 }, " to look up information, ", { h: "including drug dosages.", d: 0.4 }] },
-      { p: ["This process was not only time-consuming but also error-prone: information could be outdated and memory was unreliable. And it happened at exactly the ", { h: "most critical moment of the consult.", d: 0.6 }] },
-    ],
-  },
-  opportunity: {
-    heading: "Opportunity",
-    blocks: [
-      { p: [{ h: "The information already existed somewhere, but it wasn't quickly accessible", d: 0.2 }, " and was often outdated."] },
+      { p: ["Vets had nowhere to look up ", { h: "drug information", d: 0.2 }, " quickly and easily, such as dosages, indications and interactions."] },
+      { p: ["More often than not, they fell back on ", { h: "books or a pile of PDFs.", d: 0.4 }] },
     ],
   },
   solution: {
     heading: "Solution",
     blocks: [
-      { p: [{ h: "The problem happened during the consult, so the solution had to live in that same context.", d: 0.2 }] },
-      { p: ["We brought that information into an app, available in the vet's hand during the consult."] },
-      { p: ["We started by reorganizing the content for quick access, structuring information so it could be understood without reading it in full."] },
-      { p: ["We prioritized ", { h: "scannability over depth", d: 0.4 }, ", ", { h: "reducing the amount of visible information", d: 0.6 }, " and organizing everything into a consistent pattern."] },
-      { p: ["This decision came from observing that ", { h: "full reading didn't happen during the consult.", d: 0.8 }] },
-      { p: ["So we adopted a few structural principles for the app:"] },
-      { ul: [[{ h: "direct search", d: 1.0 }], [{ h: "simple lists", d: 1.2 }], [{ h: "information always in the same format", d: 1.4 }]], mt: 16 },
-      { p: ["With that, the vet's focus shifted to quick access to information during the consult."] },
+      { p: ["We brought that information into an app the vet uses ", { h: "during the appointment itself.", d: 0.2 }] },
+      { p: ["There was no time to browse during a consult, so ", { h: "search did most of the work", d: 0.4 }, ". It was the most direct route to the information, and it ran on name, active ingredient, company or disease."] },
+      { p: ["Every package insert was laid out differently, all of it running text. I organized the content into ", { h: "fixed sections", d: 0.6 }, ": Doses, Indications, Formats and Drug interactions, consistent across every product, ", { h: "more than 4,000 of them.", d: 0.8 }] },
+      { p: ["I also broke the running text into modules, which made the information more visual and faster to take in."] },
     ],
   },
   evolution: {
@@ -241,7 +283,7 @@ export default function VetSmart() {
         </div>
         <div className="mb-8 md:mb-[100px]">
           <div className="md:hidden"><Img src="/vet-smart/02-mobile.png" alt="Vet Smart" /></div>
-          <div className="hidden md:block"><Img src="/vet-smart/02.png" alt="Vet Smart" /></div>
+          <div className="hidden md:block"><VideoNaTela src="/vet-smart/02-motion.mp4" estatico="/vet-smart/02.png" alt="Vet Smart" /></div>
         </div>
 
         {/* Intro */}
@@ -258,23 +300,18 @@ export default function VetSmart() {
             </div>
             <div className="hidden md:block"><Img src="/vet-smart/03.png" alt="Vet Smart" /></div>
           </div>
-          <div className="flex md:hidden"><Img src="/vet-smart/04-mobile.gif" alt="Vet Smart motion" /></div>
-          <div className="hidden md:flex"><Img src="/vet-smart/04.gif" alt="Vet Smart motion" /></div>
+          {/* o cachorro repete: é ambiente, não tem começo nem fim como a montagem do logo */}
+          <div className="flex md:hidden"><VideoNaTela src="/vet-smart/04-mobile-motion.mp4" estatico="/vet-smart/04-mobile-poster.jpg" alt="Vet Smart motion" repetir /></div>
+          <div className="hidden md:flex"><VideoNaTela src="/vet-smart/04-motion.mp4" estatico="/vet-smart/04-poster.jpg" alt="Vet Smart motion" repetir /></div>
           <div className="flex md:hidden"><Img src="/vet-smart/celular-mobile.png" alt="Vet Smart" /></div>
           <div className="hidden md:block"><Img src="/vet-smart/05.png" alt="Vet Smart resultados" /></div>
         </div>
 
-        {/* Onde identificamos uma dor */}
+        {/* O problema durante a consulta */}
         <TwoCol heading={c.pain.heading}>
           <Blocks blocks={c.pain.blocks} />
         </TwoCol>
 
-        <Divider />
-
-        {/* Oportunidade */}
-        <TwoCol heading={c.opportunity.heading}>
-          <Blocks blocks={c.opportunity.blocks} />
-        </TwoCol>
 
         <Divider />
 

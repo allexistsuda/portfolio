@@ -8,14 +8,21 @@ export type Block =
   | { p: Seg[]; mt?: number }
   | { ul: Seg[][]; mt?: number; liPad?: number };
 
+// O marcador amarelo saiu das internas. Os segmentos { h: "..." } continuam no conteúdo
+// de propósito: assim a marcação de quais trechos importam não se perde, e voltar o efeito
+// é trocar este false por true. A home não passa por aqui, então não é afetada.
+const MARCADOR = false;
+
 function renderSegs(segs: Seg[]) {
   return segs.map((s, i) =>
     typeof s === "string" ? (
       <span key={i}>{s}</span>
-    ) : (
+    ) : MARCADOR ? (
       <HighlightText key={i} delay={s.d ?? 0.2}>
         {s.h}
       </HighlightText>
+    ) : (
+      <span key={i}>{s.h}</span>
     )
   );
 }
