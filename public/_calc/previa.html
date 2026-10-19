@@ -192,14 +192,19 @@ function desenha(t) {
   // por baixo dele, que é o que faz a troca parecer o campo ganhando foco
   const vis = entre(t, FOCO, FOCO + 0.18) * (1 - entre(t, DESFOCO, DESFOCO + 0.25));
   campo.style.opacity = String(vis);
-  mascara.style.left = (VALOR.x + larg - CAMPO.x) + "px";
-  mascara.style.width = Math.max(0, MASCARA.fim - (VALOR.x + larg)) + "px";
+  // a borda da máscara e o fio do cursor andam em pixel inteiro do palco. O render sai
+  // em 2720x1792, o tamanho do próprio palco, então pixel de palco é pixel de saída:
+  // em posição fracionária o navegador espalha o fio por dois pixels e ele muda de peso
+  // a cada tecla, que é o que fazia a barra parecer mais grossa umas horas que outras.
+  const borda = Math.round(VALOR.x + larg);
+  mascara.style.left = (borda - CAMPO.x) + "px";
+  mascara.style.width = Math.max(0, Math.round(MASCARA.fim) - borda) + "px";
 
   // cursor: pisca parado, fica sólido enquanto digita
   const digitando = t >= TECLAS[0] - 0.1 && t <= APAGA[APAGA.length - 1] + 0.1;
   const visivel = focado && (digitando || Math.floor((t - FOCO) / PISCA) % 2 === 0);
   cursor.style.opacity = visivel ? "1" : "0";
-  cursor.style.left = (PX + VALOR.x + larg + 2) + "px";
+  cursor.style.left = (Math.round(PX) + borda + 2) + "px";
 
   // o cartão abre quando o número fecha e torna a fechar no fim
   const abre = suave(entre(t, CALC, CALC + ABRE_DUR));
