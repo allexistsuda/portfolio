@@ -1,0 +1,54 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>cor — metade direita pro celular</title>
+<style>
+  body { margin:0; background:#111 }
+  body.render { background:#fff }
+  #palco { position:relative; margin:0 auto; overflow:hidden; background:#fff;
+           transform-origin:top left }
+  #palco video { position:absolute; display:block; max-width:none }
+</style>
+
+<main><div id="palco"><video id="v" src="/vet-smart/typeface-motion.mp4" muted playsinline></video></div></main>
+
+<script type="module">
+const params = new URLSearchParams(location.search);
+const RENDER = params.has("render");
+
+// A peça do desktop é 3840x1898 com duas metades: tipografia à esquerda, cor à direita.
+// Só a de cor se mexe — a tipografia fica parada os 15,5s inteiros (medido quadro a
+// quadro). No celular as duas já vinham separadas; esta aqui troca o GIF da cor pela
+// metade direita do próprio vídeo, no mesmo 1920x1898 que o GIF tinha.
+const FONTE = { w: 3840, h: 1898 };
+const W = FONTE.w / 2, H = FONTE.h;
+const DUR = 15.5;
+
+const palco = document.getElementById("palco");
+const v = document.getElementById("v");
+palco.style.width = W + "px"; palco.style.height = H + "px";
+v.style.width = FONTE.w + "px"; v.style.height = FONTE.h + "px";
+v.style.left = -W + "px"; v.style.top = "0";
+
+if (RENDER) {
+  document.body.classList.add("render");
+  palco.style.marginLeft = "0";
+  v.pause();
+  window.__pronto = false;
+  let ultimo = null;
+  v.addEventListener("seeked", () => { window.__pronto = true; });
+  const tique = () => {
+    const t = (window.__t ?? 0);
+    if (t !== ultimo) { ultimo = t; v.currentTime = Math.min(DUR - 0.001, t % DUR); }
+    requestAnimationFrame(tique);
+  };
+  tique();
+} else {
+  const encaixa = () => {
+    const s = Math.min((innerWidth - 40) / W, (innerHeight - 40) / H);
+    palco.style.transform = `scale(${s})`;
+    palco.style.marginLeft = ((innerWidth - W * s) / 2) + "px";
+  };
+  addEventListener("resize", encaixa); encaixa();
+  v.loop = true; v.play().catch(() => {});
+}
+</script>

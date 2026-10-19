@@ -41,3 +41,13 @@ public/logo-vetsmart-verde.html
 public/acaro-motion.html
 public/acaro-mockup.html
 public/bibliotecas-motion.html
+
+# pastas de trabalho das peças de motion: as receitas (previa.html / mobile.html) com
+# a geometria medida, mais as fontes que não dá pra re-exportar do Figma. Ficam no repo
+# porque remedir tudo custa caro, mas não vão pro deploy — o site só usa os mp4 prontos.
+public/_bib
+public/_bib2
+public/_calc
+public/_alertas
+public/_type
+public/_icones

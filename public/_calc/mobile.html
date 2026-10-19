@@ -1,0 +1,60 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>calculadora — recorte pro celular</title>
+<style>
+  body { margin:0; background:#111 }
+  body.render { background:#fff }
+  #palco { position:relative; margin:0 auto; overflow:hidden; background:#F5F5F5;
+           transform-origin:top left }
+  #palco video { position:absolute; display:block; max-width:none }
+</style>
+
+<main><div id="palco"><video id="v" src="/vet-smart/calculadora-motion.mp4" muted playsinline></video></div></main>
+
+<script type="module">
+const params = new URLSearchParams(location.search);
+const RENDER = params.has("render");
+
+// Reaproveita o vídeo do desktop em vez de re-renderizar: é só reenquadrar. A peça tem
+// 5040x3320 com a moldura preta em (1866, 298) medindo 1311x2723 — medido no pôster.
+// Reduzindo a moldura pra 704px ela fica do mesmo tamanho dos mockups das bibliotecas,
+// e as margens caem exatamente nos 194/120 que os blocos parados usam.
+const FONTE = { w: 5040, h: 3320, pretoX: 1866, pretoY: 298, pretoW: 1311 };
+const PRETO_ALVO = 704, MARG_X = 194, MARG_Y = 120;
+const DUR = 6.2;
+
+const ESC = PRETO_ALVO / FONTE.pretoW;
+const W = 1092, H = 1702;
+
+const palco = document.getElementById("palco");
+const v = document.getElementById("v");
+palco.style.width = W + "px"; palco.style.height = H + "px";
+v.style.width = (FONTE.w * ESC) + "px";
+v.style.height = (FONTE.h * ESC) + "px";
+v.style.left = (MARG_X - FONTE.pretoX * ESC) + "px";
+v.style.top = (MARG_Y - FONTE.pretoY * ESC) + "px";
+
+if (RENDER) {
+  document.body.classList.add("render");
+  palco.style.marginLeft = "0";
+  // o relógio manda no quadro do vídeo, igual às outras peças
+  v.pause();
+  window.__pronto = false;
+  let ultimo = null;
+  v.addEventListener("seeked", () => { window.__pronto = true; });
+  const tique = () => {
+    const t = (window.__t ?? 0);
+    if (t !== ultimo) { ultimo = t; v.currentTime = Math.min(DUR - 0.001, t % DUR); }
+    requestAnimationFrame(tique);
+  };
+  tique();
+} else {
+  const encaixa = () => {
+    const s = Math.min((innerWidth - 40) / W, (innerHeight - 40) / H);
+    palco.style.transform = `scale(${s})`;
+    palco.style.marginLeft = ((innerWidth - W * s) / 2) + "px";
+  };
+  addEventListener("resize", encaixa); encaixa();
+  v.loop = true; v.play().catch(() => {});
+}
+</script>

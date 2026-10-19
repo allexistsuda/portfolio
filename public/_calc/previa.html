@@ -1,0 +1,255 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>calculadora — digitação e dose</title>
+<style>
+  body { margin:0; background:#111; font:13px ui-sans-serif,system-ui; color:#eee }
+  body.render { background:#fff }
+  body.render #barra { display:none }
+  #palco { position:relative; margin:0 auto; transform-origin:top left; overflow:hidden; background:#F5F5F5 }
+  #palco img { display:block; max-width:none }
+  .recorte { position:absolute; overflow:hidden }
+  .recorte img { position:absolute }
+  #barra { position:fixed; left:0; right:0; bottom:0; background:#1a1a1a; padding:10px 16px;
+           display:flex; gap:18px; align-items:center; flex-wrap:wrap; z-index:9 }
+  label { display:flex; gap:7px; align-items:center; opacity:.85; white-space:nowrap }
+  input[type=range] { width:300px }
+  code { opacity:.55 }
+  button { background:#2b2b2b; color:#eee; border:1px solid #444; border-radius:6px; padding:4px 12px; cursor:pointer }
+</style>
+
+<main><div id="palco">
+  <img id="base" src="/_calc/calc1.png" alt="">
+</div></main>
+
+<div id="barra">
+  <button id="play">pausar</button>
+  <label>t <input id="tempo" type="range" min="0" max="6.2" step="0.01" value="0"><code id="ct"></code></label>
+  <label>cresce <input id="cresce" type="range" min="110" max="132" step="0.5" value="121.5"><code id="ccresce"></code></label>
+  <code id="info"></code>
+</div>
+
+<script type="module">
+const params = new URLSearchParams(location.search);
+const RENDER = params.has("render");
+
+// ---------------------------------------------------------------------------
+// Geometria. Tudo medido nos próprios PNGs exportados do Figma a 1,07942x
+// (930x1640), em coordenadas do arquivo e no referencial da calc1 — a calc2 está
+// 2px mais baixa, uma deriva do próprio arquivo, e entra aqui já descontada.
+// ---------------------------------------------------------------------------
+// ?mobile=1: um aparelho só, no enquadramento dos mockups parados do celular.
+// A moldura desta peça tem 708px e a das bibliotecas 704 (escalas de exportação
+// diferentes), então o palco cresce na mesma proporção pra o aparelho sair do
+// mesmo tamanho nos dois blocos: 708/1098 = 704/1092.
+const MOBILE = params.has("mobile");
+const W = MOBILE ? 1098 : 2720, H = MOBILE ? 1712 : 1792;
+const PNG = { w: 930, h: 1640 };
+const TELA = { x: 41, y: 36, w: 654, h: 1414 };   // a tela dentro do PNG
+const RAIO = 70;                                   // canto de baixo da tela
+const DRIFT = 2;                                   // calc2 -> calc1
+
+// o palco é o de 2520x1660 da versão anterior, reescalado pra bater com as
+// bibliotecas; a tela cai no mesmo ponto proporcional
+const K = W / 2520;
+const ALVO = { x: 957.705 * K, y: 174.791 * K };
+const PX = MOBILE ? 182 : ALVO.x - TELA.x;          // onde o PNG encosta no palco
+const PY = MOBILE ? 113 : ALVO.y - TELA.y;
+
+// O campo focado sai inteiro da calc2 — borda verde, interior e o "13,25" — em vez de
+// ser redesenhado em CSS. Borda de 2,6px com raio 16 não se reproduz em CSS sem sobrar
+// um fio da borda cinza da calc1 por baixo; recortado, bate por construção.
+const CAMPO = { x: 94, y: 696, w: 547, h: 82 };
+// o que ainda não foi digitado fica coberto por branco, inclusive o cursor que a calc2
+// já traz desenhado — o cursor que pisca é o nosso, por cima
+const MASCARA = { y: 722, h: 34, fim: 192 };
+const CORTE = 816;              // borda de baixo do cartão: daqui pra baixo desliza
+let CRESCE = 121.5;             // o quanto o cartão abre
+
+const VALOR = { x: 118, y: 727 - DRIFT, w: 66, h: 28 }; // "13,25", da calc2
+// largura revelada depois de cada tecla, medida nos vãos entre os glifos
+const PARADAS = [0, 8.5, 25.5, 33, 49.5, 66.5];
+// com 3px de folga em volta: recortado rente, o antialiasing dos glifos fica de fora
+const DOSE_R = { x: 96, y: 809 - DRIFT, w: 249, h: 34 };  // "Dose calculada" com o ⓘ
+const DOSE_V = { x: 95, y: 857 - DRIFT, w: 324, h: 50 };  // "58,3mg (1,2mL)"
+// as duas bordas laterais do cartão, medidas na calc2 na altura do vão
+const CARTAO = { esq: 68, dir: 665, borda: "#E8E8E8" };
+const CURSOR_COR = "#222";
+
+// ---------------------------------------------------------------------------
+// Tempos. Vêm da versão anterior, que foi ajustada no olho: o ritmo das teclas
+// não é metrônomo, e a saída é o inverso da entrada — primeiro sai o valor,
+// depois o rótulo, só então o cartão fecha.
+// ---------------------------------------------------------------------------
+const DUR = 6.2;
+const FOCO = 0.40;
+const TECLAS = [0.80, 0.96, 1.14, 1.28, 1.45];
+const CALC = 1.62;              // o cartão abre assim que o número fecha
+const ABRE_DUR = 0.42;
+const DOSE_ENTRA = [0.14, 0.24];
+const APAGA = [4.60, 4.72, 4.84, 4.96, 5.08];
+const SAI_VALOR = 4.60, SAI_ROTULO = 4.68, FECHA = 4.82;
+const DESFOCO = 5.40;
+const PISCA = 0.53;
+
+const palco = document.getElementById("palco");
+palco.style.width = W + "px"; palco.style.height = H + "px";
+const base = document.getElementById("base");
+base.style.position = "absolute";
+base.style.left = PX + "px"; base.style.top = PY + "px";
+base.style.width = PNG.w + "px"; base.style.height = PNG.h + "px";
+
+/** um pedaço de um dos dois PNGs, posto no palco nas coordenadas do arquivo */
+function recorte(arquivo, r, extra = {}) {
+  const d = document.createElement("div");
+  d.className = "recorte";
+  d.style.left = (PX + r.x) + "px"; d.style.top = (PY + r.y) + "px";
+  d.style.width = r.w + "px"; d.style.height = r.h + "px";
+  Object.assign(d.style, extra);
+  const i = document.createElement("img");
+  i.src = arquivo;
+  i.style.width = PNG.w + "px"; i.style.height = PNG.h + "px";
+  // a calc2 entra deslocada pra cair no referencial da calc1
+  const dy = arquivo.includes("calc2") ? -DRIFT : 0;
+  i.style.left = -r.x + "px"; i.style.top = (-r.y + dy) + "px";
+  d.appendChild(i);
+  palco.appendChild(d);
+  return d;
+}
+
+const C1 = "/_calc/calc1.png", C2 = "/_calc/calc2.png";
+
+// o que desliza: da borda de baixo do cartão até o fim da tela, recortado com o
+// canto da tela pra não pintar branco por cima do bezel
+const abaixo = recorte(C1,
+  { x: TELA.x, y: CORTE, w: TELA.w, h: TELA.y + TELA.h - CORTE },
+  { background: "#fff", borderRadius: `0 0 ${RAIO}px ${RAIO}px` });
+
+// O vão que o cartão abre. O bloco de baixo desce inteiro, então o que fica exposto
+// aqui é interior de cartão: branco com as duas bordas laterais. Sem isto reaparece a
+// tela em repouso por baixo — a borda velha do cartão e o "Administração" no lugar errado.
+const vaoFill = document.createElement("div");
+Object.assign(vaoFill.style, {
+  position: "absolute", left: (PX + TELA.x) + "px", top: (PY + CORTE) + "px",
+  width: TELA.w + "px", height: "0px", background: "#fff", overflow: "hidden",
+});
+for (const bx of [CARTAO.esq, CARTAO.dir]) {
+  const b = document.createElement("div");
+  Object.assign(b.style, { position: "absolute", top: "0", bottom: "0",
+    left: (bx - TELA.x) + "px", width: "2px", background: CARTAO.borda });
+  vaoFill.appendChild(b);
+}
+palco.appendChild(vaoFill);
+
+const dRotulo = recorte(C2, DOSE_R);
+const dValor = recorte(C2, DOSE_V);
+
+// o campo focado, inteiro, por cima do campo em repouso da calc1
+const campo = recorte(C2, CAMPO);
+campo.style.opacity = "0";
+
+// A máscara come o que ainda não foi digitado. Vai DENTRO do recorte do campo, pra
+// aparecer e sumir junto com ele — solta no palco, ela destoaria durante o fade.
+const mascara = document.createElement("div");
+Object.assign(mascara.style, {
+  position: "absolute", top: (MASCARA.y - CAMPO.y) + "px",
+  height: MASCARA.h + "px", background: "#fff", pointerEvents: "none",
+});
+campo.appendChild(mascara);
+
+const cursor = document.createElement("div");
+Object.assign(cursor.style, {
+  position: "absolute", top: (PY + VALOR.y) + "px",
+  width: "2px", height: VALOR.h + "px", background: CURSOR_COR, opacity: "0",
+});
+palco.appendChild(cursor);
+
+function encaixa() {
+  const s = Math.min((innerWidth - 40) / W, (innerHeight - 110) / H);
+  palco.style.transform = `scale(${s})`;
+  palco.style.marginLeft = ((innerWidth - W * s) / 2) + "px";
+}
+if (RENDER) {
+  document.body.classList.add("render");
+  palco.style.marginLeft = "0";
+  const ajusta = () => { palco.style.transform = `scale(${innerWidth / W}, ${innerHeight / H})`; };
+  addEventListener("resize", ajusta); ajusta();
+} else { addEventListener("resize", encaixa); encaixa(); }
+
+const trava = u => u <= 0 ? 0 : u >= 1 ? 1 : u;
+// começa rápido e assenta: é o que tira a dureza do empurrão
+const suave = u => 1 - Math.pow(1 - trava(u), 3);
+const entre = (t, a, b) => trava((t - a) / (b - a));
+
+function desenha(t) {
+  const focado = t >= FOCO && t < DESFOCO;
+
+  // quantos glifos estão na tela: as teclas somam, o apagar subtrai
+  let n = TECLAS.filter(k => t >= k).length - APAGA.filter(k => t >= k).length;
+  n = Math.max(0, Math.min(TECLAS.length, n));
+  const larg = PARADAS[n];
+
+  // o campo focado entra por cima do campo em repouso; o placeholder da calc1 some
+  // por baixo dele, que é o que faz a troca parecer o campo ganhando foco
+  const vis = entre(t, FOCO, FOCO + 0.18) * (1 - entre(t, DESFOCO, DESFOCO + 0.25));
+  campo.style.opacity = String(vis);
+  mascara.style.left = (VALOR.x + larg - CAMPO.x) + "px";
+  mascara.style.width = Math.max(0, MASCARA.fim - (VALOR.x + larg)) + "px";
+
+  // cursor: pisca parado, fica sólido enquanto digita
+  const digitando = t >= TECLAS[0] - 0.1 && t <= APAGA[APAGA.length - 1] + 0.1;
+  const visivel = focado && (digitando || Math.floor((t - FOCO) / PISCA) % 2 === 0);
+  cursor.style.opacity = visivel ? "1" : "0";
+  cursor.style.left = (PX + VALOR.x + larg + 2) + "px";
+
+  // o cartão abre quando o número fecha e torna a fechar no fim
+  const abre = suave(entre(t, CALC, CALC + ABRE_DUR));
+  const fecha = suave(entre(t, FECHA, FECHA + ABRE_DUR));
+  const vao = CRESCE * (abre - fecha);
+  abaixo.style.transform = `translateY(${vao}px)`;
+  vaoFill.style.height = vao + "px";
+
+  // a dose entra depois que o espaço abriu, e sai antes dele fechar
+  dRotulo.style.opacity = String(
+    entre(t, CALC + DOSE_ENTRA[0], CALC + DOSE_ENTRA[0] + 0.22) * (1 - entre(t, SAI_ROTULO, SAI_ROTULO + 0.12)));
+  dValor.style.opacity = String(
+    entre(t, CALC + DOSE_ENTRA[1], CALC + DOSE_ENTRA[1] + 0.22) * (1 - entre(t, SAI_VALOR, SAI_VALOR + 0.12)));
+
+  document.getElementById("ct").textContent = t.toFixed(2) + "s";
+  document.getElementById("info").textContent = `glifos ${n} · vão ${vao.toFixed(1)}px`;
+}
+
+const ctrlCresce = document.getElementById("cresce");
+if (params.has("cresce")) ctrlCresce.value = params.get("cresce");
+const aplicaCresce = () => {
+  CRESCE = +ctrlCresce.value;
+  document.getElementById("ccresce").textContent = CRESCE + "px";
+};
+ctrlCresce.oninput = () => { aplicaCresce(); desenha(agora); };
+aplicaCresce();
+
+let agora = 0;
+const tempo = document.getElementById("tempo");
+
+if (RENDER) {
+  window.__pronto = false;
+  let ultimo = null;
+  const imgs = [...document.images];
+  const prontas = () => imgs.every(i => i.complete && i.naturalWidth > 0);
+  const tique = () => {
+    const t = (window.__t ?? 0) % DUR;
+    if (t !== ultimo) { ultimo = t; agora = t; desenha(t); window.__pronto = prontas(); }
+    requestAnimationFrame(tique);
+  };
+  desenha(0); tique();
+} else {
+  let tocando = true, t0 = performance.now();
+  const botao = document.getElementById("play");
+  botao.onclick = () => { tocando = !tocando; botao.textContent = tocando ? "pausar" : "tocar"; t0 = performance.now() - agora * 1000; };
+  tempo.oninput = () => { tocando = false; botao.textContent = "tocar"; agora = +tempo.value; desenha(agora); };
+  const laco = () => {
+    if (tocando) { agora = ((performance.now() - t0) / 1000) % DUR; tempo.value = agora; desenha(agora); }
+    requestAnimationFrame(laco);
+  };
+  desenha(0); laco();
+}
+</script>

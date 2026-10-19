@@ -1,0 +1,90 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>alertas — recorte pro celular</title>
+<style>
+  body { margin:0; background:#111 }
+  body.render { background:#fff }
+  #palco { position:relative; margin:0 auto; overflow:hidden; background:#F5F5F5;
+           transform-origin:top left }
+  #palco video { position:absolute; display:block; max-width:none }
+</style>
+
+<main><div id="palco"><video id="v" src="/vet-smart/alertas-motion.mp4" muted playsinline></video></div></main>
+
+<script type="module">
+const params = new URLSearchParams(location.search);
+const RENDER = params.has("render");
+const I = Math.max(0, Math.min(2, +(params.get("i") ?? 0)));
+
+// Reaproveita o vídeo do desktop: recorte no espaço e no tempo. A peça tem 4000x2634
+// com três molduras de 1040px em x 247/1480/2714, todas começando em y 236 — medido
+// no pôster. Reduzindo pra 704px elas ficam do tamanho dos outros mockups do celular.
+const FONTE = { w: 4000, h: 2634, pretoY: 236, pretoW: 1040, pretoX: [247, 1480, 2714] };
+const PRETO_ALVO = 704, MARG_X = 194, MARG_Y = 120;
+// Cada aparelho age numa fatia diferente dos 8,2s: o 1 até 2,8s, o 2 de 3,0 a 4,6,
+// o 3 de 4,8 a 7,4 (medido quadro a quadro). Sem recortar no tempo, os blocos 2 e 3
+// abririam com segundos de tela parada antes de qualquer coisa acontecer.
+const INICIO = [0.0, 2.70, 4.50];
+const DUR = 3.4;   // a fatia, mais um descanso no estado resolvido
+
+const ESC = PRETO_ALVO / FONTE.pretoW;
+const W = 1092, H = 1702;
+
+const palco = document.getElementById("palco");
+const v = document.getElementById("v");
+palco.style.width = W + "px"; palco.style.height = H + "px";
+v.style.width = (FONTE.w * ESC) + "px";
+v.style.height = (FONTE.h * ESC) + "px";
+v.style.left = (MARG_X - FONTE.pretoX[I] * ESC) + "px";
+v.style.top = (MARG_Y - FONTE.pretoY * ESC) + "px";
+
+// Os aparelhos ficam a 131px um do outro nesta escala, e o enquadramento pede 194 de
+// margem — então sobra vizinho dentro do quadro. Os dois lados pedem coisas diferentes:
+//
+// esquerda: o que invade é a SOMBRA DO VIZINHO, escura (94) logo depois da moldura dele.
+//   Tem que sumir inteira, então é faixa chapada até encostar no nosso aparelho.
+// direita: o que está ali é a NOSSA sombra, que aos 131px ainda vale 231 e não terminou.
+//   Faixa chapada cortaria ela em degrau; o degradê deixa ela desmaiar até o fundo.
+const esquerdaDo = (j) => MARG_X + (FONTE.pretoX[j] - FONTE.pretoX[I]) * ESC;
+const tapa = (estilo) => {
+  const d = document.createElement("div");
+  Object.assign(d.style, { position: "absolute", top: "0", bottom: "0" }, estilo);
+  palco.appendChild(d);
+};
+if (I > 0) tapa({ left: "0", width: (MARG_X - 3) + "px", background: "#F5F5F5" });
+if (I < 2) {
+  const viz = esquerdaDo(I + 1);          // onde a moldura do vizinho começa
+  const de = viz - 90, ate = viz - 4;
+  tapa({ left: de + "px", width: (ate - de) + "px",
+         background: "linear-gradient(to right, rgba(245,245,245,0), rgba(245,245,245,1))" });
+  tapa({ left: ate + "px", width: (W - ate) + "px", background: "#F5F5F5" });
+}
+
+if (RENDER) {
+  document.body.classList.add("render");
+  palco.style.marginLeft = "0";
+  v.pause();
+  window.__pronto = false;
+  let ultimo = null;
+  v.addEventListener("seeked", () => { window.__pronto = true; });
+  const tique = () => {
+    const t = (window.__t ?? 0);
+    if (t !== ultimo) { ultimo = t; v.currentTime = Math.min(8.19, INICIO[I] + Math.min(t, DUR)); }
+    requestAnimationFrame(tique);
+  };
+  tique();
+} else {
+  const encaixa = () => {
+    const s = Math.min((innerWidth - 40) / W, (innerHeight - 40) / H);
+    palco.style.transform = `scale(${s})`;
+    palco.style.marginLeft = ((innerWidth - W * s) / 2) + "px";
+  };
+  addEventListener("resize", encaixa); encaixa();
+  const laco = () => {
+    const t = (performance.now() / 1000) % (DUR + 1.2);
+    v.currentTime = Math.min(8.19, INICIO[I] + Math.min(t, DUR));
+    requestAnimationFrame(laco);
+  };
+  laco();
+}
+</script>
