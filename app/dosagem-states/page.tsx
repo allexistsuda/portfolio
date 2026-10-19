@@ -62,6 +62,15 @@ const D = { focus: 0.28, validate: 0.32, alert: 0.42 };
 
 // paradas do clip sobre t-valor-15.png, nos vãos entre os glifos
 const CLIP = [0, 5.6, 10.32, 19.46];
+// O cursor é um fio fino. Em posição fracionária o navegador espalha ele por dois pixels e
+// ele engorda — era o que fazia a barra mudar de peso a cada tecla e diferir entre aparelhos.
+// A peça é renderizada com o palco em escala 2 (4000x2634 pra um palco de 2000x1317), então
+// meio pixel de palco é um pixel inteiro de saída: ancorando o fio nessa grade e dando a ele
+// 1,5 de palco de largura, ele sai sempre com exatamente 3px, em qualquer posição.
+const GRADE = 2; // escala do palco no render
+const fio = (x: number) => Math.round(x * SCALE * GRADE) / (SCALE * GRADE);
+const FIO_W = 1.5 / SCALE;
+
 const VAL_X = 44.64; // origem do texto dentro do campo
 const VAL_Y = 396.92;
 
@@ -314,9 +323,9 @@ function Tela2({
       <div
         style={{
           position: "absolute",
-          left: VAL_X + clip + 1.24,
+          left: fio(VAL_X + clip + 1.24),
           top: VAL_Y,
-          width: 1.2,
+          width: FIO_W,
           height: 14.56,
           background: "#18181b",
           opacity: cursorOn ? 1 : 0,
@@ -406,9 +415,9 @@ function Tela3({
       <div
         style={{
           position: "absolute",
-          left: VAL_X + clip + 1.09,
+          left: fio(VAL_X + clip + 1.09),
           top: VAL_Y,
-          width: 1.2,
+          width: FIO_W,
           height: 14.56,
           background: "#18181b",
           opacity: cursorOn ? 1 : 0,
@@ -544,9 +553,9 @@ function Tela({
       <div
         style={{
           position: "absolute",
-          left: VAL_X + clip + 1.17,
+          left: fio(VAL_X + clip + 1.17),
           top: VAL_Y,
-          width: 1.2,
+          width: FIO_W,
           height: 14.45,
           background: "#18181b",
           opacity: cursorOn ? 1 : 0,
