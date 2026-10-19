@@ -48,6 +48,15 @@ let entrada = AVAssetWriterInput(mediaType: .video, outputSettings: [
         AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
         AVVideoMaxKeyFrameIntervalKey: gop,
     ],
+    // Sem isto o arquivo sai sem etiqueta de cor, e aí cada player adivinha a faixa:
+    // o encoder grava em faixa limitada, o navegador expande como se fosse cheia, e a
+    // imagem inteira chega uns 3 níveis mais escura que o PNG de origem. Declarando
+    // Rec. 709 explicitamente, decodificador nenhum precisa chutar.
+    AVVideoColorPropertiesKey: [
+        AVVideoColorPrimariesKey: AVVideoColorPrimaries_ITU_R_709_2,
+        AVVideoTransferFunctionKey: AVVideoTransferFunction_ITU_R_709_2,
+        AVVideoYCbCrMatrixKey: AVVideoYCbCrMatrix_ITU_R_709_2,
+    ],
 ])
 entrada.expectsMediaDataInRealTime = false
 let adaptador = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: entrada, sourcePixelBufferAttributes: [
