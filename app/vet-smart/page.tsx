@@ -213,7 +213,7 @@ const en: Content = {
     ],
   },
   pain: {
-    heading: "Before Vet Smart, there was a problem during the consult",
+    heading: "Before Vet Smart, there was a problem during the appointment",
     blocks: [
       { p: ["When it came to prescribing, the vet had nowhere to look up ", { h: "drug information", d: 0.2 }, " quickly and easily, such as dosages, indications and interactions."] },
       { p: ["More often than not, they fell back on ", { h: "books or a pile of PDFs", d: 0.4 }, ". Every package insert organized its content differently."] },
@@ -222,34 +222,34 @@ const en: Content = {
   solution: {
     heading: "Our answer was to bring that information into an app the vet could use during the appointment itself",
     blocks: [
-      { p: ["We arrived at that shape after a long discovery. We ran research, interviews and usability sessions, validating a range of hypotheses with vets."] },
+      { p: ["We arrived at that shape after a long discovery process. We ran research, interviews and usability sessions, validating a range of hypotheses with vets."] },
       { p: ["Package inserts presented everything as running text, so I organized the content into ", { h: "fixed sections", d: 0.4 }, " like doses, indications, formats and drug interactions, consistent across every product, ", { h: "more than 4,000 of them.", d: 0.6 }] },
       { p: ["Inside them, I broke the text into modules, a more visual and quicker way to take it in."] },
-      { p: ["", { h: "Search carried a lot of weight in the navigation", d: 0.8 }, ", because it was the most direct route to the drug, and during a consult the vet had no time to hunt around."] },
+      { p: ["", { h: "Search carried a lot of weight in the navigation", d: 0.8 }, ", because it was the most direct route to the drug, and during an appointment the vet had no time to hunt around."] },
     ],
   },
   evolution: {
-    heading: "We had more than 75,000 signed up, out of 130,000 vets in the country",
+    heading: "We had more than 75,000 sign-ups, out of 130,000 vets in the country",
     blocks: [
-      { p: ["The feedback was positive, ", { h: "4.75 on the stores", d: 0.2 }, ". On the business side, we worked with the biggest brands in the market, like Royal Canin, Purina and Zoetis."] },
+      { p: ["The feedback was positive, ", { h: "4.75 in the app stores", d: 0.2 }, ". On the business side, we worked with the biggest brands in the market, like Royal Canin, Purina and Zoetis."] },
     ],
   },
   frequencia: {
     heading: "Despite all of this looking good, when we looked at how people actually used the app we found a problem: they came back very rarely",
     blocks: [
-      { p: ["Of the 75,000 signed up, 35,000 were active. Each of them opened the app an average of ", { h: "five times a month.", d: 0.2 }] },
+      { p: ["Of those 75,000, 35,000 were active. Each of them opened the app an average of ", { h: "five times a month.", d: 0.2 }] },
       { p: ["That metric mattered because our business model depended mostly on advertising inside the app: around ", { h: "70% of our revenue came from selling ads", d: 0.4 }, "."] },
       { p: ["Low frequency meant fewer visits, fewer pageviews and, in turn, fewer ad impressions and less revenue."] },
       { p: ["Without that revenue, we could not grow as a company."] },
     ],
   },
   investigacao: {
-    heading: "With a startup's limited resources, I investigated as broadly as possible before narrowing to specifics",
+    heading: "With a startup's limited resources, I investigated as broadly as possible before narrowing down to specifics",
     blocks: [
       { p: ["I started with a ", { h: "quantitative survey", d: 0.2 }, ", emailed to our whole base. I asked in what situations they used Vet Smart, what kind of content they looked up and what they missed. A pattern came up very consistently: ", { h: "they wanted to keep up professionally", d: 0.4 }, ", with recent studies, protocols and real use cases."] },
       { p: ["Then I went deeper in interviews. Vets told me they relied on courses and in-person events, with fixed dates and a high cost that did not always fit the budget. And what was available was ", { h: "outdated and scattered.", d: 0.6 }] },
-      { p: ["I also looked at the market, veterinary and human health, here and abroad. Almost all of the content was the ", { h: "package insert copied and pasted", d: 0.8 }, ", with no structure behind it."] },
-      { p: ["Last, I looked at how the app was used, in the analytics. ", { h: "Half of all visits were to check a dose", d: 1.0 }, ". At first that looked like confirmation that the area already worked well. It did not look like a problem to explore."] },
+      { p: ["I also looked at the market, veterinary and human health, in Brazil and abroad. Almost all of the content was the ", { h: "package insert copied and pasted", d: 0.8 }, ", with no structure behind it."] },
+      { p: ["Finally, I looked at how the app was used, in the analytics. ", { h: "Half of all visits were to check a dose", d: 1.0 }, ". At first that looked like confirmation that the area already worked well. It did not look like a problem to explore."] },
     ],
   },
   hipotese: {
@@ -268,18 +268,18 @@ const en: Content = {
   esforco: {
     heading: "I had done exactly what they asked for in the surveys and the interviews. And it turned out not to be enough",
     blocks: [
-      { p: ["Even with positive feedback from vets about the content, usage frequency stayed exactly the same: ", { h: "five visits a month, per active user.", d: 0.2 }] },
+      { p: ["Even with positive feedback from vets about the content, usage frequency stayed exactly the same: ", { h: "five visits a month per active user.", d: 0.2 }] },
     ],
   },
   olhos: {
     heading: "So I decided to shadow vets during appointments, to understand more about how they worked day to day and whether there was an opportunity there",
     blocks: [
-      { p: ["One thing caught my attention right away. The vet had to ", { h: "work the drug's dose out from the animal's weight", d: 0.2 }, ", often with a rule of three to convert mg into ml. And they repeated that calculation several times a day."] },
+      { p: ["One thing caught my attention right away. The vet had to ", { h: "work the drug's dose out from the animal's weight", d: 0.2 }, ", by hand. And they repeated that calculation several times a day."] },
       { p: ["Our app already showed the recommended dose, but we did not do that calculation. It was ", { h: "a real pain, and so automatic that no vet had ever raised it.", d: 0.4 }] },
     ],
   },
   calc: {
-    heading: "What if we built a calculator that did the maths for the vet?",
+    heading: "What if we built a calculator that did the math for the vet?",
     blocks: [
       { p: ["The idea was to cut the effort to the bare minimum: they typed the weight, ", { h: "without pressing anything", d: 0.2 }, ", and the dose appeared right there, in mg and ml."] },
     ],
@@ -297,7 +297,7 @@ const en: Content = {
     blocks: [
       {
         ul: [
-          ["Usage frequency: ", { h: "from 5 to 28 visits a month", d: 0.2 }, ", per active user"],
+          ["Usage frequency: ", { h: "from 5 to 28 visits a month", d: 0.2 }, " per active user"],
           ["Active users: ", { h: "from 35,000 to 70,000", d: 0.4 }],
           ["Use of the dosage area: ", { h: "from 50% to 80% of the total", d: 0.6 }],
           [{ h: "2.5 million pageviews a month", d: 0.8 }],
@@ -310,8 +310,8 @@ const en: Content = {
   licao: {
     heading: "The biggest lesson was that a metric that already looked good was hiding the biggest opportunity",
     blocks: [
-      { p: ["The 50% of visits going to dosage were numbers from a feature that already worked well. But there was ", { h: "a pain not even the vets themselves were able to name", d: 0.2 }, ", and it only showed up by watching the day to day."] },
-      { p: ["In the end, half of Brazil's small-animal vets became active users, and Vet Smart made it into these professionals' routine. That caught Petlove's attention. They wanted into the sector, and ", { h: "ended up buying our company.", d: 0.4 }] },
+      { p: ["That 50% of visits going to dosage was data from a feature that already worked well. But there was ", { h: "a pain not even the vets themselves were able to name", d: 0.2 }, ", and it only showed up by watching the day to day."] },
+      { p: ["In the end, half of Brazil's small-animal vets became active users, and Vet Smart became part of their routine. That caught Petlove's attention. They wanted to move into the sector, and ", { h: "ended up buying our company.", d: 0.4 }] },
     ],
   },
   back: "Back",
@@ -496,8 +496,6 @@ export default function VetSmart() {
             <VideoNaTela src="/vet-smart/alertas-motion.mp4" estatico="/vet-smart/alertas-poster.jpg" alt="Vet Smart estados de alerta da calculadora" />
           </div>
         </div>
-
-        <Divider />
 
         {/* Resultado */}
         <TwoCol heading={c.results.heading}>
