@@ -33,13 +33,15 @@ function TwoCol({ heading, children }: { heading: string; children: React.ReactN
 }
 
 const flamePt: Block[] = [
-  { p: ["Atuação no time de Design System do Santander, contribuindo para a evolução de componentes, bibliotecas compartilhadas e padrões utilizados em diferentes produtos da companhia."] },
-  { p: ["Participação na construção de um novo Design System global para diferentes países, apoiando a consistência e escalabilidade da experiência."] },
+  { p: ["Trabalhei na criação de um Design System do zero e também na sua manutenção, contribuindo para a evolução de componentes, bibliotecas compartilhadas e padrões utilizados em diferentes produtos da companhia."] },
+  { p: ["Como principal resultado, reduzimos em 35% o tempo de criação de interfaces com o uso do Design System."] },
+  { p: ["Fui selecionado também para participar da construção de um Design System global, com reuniões frequentes de alinhamento com outros times internacionais."] },
 ];
 
 const flameEn: Block[] = [
-  { p: ["Worked on Santander's Design System team, contributing to the evolution of components, shared libraries and patterns used across the company's products."] },
-  { p: ["Helped build a new global Design System for multiple countries, supporting consistency and scalability of the experience."] },
+  { p: ["I worked on building a Design System from scratch and on maintaining it, contributing to the evolution of components, shared libraries and patterns used across the company's products."] },
+  { p: ["As the main outcome, we cut the time it takes to design interfaces by 35% with the Design System."] },
+  { p: ["I was also selected to help build a global Design System, with frequent alignment meetings with international teams."] },
 ];
 
 export default function SantanderDesignSystem() {

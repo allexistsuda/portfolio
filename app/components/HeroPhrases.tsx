@@ -6,11 +6,14 @@ import { useEffect, useState } from "react";
 // Cada frase é [linha1, linha2] — a quebra só é forçada no desktop (md+);
 // no mobile o texto flui naturalmente, sem cortar no meio de uma palavra.
 const phrases = [
+  // a ordem vai do durável pro perecível: quem é, o que faz, como decide, onde se
+  // importa, e por último a ferramenta do momento — que é a que envelhece primeiro.
+  "Over fifteen years designing products,\nand still obsessed with making things.",
   "I build design systems, and\nI stick around to keep them useful.",
   // o | quebra só no mobile (no desktop vira um espaço); o \n quebra só no desktop
   "Data first.|Then the design\nhas something to stand on.",
-  "AI raises the ceiling on the thinking,\nnot just the pace of shipping.",
   "The small interactions are where\na product starts to feel right.",
+  "AI raises the ceiling on the thinking,\nnot just the pace of shipping.",
 ];
 
 const HOLD_MS = 3800; // tempo que cada frase fica visível
