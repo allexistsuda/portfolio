@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { LangProvider } from "./i18n/lang";
 
@@ -29,6 +30,7 @@ export default function RootLayout({
       <body className="bg-[#F2F2F2] text-[#0D0D0D] antialiased" suppressHydrationWarning>
         <LangProvider>{children}</LangProvider>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
