@@ -5,6 +5,7 @@ import Nav from "../components/Nav";
 import Reveal from "../components/Reveal";
 import VideoPlayer from "../components/VideoPlayer";
 import FlameCards from "./FlameCards";
+import FlameTokens from "./FlameTokens";
 import { useLang } from "../i18n/lang";
 import { Blocks, type Block } from "../i18n/render";
 
@@ -50,6 +51,17 @@ const flameEn: Block[] = [
   { p: ["I was also selected to help build a global Design System, with frequent alignment meetings with international teams."] },
 ];
 
+const tokensTituloPt = "No Flame, cada propriedade de um componente vem de um token";
+const tokensTituloEn = "In Flame, every property of a component comes from a token";
+
+const tokensPt: Block[] = [
+  { p: ["No botão primário, o fundo, o texto, os cantos e o respiro passam por uma cadeia de tokens até chegar ao valor. Assim, uma mudança no fim da cadeia alcança todos os botões de uma vez."] },
+];
+
+const tokensEn: Block[] = [
+  { p: ["In the primary button, the background, text, corners and padding go through a chain of tokens before reaching their value. A change at the end of that chain reaches every button at once."] },
+];
+
 export default function SantanderDesignSystem() {
   const { lang } = useLang();
   const flame = lang === "pt" ? flamePt : flameEn;
@@ -74,6 +86,14 @@ export default function SantanderDesignSystem() {
             ilustrações animadas em canvas (FlameCards) */}
         <div className="my-8 md:my-[100px]">
           <FlameCards lang={lang} />
+        </div>
+
+        {/* Tokens: o texto e, embaixo, a anatomia do botão em carrossel (FlameTokens) */}
+        <TwoCol heading={lang === "pt" ? tokensTituloPt : tokensTituloEn}>
+          <Blocks cascata blocks={lang === "pt" ? tokensPt : tokensEn} />
+        </TwoCol>
+        <div className="my-8 md:my-[100px]">
+          <FlameTokens lang={lang} />
         </div>
 
         <BottomNav prev={{ label: "Unico You", href: "/unico-you" }} next={{ label: "Santander Workshops", href: "/santander-workshops" }} />

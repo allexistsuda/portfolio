@@ -20,6 +20,14 @@ export const santanderHead = localFont({
 
 // Os 8 cards do Flame (FlameCards): títulos e textos em Regular; o "Aa" do card de
 // tipografia parte do Light e engrossa com contorno até o peso do Bold.
+// A anatomia do botão (FlameTokens): o "Aa" do card de tipografia é a fonte do próprio
+// token, a Micro Text.
+export const santanderMicro = localFont({
+  src: [{ path: "../../public/fonts/SantanderMicroText-Regular.otf", weight: "400", style: "normal" }],
+  variable: "--font-santander-micro",
+  display: "swap",
+});
+
 export const santanderHeadline = localFont({
   src: [
     { path: "../../public/fonts/SantanderHeadline-Light.ttf", weight: "300", style: "normal" },
