@@ -53,7 +53,9 @@ export default function ProjectsList({
               style={{
                 fontSize: 20,
                 fontWeight: 400,
-                letterSpacing: "-0.45px",
+                // -0.45px aqui era -0.0225em: mais fechado que o título de 36px do About,
+                // num corpo quase a metade. A escala tem que apertar conforme CRESCE.
+                letterSpacing: "-0.012em",
                 lineHeight: "29px",
                 color: "#222",
                 textAlign: "left",

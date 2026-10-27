@@ -596,7 +596,7 @@ export default function Home() {
                   // sem régua no último item (igual à ProjectsList do desktop)
                   style={{ padding: "24px 0", borderBottom: i === projects.length - 1 ? "none" : "1px solid #DEDEDE", textDecoration: "none" }}
                 >
-                  <span style={{ fontSize: 20, fontWeight: 400, letterSpacing: "-0.45px", lineHeight: "29px", color: "#222" }}>{p.title}</span>
+                  <span style={{ fontSize: 20, fontWeight: 400, letterSpacing: "-0.012em", lineHeight: "29px", color: "#222" }}>{p.title}</span>
                   <span style={{ fontSize: 14, fontWeight: 400, letterSpacing: "-0.1px", color: "#8D8D8D", whiteSpace: "nowrap" }}>{p.category}</span>
                 </a>
               </Reveal>
@@ -881,7 +881,7 @@ export default function Home() {
                                     <div className="exp-data" style={{ fontSize: 12, fontWeight: 400, letterSpacing: "0.08em", lineHeight: "21px", color: "#8D8D8D", fontVariantNumeric: "tabular-nums" }}>
                                       {anos(exp.period[lang])}
                                     </div>
-                                    <div className="exp-empresa" style={{ fontSize: 20, fontWeight: 400, letterSpacing: "-0.45px", lineHeight: "29px", color: "#222" }}>{exp.company}</div>
+                                    <div className="exp-empresa" style={{ fontSize: 20, fontWeight: 400, letterSpacing: "-0.012em", lineHeight: "29px", color: "#222" }}>{exp.company}</div>
                                     <div className="exp-cargo" style={{ fontSize: 14, fontWeight: 400, letterSpacing: "-0.1px", lineHeight: "21px", color: "#8D8D8D" }}>{exp.role}</div>
                                   </div>
                                 </Reveal>
