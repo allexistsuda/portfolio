@@ -310,7 +310,7 @@ const CARDS: Card[] = [
   { n: "02", x: 968, y: 200, w: 320, h: 216, classe: "", desenha: colors, parado: 1, ciclo: 16,
     t: { en: "Colors", pt: "Cores" }, s: { en: "5 color palettes", pt: "5 paletas de cores" } },
   { n: "03", x: 1304, y: 200, w: 320, h: 216, classe: "", desenha: typography, parado: 1,
-    t: { en: "Typography", pt: "Tipografia" }, s: { en: "23 exclusive weight fonts", pt: "23 fontes exclusivas" } },
+    t: { en: "Typography", pt: "Tipografia" }, s: { en: "23 exclusive font weights", pt: "23 pesos de fonte exclusivos" } },
   { n: "04", x: 968, y: 432, w: 320, h: 216, classe: "", desenha: icons, parado: 1,
     t: { en: "Icons", pt: "Ícones" }, s: { en: "602 exclusive icons", pt: "602 ícones exclusivos" } },
   { n: "05", x: 1304, y: 432, w: 320, h: 216, classe: "", desenha: motion, parado: 0,

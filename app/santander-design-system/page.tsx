@@ -43,24 +43,24 @@ const tituloEn = "I worked on building a Design System from scratch and on maint
 const flamePt: Block[] = [
   { p: ["Também contribuí para a evolução de componentes, bibliotecas compartilhadas e padrões utilizados em diferentes produtos da companhia."] },
   { p: ["Como principal resultado, reduzimos em 35% o tempo de criação de interfaces com o uso do Design System."] },
-  { p: ["Fui selecionado também para participar da construção de um Design System global, com reuniões frequentes de alinhamento com outros times internacionais."] },
+  { p: ["Fui selecionado para participar da construção de um Design System global, com reuniões frequentes de alinhamento com times internacionais."] },
 ];
 
 const flameEn: Block[] = [
-  { p: ["I also contributed to the evolution of components, shared libraries and patterns used across the company's products."] },
-  { p: ["As the main outcome, we cut the time it takes to design interfaces by 35% with the Design System."] },
-  { p: ["I was also selected to help build a global Design System, with frequent alignment meetings with international teams."] },
+  { p: ["I also contributed to the evolution of components, shared libraries and patterns used across the company’s products."] },
+  { p: ["As the main outcome, the Design System cut interface design time by 35%."] },
+  { p: ["I was selected to help build a global Design System, with frequent alignment meetings with international teams."] },
 ];
 
-const tokensTituloPt = "No Flame, cada propriedade de um componente vem de um token";
-const tokensTituloEn = "In Flame, every property of a component comes from a token";
+const tokensTituloPt = "No Flame, cada propriedade de um componente vinha de um token";
+const tokensTituloEn = "In Flame, every property of a component came from a token";
 
 const tokensPt: Block[] = [
-  { p: ["No botão primário, o fundo, o texto, os cantos e o respiro passam por uma cadeia de tokens até chegar ao valor. Assim, uma mudança no fim da cadeia alcança todos os botões de uma vez."] },
+  { p: ["O fundo, o texto, os cantos e o respiro do botão primário passavam por uma cadeia de tokens até chegar ao valor. Assim, uma mudança no fim da cadeia alcançava todos os botões de uma vez."] },
 ];
 
 const tokensEn: Block[] = [
-  { p: ["In the primary button, the background, text, corners and padding go through a chain of tokens before reaching their value. A change at the end of that chain reaches every button at once."] },
+  { p: ["The primary button’s background, text, corners and padding went through a chain of tokens before reaching their value. A change at the end of that chain reached every button at once."] },
 ];
 
 const atomicTituloPt = "A biblioteca foi organizada em Atomic Design";

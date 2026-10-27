@@ -83,7 +83,7 @@ const CARDS: Card[] = [
   { t: { en: "Typography", pt: "Tipografia" },
     tokens: [[24, 104, "button.typography"], [56, 132, "typography.label.md"], [88, 160, "font.family.micro-text"]],
     valor: "16/24" },
-  { t: { en: "Corner radius", pt: "Raio do canto" },
+  { t: { en: "Corner radius", pt: "Arredondamento" },
     tokens: [[24, 104, "button.radius"], [56, 132, "radius.md"]],
     valor: "6px" },
   { t: { en: "Padding", pt: "Respiro" },

@@ -149,12 +149,12 @@ const ILUSTRA: ((t: number) => string)[] = [
 ];
 
 const CAMADAS: { t: Record<Lang, string>; s: Record<Lang, string> }[] = [
-  { t: { en: "Design tokens", pt: "Design tokens" }, s: { en: "Base variables for color, type and spacing.", pt: "As variáveis de base de cor, tipografia e espaçamento." } },
-  { t: { en: "Atoms", pt: "Átomos" }, s: { en: "The smallest parts: icons, labels and inputs.", pt: "As menores peças: ícones, rótulos e campos." } },
+  { t: { en: "Design tokens", pt: "Design tokens" }, s: { en: "Base variables for color, type and spacing.", pt: "Variáveis base de cor, tipografia e espaçamento." } },
+  { t: { en: "Atoms", pt: "Átomos" }, s: { en: "The smallest parts: icons, labels and inputs.", pt: "Peças mínimas: ícones, rótulos e campos." } },
   { t: { en: "Molecules", pt: "Moléculas" }, s: { en: "Groups of atoms that make up simple components.", pt: "Grupos de átomos que formam componentes simples." } },
   { t: { en: "Organisms", pt: "Organismos" }, s: { en: "Larger components built from molecules and atoms.", pt: "Componentes maiores, feitos de moléculas e átomos." } },
   { t: { en: "Templates", pt: "Templates" }, s: { en: "Layouts that show how components connect.", pt: "Layouts que mostram como os componentes se conectam." } },
-  { t: { en: "Pages", pt: "Páginas" }, s: { en: "Final screens, filled with real content and data.", pt: "As telas finais, com conteúdo e dados reais." } },
+  { t: { en: "Pages", pt: "Páginas" }, s: { en: "Final screens, filled with real content and data.", pt: "Telas finais, com conteúdo e dados reais." } },
 ];
 
 // a montagem: cada ilustração entra ENTRA_INTERVALO depois da anterior, em ENTRA segundos
