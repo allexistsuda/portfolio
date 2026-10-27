@@ -269,7 +269,8 @@ function botao(de: number, para: number, p: number, u: number, lang: Lang) {
   let s = "";
   // o anel se desenha em volta (Focus ring) e some junto quando sai
   if (c.anel > 0) s += `<g${op(c.anel)}>` + contorno(BX - 6, BY - 6, BW + 12, BH + 12, BR + 6, INK, 2,
-    para === 3 ? `pathLength="1" stroke-dasharray="${n(monta)} 1"` : "") + `</g>`;
+    // perto do fim o tracejado de desenho deixava um fio aberto na emenda: aí o anel fecha inteiro
+    para === 3 && monta < .97 ? `pathLength="1" stroke-dasharray="${n(monta)} 2" stroke-linecap="round"` : "") + `</g>`;
   // fundo e o contorno do desenho são camadas separadas; sem fundo, fica o tracejado
   const tracejado = (a: number) => a <= 0 ? "" : `<g${op(a)}>` + contorno(BX, BY, BW, BH, BR, GUIA, 1, `stroke-dasharray="4 4"`) + `</g>`;
   if (para === 0) {
