@@ -12,8 +12,8 @@ import { santanderHeadline, santanderMicro } from "./fonts";
  * direto do token anterior pro novo.
  *
  * É um SVG só, nas coordenadas do frame (1920 x 1080), redesenhado a cada quadro como nos
- * FlameCards. O viewBox aproxima o miolo em 1280 x 720 (ainda 16:9, como o vídeo acima); no
- * celular recorta só o botão e o card ativo. Com prefers-reduced-motion fica parado no Background.
+ * FlameCards e, como eles, em 1:1 com a tela: a janela mais larga mostra mais cards dos lados,
+ * sem mudar o tamanho de nada. Com prefers-reduced-motion fica parado no Background.
  */
 
 type Lang = "pt" | "en";
@@ -26,6 +26,9 @@ const MICRO = santanderMicro.style.fontFamily.replace(/"/g, "'");
 // a fila anda um card em ANDA segundos (o botão troca de token junto) e cada card fica
 // PARADO segundos no centro: tempo da montagem dele, ou de um ciclo do loop no States
 const ANDA = .6, PARADO = 3;
+// o quadro: altura fixa em px (centrada entre o topo do botão e a base dos cards) e a largura
+// mínima em que o desenho fica em 1:1
+const ALTURA = 768, ALTURA_CELULAR = 440, CENTRO_Y = 535, MIN_LARGURA = 400;
 
 /* ------------------------------------------------------------------ util */
 
@@ -362,7 +365,7 @@ function quadro(k: number, de: number, p: number, dir: number, u: number, lang: 
   // Sem ponta de seta, que se confundiria com a seta do próprio botão
   s += traco(`M960 ${BY + BH + FOLGA_RAMO}V${Y - FOLGA_RAMO}`, RAMO, 1) + botao(de, k, ease(clamp((p - .2) / .8)), u, lang);
   // as pontas somem no fundo
-  const fw = vb[2] > 1000 ? 240 : 40;
+  const fw = Math.round(clamp(vb[2] * .15, 40, 240));
   return `<defs><linearGradient id="tk-esq"><stop offset="0" stop-color="${FUNDO}"/><stop offset="1" stop-color="${FUNDO}" stop-opacity="0"/></linearGradient>`
     + `<linearGradient id="tk-dir"><stop offset="0" stop-color="${FUNDO}" stop-opacity="0"/><stop offset="1" stop-color="${FUNDO}"/></linearGradient></defs>`
     + s + `<rect x="${vb[0]}" y="${vb[1]}" width="${fw}" height="${vb[3]}" fill="url(#tk-esq)"/>`
@@ -381,12 +384,16 @@ export default function FlameTokens({ lang }: { lang: Lang }) {
     const sv = tela.current;
     if (!sv) return;
     const menosMovimento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const largo = window.matchMedia("(min-width: 768px)");
-    // desktop: o miolo do frame; celular: o recorte do botão e do card ativo
+    const caixa = sv.parentElement!;
+    // 1:1 com a tela, como os FlameCards: o texto não cresce nem encolhe com a janela, o quadro
+    // só mostra mais ou menos cards dos lados. Abaixo de 400px de largura reduz, pro card caber.
     let vb: number[] = [];
     const ajusta = () => {
-      vb = largo.matches ? [320, 180, 1280, 720] : [760, 326, 400, 420];
-      sv.setAttribute("viewBox", vb.join(" "));
+      const w = caixa.clientWidth || 1, esc = Math.min(1, w / MIN_LARGURA);
+      const h = w >= 768 ? ALTURA : ALTURA_CELULAR;
+      vb = [960 - w / esc / 2, CENTRO_Y - h / 2, w / esc, h];
+      sv.setAttribute("viewBox", vb.map(v => n(v)).join(" "));
+      caixa.style.height = `${Math.round(h * esc)}px`;
     };
     // a fila anda sozinha: cada card fica PARADO segundos no centro depois da troca, e só
     // enquanto o quadro está na tela (fora dela o relógio para e retoma de onde estava)
@@ -416,13 +423,13 @@ export default function FlameTokens({ lang }: { lang: Lang }) {
     redesenha.current = desenha;
     ajusta();
     desenha();
-    const troca = () => { ajusta(); desenha(); };
-    largo.addEventListener("change", troca);
-    return () => { obs.disconnect(); largo.removeEventListener("change", troca); cancelAnimationFrame(raf); };
+    const tam = new ResizeObserver(() => { ajusta(); desenha(); });
+    tam.observe(caixa);
+    return () => { obs.disconnect(); tam.disconnect(); cancelAnimationFrame(raf); };
   }, []);
 
   return (
-    <div className="relative w-full overflow-hidden aspect-[400/420] md:aspect-video" style={{ borderRadius: 16, background: FUNDO }}>
+    <div className="relative w-full overflow-hidden" style={{ borderRadius: 16, background: FUNDO, height: ALTURA }}>
       <svg ref={tela} aria-hidden="true" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid meet" />
     </div>
   );
