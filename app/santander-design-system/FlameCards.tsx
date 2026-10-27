@@ -6,7 +6,7 @@ import { santanderHeadline } from "./fonts";
 /**
  * Os 8 pilares do Flame em cards (frame "Flame — Cards de token (v2)" no Figma).
  *
- * Os cards são HTML — título, subtítulo e número são texto de verdade e seguem o idioma —
+ * Os cards são HTML — título e subtítulo são texto de verdade e seguem o idioma —
  * e cada ilustração é um SVG gerado a cada quadro com as coordenadas do Figma. O SVG cobre
  * o card da borda de fora até 80px antes da base (onde começa o texto) e o viewBox põe o
  * card do Figma centrado na horizontal, em 1:1. Assim a ilustração fica no mesmo lugar
@@ -399,7 +399,6 @@ export default function FlameCards({ lang }: { lang: Lang }) {
             // da borda de fora do card, como no Figma, até 80px antes da base (no texto)
             style={{ width: "calc(100% + 2px)", height: "calc(100% - 78px)", overflow: "hidden" }}
           />
-          <span className="absolute top-6 right-6 text-[14px] leading-6" style={{ opacity: .6 }}>{c.n}</span>
           <div className="absolute left-6 right-6 bottom-6">
             <p className="text-[20px] leading-6">{c.t[lang]}</p>
             <p className="mt-1 text-[16px] leading-6" style={{ opacity: .6 }}>{c.s[lang]}</p>

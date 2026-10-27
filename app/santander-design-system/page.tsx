@@ -6,6 +6,7 @@ import Reveal from "../components/Reveal";
 import VideoPlayer from "../components/VideoPlayer";
 import FlameCards from "./FlameCards";
 import FlameTokens from "./FlameTokens";
+import FlameAtomic from "./FlameAtomic";
 import { useLang } from "../i18n/lang";
 import { Blocks, type Block } from "../i18n/render";
 
@@ -62,6 +63,17 @@ const tokensEn: Block[] = [
   { p: ["In the primary button, the background, text, corners and padding go through a chain of tokens before reaching their value. A change at the end of that chain reaches every button at once."] },
 ];
 
+const atomicTituloPt = "A biblioteca foi organizada em Atomic Design";
+const atomicTituloEn = "The library was organized with Atomic Design";
+
+const atomicPt: Block[] = [
+  { p: ["Seguindo a metodologia de Brad Frost, os componentes eram divididos em cinco níveis, de átomos a páginas, com os tokens como base."] },
+];
+
+const atomicEn: Block[] = [
+  { p: ["Following Brad Frost’s methodology, components were split into five levels, from atoms to pages, with tokens as the foundation."] },
+];
+
 export default function SantanderDesignSystem() {
   const { lang } = useLang();
   const flame = lang === "pt" ? flamePt : flameEn;
@@ -94,6 +106,14 @@ export default function SantanderDesignSystem() {
         </TwoCol>
         <div className="my-8 md:my-[100px]">
           <FlameTokens lang={lang} />
+        </div>
+
+        {/* Atomic Design: o texto e, embaixo, de design tokens até a página em seis cards (FlameAtomic) */}
+        <TwoCol heading={lang === "pt" ? atomicTituloPt : atomicTituloEn}>
+          <Blocks cascata blocks={lang === "pt" ? atomicPt : atomicEn} />
+        </TwoCol>
+        <div className="my-8 md:my-[100px]">
+          <FlameAtomic lang={lang} />
         </div>
 
         <BottomNav prev={{ label: "Unico You", href: "/unico-you" }} next={{ label: "Santander Workshops", href: "/santander-workshops" }} />
