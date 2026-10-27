@@ -11,9 +11,8 @@ import { santanderHeadline } from "./fonts";
  * ilustração centrada em cima e texto na base. A ilustração é um SVG pequeno desenhado em 48 x 32 e
  * mostrado em 1,5x, como no Figma. Três por linha no desktop largo, dois no tablet e um no celular.
  *
- * Movimento: quando o bloco aparece, as ilustrações entram em sequência, de 01 a 06; depois
- * cada uma fica num loop curto que mostra a sua camada, sem nada sumir e reaparecer. Como nos
- * FlameCards, o SVG é redesenhado a cada quadro, só com o bloco na tela, e com
+ * Movimento: cada ilustração fica num loop curto que vai da metáfora à peça real e volta. Como
+ * nos FlameCards, o SVG é redesenhado a cada quadro, só com o bloco na tela, e com
  * prefers-reduced-motion tudo fica parado no primeiro quadro.
  */
 
@@ -157,9 +156,6 @@ const CAMADAS: { t: Record<Lang, string>; s: Record<Lang, string> }[] = [
   { t: { en: "Pages", pt: "Páginas" }, s: { en: "Final screens, filled with real content and data.", pt: "Telas finais, com conteúdo e dados reais." } },
 ];
 
-// a montagem: cada ilustração entra ENTRA_INTERVALO depois da anterior, em ENTRA segundos
-const ENTRA = .5, ENTRA_INTERVALO = .18;
-
 export default function FlameAtomic({ lang }: { lang: Lang }) {
   const grade = useRef<HTMLDivElement>(null);
   const telas = useRef<(SVGSVGElement | null)[]>([]);
@@ -168,14 +164,11 @@ export default function FlameAtomic({ lang }: { lang: Lang }) {
     const el = grade.current;
     if (!el) return;
     const menosMovimento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    // o relógio só anda com o bloco na tela; a montagem começa na primeira vez que ele aparece
+    // o relógio só anda com o bloco na tela e retoma de onde parou
     let raf = 0, visivel = false, inicio = 0, pausa = 0, viu = false;
+    // como os cards são imagens, as ilustrações já aparecem montadas e só rodam os loops
     const desenha = (t: number | null) => telas.current.forEach((sv, i) => {
-      if (!sv) return;
-      // antes de ver o bloco, nada aparece; com menos movimento, tudo já montado e parado
-      const entra = t === null ? (menosMovimento ? 1 : 0) : ease((t - i * ENTRA_INTERVALO) / ENTRA);
-      const s = .85 + .15 * entra;
-      sv.innerHTML = entra <= 0 ? "" : `<g opacity="${n(entra)}" transform="translate(24 16) scale(${n(s)}) translate(-24 -16)">${ILUSTRA[i](t === null ? 0 : Math.max(0, t - i * ENTRA_INTERVALO))}</g>`;
+      if (sv) sv.innerHTML = ILUSTRA[i](t ?? 0);
     });
     const roda = () => {
       if (!visivel) { raf = 0; return; }
