@@ -51,3 +51,7 @@ public/_calc
 public/_alertas
 public/_type
 public/_icones
+
+# motion dos cards do Flame
+public/flame-motion
+public/flame-cards-motion.html

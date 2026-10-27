@@ -17,3 +17,14 @@ export const santanderHead = localFont({
   variable: "--font-santander-head",
   display: "swap",
 });
+
+// Os 8 cards do Flame (FlameCards): títulos e textos em Regular; o "Aa" do card de
+// tipografia parte do Light e engrossa com contorno até o peso do Bold.
+export const santanderHeadline = localFont({
+  src: [
+    { path: "../../public/fonts/SantanderHeadline-Light.ttf", weight: "300", style: "normal" },
+    { path: "../../public/fonts/SantanderHeadline-Regular.ttf", weight: "400", style: "normal" },
+  ],
+  variable: "--font-santander-headline",
+  display: "swap",
+});

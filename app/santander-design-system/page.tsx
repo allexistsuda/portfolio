@@ -4,6 +4,7 @@ import BottomNav from "../components/BottomNav";
 import Nav from "../components/Nav";
 import Reveal from "../components/Reveal";
 import VideoPlayer from "../components/VideoPlayer";
+import FlameCards from "./FlameCards";
 import { useLang } from "../i18n/lang";
 import { Blocks, type Block } from "../i18n/render";
 
@@ -32,14 +33,19 @@ function TwoCol({ heading, children }: { heading: string; children: React.ReactN
   );
 }
 
+// a primeira frase foi partida: o começo vira o título da esquerda, e o texto da direita
+// abre com uma frase completa ("também contribuí") que amarra com o título sem depender dele
+const tituloPt = "Trabalhei na criação de um Design System do zero e também na sua manutenção";
+const tituloEn = "I worked on building a Design System from scratch and on maintaining it";
+
 const flamePt: Block[] = [
-  { p: ["Trabalhei na criação de um Design System do zero e também na sua manutenção, contribuindo para a evolução de componentes, bibliotecas compartilhadas e padrões utilizados em diferentes produtos da companhia."] },
+  { p: ["Também contribuí para a evolução de componentes, bibliotecas compartilhadas e padrões utilizados em diferentes produtos da companhia."] },
   { p: ["Como principal resultado, reduzimos em 35% o tempo de criação de interfaces com o uso do Design System."] },
   { p: ["Fui selecionado também para participar da construção de um Design System global, com reuniões frequentes de alinhamento com outros times internacionais."] },
 ];
 
 const flameEn: Block[] = [
-  { p: ["I worked on building a Design System from scratch and on maintaining it, contributing to the evolution of components, shared libraries and patterns used across the company's products."] },
+  { p: ["I also contributed to the evolution of components, shared libraries and patterns used across the company's products."] },
   { p: ["As the main outcome, we cut the time it takes to design interfaces by 35% with the Design System."] },
   { p: ["I was also selected to help build a global Design System, with frequent alignment meetings with international teams."] },
 ];
@@ -60,9 +66,15 @@ export default function SantanderDesignSystem() {
         </div>
 
         {/* Flame */}
-        <TwoCol heading="Flame">
+        <TwoCol heading={lang === "pt" ? tituloPt : tituloEn}>
           <Blocks cascata blocks={flame} />
         </TwoCol>
+
+        {/* Os 8 pilares do Flame: cards em HTML na largura do container, com as
+            ilustrações animadas em canvas (FlameCards) */}
+        <div className="my-8 md:my-[100px]">
+          <FlameCards lang={lang} />
+        </div>
 
         <BottomNav prev={{ label: "Unico You", href: "/unico-you" }} next={{ label: "Santander Workshops", href: "/santander-workshops" }} />
 
