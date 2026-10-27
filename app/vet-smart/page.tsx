@@ -337,7 +337,7 @@ export default function VetSmart() {
           </div>
         </div>
         <div className="mb-8 md:mb-[100px]">
-          <div className="md:hidden"><Img src="/vet-smart/02-mobile.png" alt="Vet Smart" /></div>
+          <div className="md:hidden"><VideoNaTela src="/vet-smart/02-mobile-motion.mp4" estatico="/vet-smart/02-mobile-poster.jpg" alt="Vet Smart" /></div>
           <div className="hidden md:block"><VideoNaTela src="/vet-smart/02-motion.mp4" estatico="/vet-smart/02.png" alt="Vet Smart" /></div>
         </div>
 

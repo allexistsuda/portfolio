@@ -1,0 +1,64 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>vet smart — logo, recorte pro celular</title>
+<style>
+  body { margin:0; background:#111 }
+  body.render { background:#fff }
+  #palco { position:relative; margin:0 auto; overflow:hidden; background:#fff;
+           transform-origin:top left }
+  #palco video { position:absolute; display:block; max-width:none }
+</style>
+
+<main><div id="palco"><video id="v" src="/vet-smart/02-motion.mp4" muted playsinline></video></div></main>
+
+<script type="module">
+const RENDER = new URLSearchParams(location.search).has("render");
+
+// Reaproveita o vídeo do desktop em vez de re-renderizar: a arte é a mesma, muda só o
+// enquadramento. Medido nos dois PNGs: o logo ocupa 41,36% da largura no 02.png e
+// 61,25% no 02-mobile.png, com o mesmo centro relativo — ou seja, é zoom puro.
+const FONTE = { w: 2720, h: 1426, logoRel: 0.4136, cx: 0.5002, cy: 0.5130 };
+const W = 1280, H = 1068;                 // 2x do 02-mobile.png (640x534)
+const LOGO_REL = 0.6125, CX = 0.5000, CY = 0.5122;
+const DUR = 2.3;
+
+// escala que leva o logo do tamanho da fonte ao tamanho que ele tem no celular
+const ESC = (LOGO_REL * W) / (FONTE.logoRel * FONTE.w);
+// o vídeo sobra na vertical (1,907 contra 1,199) e falta nas pontas de cima e de baixo;
+// como o fundo dele é branco puro nas quatro bordas, a sobra some no fundo do palco
+const VW = FONTE.w * ESC, VH = FONTE.h * ESC;
+const LEFT = CX * W - FONTE.cx * VW;
+const TOP  = CY * H - FONTE.cy * VH;
+
+const palco = document.getElementById("palco"), v = document.getElementById("v");
+palco.style.width = W + "px"; palco.style.height = H + "px";
+v.style.width = VW + "px"; v.style.height = VH + "px";
+v.style.left = LEFT + "px"; v.style.top = TOP + "px";
+
+if (RENDER) {
+  document.body.classList.add("render");
+  palco.style.transform = "none"; palco.style.marginLeft = "0";
+  window.__pronto = false;
+  await v.play().catch(() => {});
+  v.pause();
+  const tick = async () => {
+    const t = Math.min(window.__t || 0, DUR - 0.001);
+    if (Math.abs(v.currentTime - t) > 0.001) {
+      v.currentTime = t;
+      await new Promise(r => { v.onseeked = r; });
+    }
+    window.__pronto = true;
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+} else {
+  const ajusta = () => {
+    const s = Math.min(1, (innerWidth - 40) / W, (innerHeight - 40) / H);
+    palco.style.transform = `scale(${s})`;
+    palco.style.marginLeft = ((innerWidth - W * s) / 2) + "px";
+    document.querySelector("main").style.height = (H * s) + "px";
+  };
+  addEventListener("resize", ajusta); ajusta();
+  v.loop = true; v.play().catch(() => {});
+}
+</script>
