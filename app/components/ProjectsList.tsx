@@ -34,7 +34,7 @@ export default function ProjectsList({
             style={{
               gridTemplateColumns: "1fr 180px 72px",
               columnGap: 24,
-              padding: "16px 0",
+              padding: "20px 0",
               borderBottom: i === items.length - 1 ? "none" : "1px solid #DEDEDE",
               textDecoration: "none",
               position: "relative",

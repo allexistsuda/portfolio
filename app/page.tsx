@@ -31,6 +31,7 @@ const experiences: {
   role: string;
   period: { pt: string; en: string };
 }[] = [
+  { company: "act digital", role: "Product Designer", period: { pt: "2026 – presente", en: "2026 – Present" } },
   { company: "Ticket", role: "Product Designer", period: { pt: "set/2024 – mar/2026", en: "Sep 2024 – Mar 2026" } },
   { company: "Santander", role: "Product Designer", period: { pt: "jan/2022 – jul/2024", en: "Jan 2022 – Jul 2024" } },
   { company: "Sioux", role: "Product Designer", period: { pt: "jan/2021 – dez/2021", en: "Jan 2021 – Dec 2021" } },
@@ -387,12 +388,17 @@ export default function Home() {
       const right = easeOut(clamp(p * 1.45));
       const left = easeInOut(clamp((p - 0.3) / 0.7));
       dark.style.clipPath = `polygon(0% ${(1 - left) * 100}%, 100% ${(1 - right) * 100}%, 100% 100%, 0% 100%)`;
-      // 0.72, não 0.55: o texto estava aparecendo com o preto ainda subindo
-      text.style.opacity = String(clamp((p - 0.72) / 0.28));
-      if (contactFooterRef.current) contactFooterRef.current.style.opacity = String(clamp((p - 0.7) / 0.3));
-      text.style.transform = `translateY(${(1 - clamp((p - 0.72) / 0.28)) * 24}px)`;
+      // o texto não usa o p do preto: aquele satura com a seção ainda a 25% da
+      // tela, então a frase já estava pronta antes de você terminar de rolar.
+      // q mede a seção entrando: 0 quando o topo dela encosta na base da janela,
+      // 1 quando ela ocupa a tela toda — que é o fim do scroll da página.
+      const q = clamp((vh - rect.top) / vh);
+      const entra = clamp((q - 0.8) / 0.17);
+      text.style.opacity = String(entra);
+      if (contactFooterRef.current) contactFooterRef.current.style.opacity = String(clamp((q - 0.78) / 0.17));
+      text.style.transform = `translateY(${(1 - entra) * 24}px)`;
       // os chips caem logo depois que a frase já está quase toda visível
-      if (p > 0.92 && !chipsFiredRef.current) {
+      if (q > 0.95 && !chipsFiredRef.current) {
         chipsFiredRef.current = true;
         setChipsIn(true);
       }
@@ -827,7 +833,7 @@ export default function Home() {
                         {/* coluna da esquerda: o título e, logo abaixo (como no começo), a foto redonda; aparece com o Reveal (fade + subida leve).
                             A coluna inteira fica presa (sticky) enquanto o texto da direita rola. */}
                         {/* o `top` vem inline: o md:top-24 (96px) prendia a frase baixa demais */}
-                        <div className="flex flex-col gap-8 md:sticky md:self-start" style={{ top: 72 }}>
+                        <div className="flex flex-col gap-8 md:gap-10 md:sticky md:self-start" style={{ top: 72 }}>
                           <Reveal delay={50} triggerMargin="0%">
                             <h2
                               className="text-[29px] leading-[38px] tracking-[-0.58px] md:text-[36px] md:leading-[44px] md:tracking-[-0.72px]"
