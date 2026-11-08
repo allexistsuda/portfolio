@@ -183,6 +183,264 @@ function LangSwitcher() {
   );
 }
 
+
+// ---- menu de contato ----------------------------------------------------------
+// O "Contact" abre um painel ali mesmo, em vez de levar até o rodapé da home: nos
+// cases ele tirava a pessoa do case justo quando ela se interessou. Os ícones são os
+// do site (public/icons), em tinta escura.
+
+const LINKEDIN_URL = "https://www.linkedin.com/in/allexis-tsuda-a99ab18/";
+const INSTAGRAM_URL = "https://www.instagram.com/allexistsuda";
+const RESUME_URL = "/resume.pdf";
+const EMAIL = "allexistsuda@gmail.com";
+
+// os ícones de contato são os do site (public/icons), em tinta escura. A seta e o
+// copiar/check são da mesma família (a do e-mail e do Instagram) e no mesmo tamanho,
+// 20px num viewBox de 24 — assim o traço tem a mesma espessura em todos.
+function IconeEmail() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden style={{ flexShrink: 0 }}>
+      <path d="M17 21.25H7C3.35 21.25 1.25 19.15 1.25 15.5V8.5C1.25 4.85 3.35 2.75 7 2.75H17C20.65 2.75 22.75 4.85 22.75 8.5V15.5C22.75 19.15 20.65 21.25 17 21.25ZM7 4.25C4.14 4.25 2.75 5.64 2.75 8.5V15.5C2.75 18.36 4.14 19.75 7 19.75H17C19.86 19.75 21.25 18.36 21.25 15.5V8.5C21.25 5.64 19.86 4.25 17 4.25H7Z" />
+      <path d="M11.9998 12.87C11.1598 12.87 10.3098 12.61 9.65978 12.08L6.52978 9.57997C6.20978 9.31997 6.14978 8.84997 6.40978 8.52997C6.66978 8.20997 7.13978 8.14997 7.45978 8.40997L10.5898 10.91C11.3498 11.52 12.6398 11.52 13.3998 10.91L16.5298 8.40997C16.8498 8.14997 17.3298 8.19997 17.5798 8.52997C17.8398 8.84997 17.7898 9.32997 17.4598 9.57997L14.3298 12.08C13.6898 12.61 12.8398 12.87 11.9998 12.87Z" />
+    </svg>
+  );
+}
+
+function IconeLinkedin() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden style={{ flexShrink: 0 }}>
+      <rect x="2" y="2" width="20" height="20" rx="7" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="8.1" cy="8.4" r="0.9" fill="currentColor" />
+      <path d="M8.1 11.2V16.65" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M11.9 16.65V11.2M11.9 13.4C11.9 12.1 12.85 11.2 14.05 11.2C15.25 11.2 16.15 12.1 16.15 13.5V16.65" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function IconeInstagram() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden style={{ flexShrink: 0 }}>
+      <path d="M15 22.75H9C3.57 22.75 1.25 20.43 1.25 15V9C1.25 3.57 3.57 1.25 9 1.25H15C20.43 1.25 22.75 3.57 22.75 9V15C22.75 20.43 20.43 22.75 15 22.75ZM9 2.75C4.39 2.75 2.75 4.39 2.75 9V15C2.75 19.61 4.39 21.25 9 21.25H15C19.61 21.25 21.25 19.61 21.25 15V9C21.25 4.39 19.61 2.75 15 2.75H9Z" />
+      <path d="M12 16.25C9.66 16.25 7.75 14.34 7.75 12C7.75 9.66 9.66 7.75 12 7.75C14.34 7.75 16.25 9.66 16.25 12C16.25 14.34 14.34 16.25 12 16.25ZM12 9.25C10.48 9.25 9.25 10.48 9.25 12C9.25 13.52 10.48 14.75 12 14.75C13.52 14.75 14.75 13.52 14.75 12C14.75 10.48 13.52 9.25 12 9.25Z" />
+      <circle cx="17" cy="6.5" r="1" />
+    </svg>
+  );
+}
+
+function IconeCurriculo() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden style={{ flexShrink: 0 }}>
+      <rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M7.8 9h8.4M7.8 12.5h8.4M7.8 16h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// copiar e check: o "copy" e o "tick" da mesma família do e-mail, em cinza
+function IconeCopiar({ feito }: { feito: boolean }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden style={{ flexShrink: 0, color: "#8D8D8D" }}>
+      {feito ? (
+        <path d="M4.5 12.5L9.5 17.5L19.5 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      ) : (
+        <>
+          <path d="M16 12.9V17.1C16 20.6 14.6 22 11.1 22H6.9C3.4 22 2 20.6 2 17.1V12.9C2 9.4 3.4 8 6.9 8H11.1C14.6 8 16 9.4 16 12.9Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M22 6.9V11.1C22 14.6 20.6 16 17.1 16H16V12.9C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2H17.1C20.6 2 22 3.4 22 6.9Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </>
+      )}
+    </svg>
+  );
+}
+
+// a seta da mesma família ("arrow-right"), no mesmo tamanho dos outros
+function SetaMenu() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden className="contato-seta" style={{ flexShrink: 0, color: "#8D8D8D" }}>
+      <path d="M14.43 5.93L20.5 12L14.43 18.07" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3.5 12H20.33" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+const linhaStyle: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: 12,
+  width: "100%",
+  padding: "22px 0",
+  background: "transparent",
+  border: "none",
+  textAlign: "left",
+  textDecoration: "none",
+  color: "#222",
+  cursor: "pointer",
+  font: "inherit",
+};
+
+function Linha({ icone, titulo, fim }: { icone: React.ReactNode; titulo: React.ReactNode; fim: React.ReactNode }) {
+  return (
+    <>
+      <span style={{ display: "flex", flexShrink: 0, color: "#222" }}>{icone}</span>
+      <span className="contato-nome" style={{ minWidth: 0, flex: 1, fontSize: 16, fontWeight: 400, letterSpacing: "-0.01em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+        {titulo}
+      </span>
+      {fim}
+    </>
+  );
+}
+
+// Link simples pro contato. O contato da home é um rodapé grudado no fundo (sticky),
+// então o scrollIntoView não sai do lugar: na home rola até o fim da página; fora dela,
+// vai pra /#contato e a home faz esse mesmo rolar ao abrir.
+function ContatoLink() {
+  const href = useHref();
+  return (
+    <Link
+      href={href("/#contato")}
+      onClick={(e) => {
+        if (!document.getElementById("contato")) return;
+        e.preventDefault();
+        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
+      }}
+      className="hover:opacity-60 transition-opacity duration-300 ease-out"
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        fontSize: 14,
+        fontWeight: 600,
+        letterSpacing: "-0.21px",
+        color: "#222",
+        lineHeight: 1,
+      }}
+    >
+      Contact
+    </Link>
+  );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- segurado por enquanto
+function ContactMenu() {
+  const { lang } = useLang();
+  const pt = lang === "pt";
+  const [open, setOpen] = useState(false);
+  const [copiado, setCopiado] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  useEffect(() => {
+    if (!copiado) return;
+    const t = setTimeout(() => setCopiado(false), 1800);
+    return () => clearTimeout(t);
+  }, [copiado]);
+
+  // copia o e-mail em vez de abrir o app de e-mail (que muita gente nem configurou).
+  // Fora de https/localhost não há área de transferência: aí cai no mailto.
+  const copiar = async () => {
+    try {
+      await navigator.clipboard.writeText(EMAIL);
+      setCopiado(true);
+    } catch {
+      window.location.href = `mailto:${EMAIL}`;
+    }
+  };
+
+  // cada item entra 35ms depois do anterior, o ritmo das listas da home
+  const item = (i: number, extra?: React.CSSProperties): React.CSSProperties => ({
+    ...linhaStyle,
+    borderTop: i === 0 ? "none" : "1px solid #EDEDED",
+    animationDelay: `${90 + i * 35}ms`,
+    ...extra,
+  });
+
+  return (
+    <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        className="hover:opacity-60 transition-opacity duration-300 ease-out"
+        style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 14, fontWeight: 600, letterSpacing: "-0.21px", color: "#222", lineHeight: 1 }}
+      >
+        Contact
+      </button>
+
+      <style>{`
+/* menu de contato do Nav. O painel abre como um recorte crescendo a partir do canto
+   do "Contact" (cima, à direita), e os itens entram em cascata — 35ms entre eles, o
+   ritmo das listas da home. O fundo escurece de leve. */
+.contato-menu {
+  transform-origin: right top;
+  animation: contato-abre 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.contato-menu .contato-item {
+  animation: contato-entra 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.contato-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.12);
+  animation: contato-escurece 0.3s ease both;
+}
+.contato-nome { transition: color 0.25s ease; }
+.contato-item:hover .contato-nome { color: #8D8D8D; }
+.contato-item .contato-seta { transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.contato-item:hover .contato-seta { transform: translateX(4px); }
+@keyframes contato-abre {
+  from { clip-path: inset(0 0 100% 40% round 8px); transform: translateY(-6px); }
+  to { clip-path: inset(0 0 0 0 round 8px); transform: none; }
+}
+@keyframes contato-entra {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes contato-escurece {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .contato-menu, .contato-menu .contato-item, .contato-scrim { animation: none; }
+}
+      `}</style>
+
+      {open && (
+        <>
+          <div className="contato-scrim" onClick={() => setOpen(false)} aria-hidden />
+          <div
+            role="dialog"
+            aria-label={pt ? "Contato" : "Contact"}
+            className="contato-menu"
+            style={{ position: "absolute", right: 0, top: "calc(100% + 20px)", zIndex: 51, width: "min(320px, calc(100vw - 48px))", background: "#fff", border: "1px solid #E6E6E6", borderRadius: 8, padding: "6px 20px", boxShadow: "0 16px 40px rgba(0,0,0,0.08)" }}
+          >
+            <button type="button" onClick={copiar} className="contato-item" style={item(0)} aria-label={pt ? `Copiar ${EMAIL}` : `Copy ${EMAIL}`}>
+              <Linha
+                icone={<IconeEmail />}
+                titulo={EMAIL}
+                fim={<IconeCopiar feito={copiado} />}
+              />
+            </button>
+            <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="contato-item" style={item(1)}>
+              <Linha icone={<IconeLinkedin />} titulo="LinkedIn" fim={<SetaMenu />} />
+            </a>
+            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="contato-item" style={item(2)}>
+              <Linha icone={<IconeInstagram />} titulo="Instagram" fim={<SetaMenu />} />
+            </a>
+            <a href={RESUME_URL} target="_blank" rel="noopener noreferrer" className="contato-item" style={item(3)}>
+              <Linha icone={<IconeCurriculo />} titulo={pt ? "Currículo" : "Resume"} fim={<SetaMenu />} />
+            </a>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function Nav() {
   const href = useHref();
   return (
@@ -210,28 +468,9 @@ export default function Nav() {
           gap: 16,
         }}
       >
-        <Link
-          href={href("/#contato")}
-          onClick={(e) => {
-            // se a seção já está nesta página, rola suave em vez de pular pela âncora
-            const alvo = document.getElementById("contato");
-            if (!alvo) return;
-            e.preventDefault();
-            alvo.scrollIntoView({ behavior: "smooth", block: "start" });
-          }}
-          className="hover:opacity-60 transition-opacity duration-300 ease-out"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            fontSize: 14,
-            fontWeight: 600,
-            letterSpacing: "-0.21px",
-            color: "#222",
-            lineHeight: 1,
-          }}
-        >
-          Contact
-        </Link>
+        {/* menu de contato segurado por enquanto (ContactMenu fica guardado acima);
+            volta o link simples que leva ao contato no fim da home */}
+        <ContatoLink />
       </div>
     </nav>
   );

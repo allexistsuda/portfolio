@@ -1,6 +1,6 @@
 "use client";
 
-import BottomNav from "../components/BottomNav";
+import BottomNav, { Folha } from "../components/BottomNav";
 import VideoNaTela from "../components/VideoNaTela";
 import Nav from "../components/Nav";
 import Reveal from "../components/Reveal";
@@ -19,7 +19,7 @@ const title: React.CSSProperties = {
 
 function TwoCol({ heading, children }: { heading: string; children: React.ReactNode }) {
   return (
-    <div className="md:px-5">
+    <div>
       <div className="grid grid-cols-1 md:grid-cols-[42%_1fr] gap-y-6 gap-x-16 lg:gap-x-24">
         {/* o título abre a cascata e os parágrafos vêm atrás, escalonados dentro do
             Blocks — mesmo ritmo do About na home. triggerMargin 0% porque o padrão do
@@ -40,7 +40,7 @@ function TwoCol({ heading, children }: { heading: string; children: React.ReactN
 }
 
 function Divider() {
-  return <div className="my-8 md:my-[100px] md:mx-5" style={{ height: 1, background: "rgba(34,34,34,0.15)" }} />;
+  return <div className="my-8 md:my-[100px]" style={{ height: 1, background: "rgba(34,34,34,0.15)" }} />;
 }
 
 function Img({ src, alt }: { src: string; alt: string }) {
@@ -323,6 +323,7 @@ export default function VetSmart() {
 
   return (
     <div className="min-h-screen bg-[#F2F2F2]" style={{ color: "#222" }}>
+      <Folha>
       <Nav />
 
       <div className="px-6 md:px-10 mx-auto" style={{ maxWidth: 1440, paddingTop: 32 }}>
@@ -523,9 +524,10 @@ export default function VetSmart() {
           <div className="hidden md:block"><VideoNaTela src="/vet-smart/typeface-motion.mp4" estatico="/vet-smart/typeface-poster.jpg" alt="Vet Smart typeface e cor" repetir /></div>
         </div>
 
-        <BottomNav prev={{ label: c.back, href: "/" }} next={{ label: "Unico You", href: "/unico-you" }} />
-
       </div>
+      </Folha>
+
+      <BottomNav prev={{ label: c.back, href: "/" }} next={{ label: "Unico You", href: "/unico-you" }} />
     </div>
   );
 }

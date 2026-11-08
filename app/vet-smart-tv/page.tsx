@@ -2,7 +2,7 @@
 
 import Nav from "../components/Nav";
 import Reveal from "../components/Reveal";
-import BottomNav from "../components/BottomNav";
+import BottomNav, { Folha } from "../components/BottomNav";
 import VideoNaTela from "../components/VideoNaTela";
 import { useLang } from "../i18n/lang";
 import { Blocks, type Block } from "../i18n/render";
@@ -12,7 +12,7 @@ const title: React.CSSProperties = { fontWeight: 500, color: "#222" };
 
 function TwoCol({ heading, children }: { heading: string; children: React.ReactNode }) {
   return (
-    <div className="md:px-5">
+    <div>
       <div className="grid grid-cols-1 md:grid-cols-[42%_1fr] gap-y-6 gap-x-16 lg:gap-x-24">
         {/* o título abre a cascata e os parágrafos vêm atrás, escalonados dentro do
             Blocks — mesmo ritmo do About na home. triggerMargin 0% porque o padrão do
@@ -33,7 +33,7 @@ function TwoCol({ heading, children }: { heading: string; children: React.ReactN
 }
 
 function Divider() {
-  return <div className="my-8 md:my-[100px] md:mx-5" style={{ height: 1, background: "rgba(34,34,34,0.15)" }} />;
+  return <div className="my-8 md:my-[100px]" style={{ height: 1, background: "rgba(34,34,34,0.15)" }} />;
 }
 
 function Img({ src, alt }: { src: string; alt: string }) {
@@ -225,6 +225,7 @@ export default function VetSmartTV() {
 
   return (
     <div className="min-h-screen bg-[#F2F2F2]" style={{ color: "#222" }}>
+      <Folha>
       <Nav />
 
       <div className="px-6 md:px-10 mx-auto" style={{ maxWidth: 1440, paddingTop: 32 }}>
@@ -279,9 +280,10 @@ export default function VetSmartTV() {
           <Blocks cascata blocks={c.role.blocks} />
         </TwoCol>
 
-        <BottomNav prev={{ label: "Santander Workshops", href: "/santander-workshops" }} next={{ label: "Home", href: "/" }} />
-
       </div>
+      </Folha>
+
+      <BottomNav prev={{ label: "Santander Design System", href: "/santander-design-system" }} next={{ label: "Santander Workshops", href: "/santander-workshops" }} />
     </div>
   );
 }

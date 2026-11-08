@@ -53,10 +53,9 @@ export default function HeroPhrases() {
       @media (min-width: 768px) { .quebra-mobile { display: none; } }
     `}</style>
     <h1
-      className="text-[30px] md:text-[46px] text-center"
+      className="text-[30px] md:text-[46px] tracking-[-0.015em] md:tracking-[-0.03em] text-center"
       style={{
         fontWeight: 500,
-        letterSpacing: "-0.03em",
         lineHeight: 1.05,
         color: "#222",
         // balance distribui as linhas por igual (no mobile, sem o <br>, o texto fluía

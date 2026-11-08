@@ -11,6 +11,7 @@ import Depoimentos from "./components/Depoimentos";
 import { useLang, useHref } from "./i18n/lang";
 import { type Seg } from "./i18n/render";
 
+
 const projects: {
   title: string;
   category: string;
@@ -51,7 +52,28 @@ const LABELS = {
   about: { pt: "SOBRE", en: "ABOUT" },
   experience: { pt: "EXPERIÊNCIA", en: "EXPERIENCE" },
   contact: { pt: "CONTATO", en: "CONTACT" },
+  recommendations: { pt: "RECOMENDAÇÕES", en: "RECOMMENDATIONS" },
 };
+
+// rótulo de seção só no celular. No desktop cada seção tem forma própria (thumbs,
+// duas colunas, grade de cards); no celular tudo vira uma coluna, e a lista de
+// projetos e a de experiência ficavam iguais — "Vet Smart" aparece nas duas.
+// Projects não leva: logo depois do "See the work" ficavam dois textinhos dizendo a
+// mesma coisa, e com a experiência rotulada a lista de cima já lê como o trabalho.
+// Proximidade: cada rótulo fica a ~20px do que nomeia e bem mais longe do que vem antes,
+// senão ele flutua no meio e não pertence a nenhum dos dois.
+function RotuloMobile({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
+  return (
+    <div
+      className="md:hidden"
+      // position: relative pra ser desenhado na ordem da página: com margem negativa ele
+      // entra na seção de cima, que é posicionada e tem fundo, e sumia por baixo dela
+      style={{ position: "relative", fontSize: 12, fontWeight: 500, letterSpacing: "0.06em", textTransform: "uppercase", color: "#222", ...style }}
+    >
+      {children}
+    </div>
+  );
+}
 
 const aboutPt: Seg[][] = [
   [
@@ -155,54 +177,13 @@ const CHIP_STAGGER = 90; // ms entre um chip e o próximo
 const RESUME_URL = "/resume.pdf";
 
 /**
- * Frase do Contato: alterna entre o convite e a procedência com o mesmo
- * fade+blur do hero (ver HeroPhrases) — 3,8s parado, 750ms de transição.
+ * Frase do Contato, parada. Ela alternava com "Based in São Paulo" no mesmo
+ * fade+blur do hero, mas no rodapé a troca sempre pegava alguém no meio dela.
  */
-const CONTACT_PHRASES: Record<"pt" | "en", string[]> = {
-  en: ["Want to work together, or talk about product? Say hi.", "Based in São Paulo, Brazil."],
-  pt: ["Quer trabalhar junto ou conversar sobre produto? Manda um oi.", "Em São Paulo, Brasil."],
+const CONTACT_PHRASE: Record<"pt" | "en", string> = {
+  en: "Want to work together, or talk about product? Say hi.",
+  pt: "Quer trabalhar junto ou conversar sobre produto? Manda um oi.",
 };
-const CONTACT_HOLD_MS = 3800;
-const CONTACT_FADE_MS = 750;
-
-function ContactPhrases({ lang }: { lang: string }) {
-  const list = CONTACT_PHRASES[lang === "pt" ? "pt" : "en"];
-  const [index, setIndex] = useState(0);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const t = setTimeout(() => setVisible(true), 50);
-    return () => clearTimeout(t);
-  }, []);
-
-  useEffect(() => {
-    if (!visible) return;
-    const t = setTimeout(() => setVisible(false), CONTACT_HOLD_MS);
-    return () => clearTimeout(t);
-  }, [index, visible]);
-
-  useEffect(() => {
-    if (visible) return;
-    const t = setTimeout(() => {
-      setIndex((i) => (i + 1) % list.length);
-      setVisible(true);
-    }, CONTACT_FADE_MS);
-    return () => clearTimeout(t);
-  }, [visible, list.length]);
-
-  return (
-    <span
-      style={{
-        display: "inline-block",
-        opacity: visible ? 1 : 0,
-        filter: visible ? "blur(0px)" : "blur(14px)",
-        transition: `opacity ${CONTACT_FADE_MS}ms ease, filter ${CONTACT_FADE_MS}ms ease`,
-      }}
-    >
-      {list[index]}
-    </span>
-  );
-}
 
 function ContactChips({ lang, show }: { lang: string; show: boolean }) {
   const base: React.CSSProperties = {
@@ -357,8 +338,25 @@ export default function Home() {
   const trackRef = useRef<HTMLDivElement>(null);
   const imgBlockRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  // chegando de outra página por /#contato: o salto da âncora não acha o rodapé (ele é
+  // sticky e já conta como visível), então leva até o fim, onde ele aparece inteiro.
+  // Repete depois que as imagens e a lista assentam, porque a altura da página muda.
+  useEffect(() => {
+    if (window.location.hash !== "#contato") return;
+    // o aviso de scroll no fim: é ele que faz o texto do rodapé entrar, e um salto
+    // feito por código nem sempre dispara um
+    const vai = () => {
+      window.scrollTo(0, document.documentElement.scrollHeight);
+      window.dispatchEvent(new Event("scroll"));
+    };
+    const t1 = setTimeout(vai, 0);
+    const t2 = setTimeout(vai, 600);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+
   const contactRef = useRef<HTMLElement>(null);
-  const darkRef = useRef<HTMLDivElement>(null);
+  // a folha é a página inteira menos o contato; ela sobe e descobre o rodapé preto
+  const folhaRef = useRef<HTMLDivElement>(null);
   const contactTextRef = useRef<HTMLDivElement>(null);
   const contactFooterRef = useRef<HTMLDivElement>(null);
   // chips do contato: caem uma vez só, quando a frase já está quase toda visível
@@ -366,39 +364,25 @@ export default function Home() {
   const [chipsIn, setChipsIn] = useState(false);
   const logoWrapRef = useRef<HTMLDivElement>(null);
   const aboutVideoRef = useRef<HTMLVideoElement>(null);
-  // Contato: o preto sobe pelo canto direito primeiro; o lado esquerdo vem atrás e equaliza (como no Fuel)
+  // Contato: rodapé preto grudado no fundo da janela, por baixo da folha (como na
+  // home nova da Unico). O texto entra conforme o rodapé vai sendo descoberto.
   useEffect(() => {
     const clamp = (n: number) => Math.min(1, Math.max(0, n));
-    const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
-    const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
     const update = () => {
       const sec = contactRef.current;
-      const dark = darkRef.current;
+      const folha = folhaRef.current;
       const text = contactTextRef.current;
-      if (!sec || !dark || !text) return;
-      const vh = window.innerHeight;
-      const rect = sec.getBoundingClientRect();
-      // dianteira de 10%: começa antes de o topo encostar na base da janela, mas
-      // sem terminar fora da tela. Com 25% o preto completava a 40% de distância
-      // e você só via o estado final — o impacto vem de ver a subida acontecendo.
-      const p = clamp((vh * 1.1 - rect.top) / (vh * 0.85));
-      // a diagonal é a diferença entre os dois cantos. Defasagem maior (direito
-      // termina em p=0.69, esquerdo só começa em 0.30) = inclinado por mais tempo
-      // antes de deitar. Antes: 1.25 e atraso de 0.12, que achatava cedo.
-      const right = easeOut(clamp(p * 1.45));
-      const left = easeInOut(clamp((p - 0.3) / 0.7));
-      dark.style.clipPath = `polygon(0% ${(1 - left) * 100}%, 100% ${(1 - right) * 100}%, 100% 100%, 0% 100%)`;
-      // o texto não usa o p do preto: aquele satura com a seção ainda a 25% da
-      // tela, então a frase já estava pronta antes de você terminar de rolar.
-      // q mede a seção entrando: 0 quando o topo dela encosta na base da janela,
-      // 1 quando ela ocupa a tela toda — que é o fim do scroll da página.
-      const q = clamp((vh - rect.top) / vh);
-      const entra = clamp((q - 0.8) / 0.17);
+      if (!sec || !folha || !text) return;
+      // o rodapé não se mexe (é sticky), então a posição dele não serve de medida.
+      // O que muda é a borda de baixo da folha: o que está abaixo dela é rodapé à mostra.
+      const visto = clamp((window.innerHeight - folha.getBoundingClientRect().bottom) / sec.offsetHeight);
+      // texto só no fim, com o rodapé quase todo à mostra (pedido: segurar o texto final)
+      const entra = clamp((visto - 0.55) / 0.4);
       text.style.opacity = String(entra);
-      if (contactFooterRef.current) contactFooterRef.current.style.opacity = String(clamp((q - 0.78) / 0.17));
       text.style.transform = `translateY(${(1 - entra) * 24}px)`;
+      if (contactFooterRef.current) contactFooterRef.current.style.opacity = String(clamp((visto - 0.6) / 0.35));
       // os chips caem logo depois que a frase já está quase toda visível
-      if (q > 0.95 && !chipsFiredRef.current) {
+      if (visto > 0.95 && !chipsFiredRef.current) {
         chipsFiredRef.current = true;
         setChipsIn(true);
       }
@@ -537,6 +521,11 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#F6F6F5]" style={{ color: "#222", fontFamily: "inherit", overflowX: "clip" }}>
 
+      {/* a folha: opaca e acima do rodapé. Borda de baixo reta (sem o raio da ref)
+          e a mesma sombra dela, que cai no preto quando a folha sobe. Começa antes
+          do Nav: se ficasse depois, o rodapé grudado aparecia atrás dele no topo. */}
+      <div ref={folhaRef} style={{ position: "relative", zIndex: 1, background: "#F6F6F5", boxShadow: "0 40px 80px rgba(0,0,0,0.35)" }}>
+
       <Nav />
 
       <div className="px-6 md:px-10" style={{ maxWidth: 1440, margin: "0 auto" }}>
@@ -559,7 +548,7 @@ export default function Home() {
               opacity: scrollHintOpacity,
               transition: "opacity 0.2s ease",
               pointerEvents: scrollHintOpacity < 0.1 ? "none" : "auto",
-              gap: 5,
+              gap: 12,
             }}
           >
             <span
@@ -573,25 +562,16 @@ export default function Home() {
             >
               See the work
             </span>
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="#8D8D8D"
-              stroke="#8D8D8D"
-              strokeWidth="0.5"
-              style={{ flexShrink: 0 }}
-            >
-              <path d="M12 21.2501C11.81 21.2501 11.62 21.1801 11.47 21.0301L5.4 14.9601C5.11 14.6701 5.11 14.1901 5.4 13.9001C5.69 13.6101 6.17 13.6101 6.46 13.9001L12 19.4401L17.54 13.9001C17.83 13.6101 18.31 13.6101 18.6 13.9001C18.89 14.1901 18.89 14.6701 18.6 14.9601L12.53 21.0301C12.38 21.1801 12.19 21.2501 12 21.2501Z" />
-              <path d="M12 21.08C11.59 21.08 11.25 20.74 11.25 20.33V3.5C11.25 3.09 11.59 2.75 12 2.75C12.41 2.75 12.75 3.09 12.75 3.5V20.33C12.75 20.74 12.41 21.08 12 21.08Z" />
-            </svg>
+            {/* traço de scroll (ref: home nova da Unico): trilho de 1px e um
+                segmento caindo por dentro em loop, no lugar da seta */}
+            <span className="traco-scroll" aria-hidden />
           </div>
         </section>
 
         {/* Thumbs dos projetos — revela ao rolar.
             Mobile: grid estático simples (não tem mouse, não faz sentido magnificar).
             Desktop: fileira com magnificação estilo Dock/geenie (ThumbsRow). */}
-        <section className="pb-[72px] md:pb-[160px]">
+        <section className="lista-sec pb-[72px] md:pb-[160px]">
           {/* Mobile: lista como a do v1 (nome à esquerda, categoria à direita, sem thumbs), com o tipo e as divisórias do v2 */}
           <div className="md:hidden">
             {projects.map((p, i) => (
@@ -600,10 +580,18 @@ export default function Home() {
                   href={href(p.href)}
                   className="flex items-baseline justify-between gap-4"
                   // sem régua no último item (igual à ProjectsList do desktop)
-                  style={{ padding: "24px 0", borderBottom: i === projects.length - 1 ? "none" : "1px solid #DEDEDE", textDecoration: "none" }}
+                  style={{ padding: "32px 0", borderBottom: i === projects.length - 1 ? "none" : "1px solid #DEDEDE", textDecoration: "none" }}
                 >
                   <span style={{ fontSize: 20, fontWeight: 400, letterSpacing: "-0.012em", lineHeight: "29px", color: "#222" }}>{p.title}</span>
-                  <span style={{ fontSize: 14, fontWeight: 400, letterSpacing: "-0.1px", color: "#8D8D8D", whiteSpace: "nowrap" }}>{p.category}</span>
+                  {/* no celular a categoria não cabia bem e não ajudava a escolher; a
+                      seta diz só "isso abre". É a mesma do "próximo" dos cases (BottomNav).
+                      alignSelf: o link alinha pela linha de base, e um svg sentaria nela */}
+                  {/* 20px, não os 24 do BottomNav: em 24 o desenho tinha a altura da
+                      maiúscula do nome e pesava mais que ele. 1.8 no viewBox de 24
+                      reduzido a 20 dá os mesmos 1,5px de traço na tela */}
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden style={{ flexShrink: 0, alignSelf: "center" }}>
+                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="#222" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                 </a>
               </Reveal>
             ))}
@@ -708,7 +696,7 @@ export default function Home() {
                   {INTERNAL_ABOUT ? (
                     // Estrutura e tipografia das internas (TwoCol): coluna de 42% | 1fr, gap 64/96px, recuo lateral de 20px;
                     // título 36px/44px/-0,72px (peso 500); corpo 24px/36px/-0,24px (peso 400); 32px entre parágrafos.
-                    <div className="md:px-5">
+                    <div>
                       {SHOW_ABOUT_LABEL && (
                         <span style={{ display: "block", textTransform: "uppercase", fontSize: 14, fontWeight: 400, letterSpacing: "0.02em", color: "#8D8D8D", marginBottom: 32 }}>
                           About
@@ -753,13 +741,14 @@ export default function Home() {
                           .reel-sticky { position: static !important; height: auto !important; }
                           .reel-bloco {
                             position: static !important;
-                            /* recua até a guia de 24px em vez de sangrar na borda */
-                            width: calc(100% - 48px) !important;
-                            margin: 0 24px;
+                            /* de ponta a ponta e sem raio: um corte na coluna de 24px,
+                               de propósito, entre a lista de projetos e o About */
+                            width: 100% !important;
+                            margin: 0;
                             height: auto !important;
                             aspect-ratio: 16 / 9;
                             transform: none !important;
-                            border-radius: 8px !important;
+                            border-radius: 0 !important;
                           }
                           /* o 1.012 existia pra disfarçar a borda durante o efeito */
                           .reel-bloco video { transform: none !important; }
@@ -772,6 +761,18 @@ export default function Home() {
                            então o aviso de scroll ficava embaixo dela. dvh mede só o visível. */
                         .hero-sec { min-height: calc(100vh - 90px); }
                         @supports (height: 100dvh) { .hero-sec { min-height: calc(100dvh - 90px); } }
+                        /* svh, não dvh: o dvh muda a cada quadro enquanto o Safari recolhe as
+                           barras no primeiro scroll, e o hero e o respiro da lista eram
+                           arredondados em separado — a lista tremia 1px até as barras pararem.
+                           svh é a tela com as barras abertas e não muda. */
+                        @supports (height: 100svh) { .hero-sec { min-height: calc(100svh - 90px); } }
+                        /* a lista começa colada no fim do hero, e o hero termina na borda
+                           de cima da barra do Safari — que é translúcida, então o primeiro
+                           projeto aparecia atrás do vidro. lvh - dvh é a altura das barras
+                           do navegador: com esse respiro a lista começa onde a tela física
+                           acaba, em qualquer iPhone. No desktop a conta dá zero. As duas
+                           medidas são fixas, então nada se mexe quando as barras recolhem. */
+                        @supports (height: 100lvh) { .lista-sec { padding-top: calc(100lvh - 100svh); } }
                         /* foto do About: o gap-8 da coluna deixava 32px até a frase.
                            (o md:mt-5 que estava aqui computava 0 — classe não gerada) */
                         @media (min-width: 768px) { .about-foto { margin-top: -4px; } }
@@ -786,7 +787,9 @@ export default function Home() {
                         .contato-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
                         .contato-grid > * { min-width: 0; }
                         /* e-mail: no celular 28px (cabe inteiro em 375); no desktop o corpo do hero */
-                        .contato-email { font-size: 28px; line-height: 34px; letter-spacing: -0.84px; gap: 8px; }
+                        /* 27, não 28: com o kerning da curva (-0,0125em) o e-mail em 28 passava 10px da
+                           margem num iPhone de 375. Antes cabia porque o aperto era de 46px (-0,03em). */
+                        .contato-email { font-size: 27px; line-height: 33px; letter-spacing: -0.34px; gap: 8px; }
                         .contato-email svg { width: 20px; height: 20px; margin-top: 8px; }
                         @media (min-width: 768px) {
                           .contato-email { font-size: 46px; line-height: 48.3px; letter-spacing: -1.38px; gap: 12px; }
@@ -829,14 +832,14 @@ export default function Home() {
                         }
                         @media (prefers-reduced-motion: reduce) { .arrow-animate { animation: none; } }
                       `}</style>
-                      <div className="grid grid-cols-1 gap-x-16 gap-y-6 md:grid-cols-[42%_1fr] lg:gap-x-24" style={{ color: fg, transition: "color 0.5s ease" }}>
+                      <div className="grid grid-cols-1 gap-x-16 gap-y-8 md:gap-y-6 md:grid-cols-[42%_1fr] lg:gap-x-24" style={{ color: fg, transition: "color 0.5s ease" }}>
                         {/* coluna da esquerda: o título e, logo abaixo (como no começo), a foto redonda; aparece com o Reveal (fade + subida leve).
                             A coluna inteira fica presa (sticky) enquanto o texto da direita rola. */}
                         {/* o `top` vem inline: o md:top-24 (96px) prendia a frase baixa demais */}
                         <div className="flex flex-col gap-8 md:gap-10 md:sticky md:self-start" style={{ top: 72 }}>
                           <Reveal delay={50} triggerMargin="0%">
                             <h2
-                              className="text-[29px] leading-[38px] tracking-[-0.58px] md:text-[36px] md:leading-[44px] md:tracking-[-0.72px]"
+                              className="text-[24px] leading-[30px] tracking-[-0.24px] md:text-[36px] md:leading-[44px] md:tracking-[-0.72px]"
                               style={{ fontWeight: 500, color: "#222" }}
                             >
                               {about[0].map((s) => (typeof s === "string" ? s : s.h)).join("")}
@@ -860,7 +863,7 @@ export default function Home() {
                         </div>
                         {/* texto da direita: cada parágrafo entra com a mesma mola da lista de projetos, em cascata depois do título */}
                         <div
-                          className="about-texto text-[19px] leading-[29px] tracking-[-0.19px] md:text-[24px] md:leading-[36px] md:tracking-[-0.24px]"
+                          className="about-texto text-[19px] leading-[29px] tracking-[-0.11px] md:text-[24px] md:leading-[36px] md:tracking-[-0.24px]"
                           style={{ fontWeight: 400, color: "#222" }}
                         >
                           {about.slice(1).map((segs, i) => (
@@ -873,6 +876,7 @@ export default function Home() {
                           {/* Referência A: ano à esquerda (caixa alta, miúdo) + empresa e cargo empilhados; régua fina entre as linhas */}
                           {SHOW_EXP_ROWS && EXP_LAYOUT === "ref-frase" && (
                             <div style={{ marginTop: 72 }}>
+                              <RotuloMobile style={{ marginBottom: -6 }}>{LABELS.experience[lang]}</RotuloMobile>
                               {experiences.map((exp, i) => (
                                 // mesma cascata da lista de projetos (35ms por item)
                                 <Reveal key={exp.company} delay={i * 35} triggerMargin="0%">
@@ -983,7 +987,7 @@ export default function Home() {
                   {SHOW_EXP_ROWS && EXP_LAYOUT === "vertical" && (
                     // Experience na 2ª coluna do About (a do texto "Throughout my career…"): mesma grade 42% | 1fr; a linha do tempo
                     // (período | bolinha | empresa | cargo) começa onde o texto começa.
-                    <div className="md:px-5" style={{ marginTop: 96 }}>
+                    <div style={{ marginTop: 96 }}>
                       <div className="grid grid-cols-1 gap-x-16 md:grid-cols-[42%_1fr] lg:gap-x-24">
                         <div className="hidden md:block" />
                         <div>
@@ -1028,7 +1032,7 @@ export default function Home() {
                   {SHOW_EXP_ROWS && EXP_LAYOUT === "horizontal" && (
                     // Timeline horizontal (a do v1): linha fina com uma bolinha por empresa; um tamanho só (16px), hierarquia pelo peso e pela cor.
                     // Anda para o lado quando não cabe. Só no desktop (no mobile é a vertical acima).
-                    <div className="hidden md:block md:px-5" style={{ marginTop: "clamp(112px, 13vw, 190px)" }}>
+                    <div className="hidden md:block" style={{ marginTop: "clamp(112px, 13vw, 190px)" }}>
                       <div className="overflow-x-auto pb-2" style={{ scrollbarWidth: "none", scrollSnapType: "x proximity" }}>
                         <div className="grid" style={{ position: "relative", gridAutoFlow: "column", gridAutoColumns: "minmax(200px, 1fr)", columnGap: 0 }}>
                           <div aria-hidden style={{ position: "absolute", top: 3.5, left: 0, right: 0, height: 1, background: "#DDDDDD" }} />
@@ -1085,7 +1089,7 @@ export default function Home() {
               )}
               {BIG_ABOUT && SHOW_ABOUT_TEXT && !REF_LAYOUT && !STATEMENT_LAYOUT && (
                 <div
-                  className="md:grid md:px-5"
+                  className="md:grid"
                   style={{
                     gridTemplateColumns: SHOW_EXP_ROWS ? "minmax(0, 620px) minmax(0, 1fr)" : "minmax(0, 1fr)", // About na largura do texto; Experience fica com o resto
                     columnGap: 96,
@@ -1329,23 +1333,27 @@ export default function Home() {
         </section>
         */}
 
-        {SHOW_DEPOIMENTOS && <Depoimentos />}
+        {SHOW_DEPOIMENTOS && (
+          <>
+            <RotuloMobile style={{ marginTop: -28, marginBottom: 20 }}>{LABELS.recommendations[lang]}</RotuloMobile>
+            <Depoimentos />
+          </>
+        )}
+
+      </div>
+      </div>
 
         {SHOW_CONTACT && (
           <>
-        {/* Contato: seção escura; o preto sobe pelo canto direito e o esquerdo equaliza */}
+        {/* Contato: rodapé preto grudado no fundo da janela, por baixo da folha.
+            Altura do conteúdo, não da tela: o preto fecha a página ocupando só uma parte. */}
         <section
           ref={contactRef}
           id="contato"
-          style={{ position: "relative", marginLeft: "calc(50% - 50vw)", width: "100vw", minHeight: "100vh", overflow: "hidden", background: "#F6F6F5" }}
+          style={{ position: "sticky", bottom: 0, zIndex: 0, overflow: "hidden", background: "#111" }}
         >
-          <div
-            ref={darkRef}
-            aria-hidden
-            style={{ position: "absolute", inset: 0, background: "#111", clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)", willChange: "clip-path" }}
-          >
-            {/* reel apagado atrás do texto — mesmo arquivo do About, então não baixa de novo.
-                Vai dentro do painel escuro pra ser recortado junto com ele na subida. */}
+          <div aria-hidden style={{ position: "absolute", inset: 0 }}>
+            {/* reel apagado atrás do texto — mesmo arquivo do About, então não baixa de novo */}
             {SHOW_CONTACT_REEL && (
               <video
                 src={ABOUT_VIDEO}
@@ -1357,14 +1365,15 @@ export default function Home() {
               />
             )}
           </div>
+          {/* 104px em cima e embaixo, o respiro do topo do rodapé da ref (13 x 8) */}
           <div
-            className="px-6 md:px-10"
-            style={{ position: "relative", maxWidth: 1440, margin: "0 auto", minHeight: "100vh", display: "flex", alignItems: "center" }}
+            className="px-6 py-[72px] md:px-10 md:py-[104px]"
+            style={{ position: "relative", maxWidth: 1440, margin: "0 auto" }}
           >
             {/* dois blocos (como no Fuel): o texto à esquerda e, à direita, uma lista de links com divisórias finas */}
             <div
               ref={contactTextRef}
-              className="contato-grid w-full items-end gap-x-16 gap-y-10 md:px-5"
+              className="contato-grid w-full items-end gap-x-16 gap-y-10"
               style={{ opacity: 0 }}
             >
               <div className="contato-esq">
@@ -1379,7 +1388,7 @@ export default function Home() {
                   color: "#8D8D8D",
                 }}
               >
-                <ContactPhrases lang={lang} />
+                {CONTACT_PHRASE[lang === "pt" ? "pt" : "en"]}
               </div>
               {/* e-mail por extenso, sublinhado — o alvo de clique da seção */}
               <a
@@ -1497,7 +1506,6 @@ export default function Home() {
           </>
         )}
 
-      </div>
     </div>
   );
 }

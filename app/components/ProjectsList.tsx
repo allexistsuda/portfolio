@@ -9,7 +9,10 @@ import Reveal from "./Reveal";
  * Só desktop por enquanto (ver grid mobile separado em page.tsx).
  */
 
-const THUMB_HEIGHT = 60;
+// 72, não 60: com o nome em 24 e a linha em 120, a thumb volta a ocupar a mesma
+// fração da linha que tinha antes (o vão entre thumbs fica 0,68 da altura dela)
+const THUMB_HEIGHT = 72;
+const THUMB_WIDTH = Math.round(THUMB_HEIGHT * 1.6);
 
 export default function ProjectsList({
   items,
@@ -32,9 +35,9 @@ export default function ProjectsList({
             href={href(p.href)}
             className="group grid items-center"
             style={{
-              gridTemplateColumns: "1fr 180px 72px",
+              gridTemplateColumns: `1fr 180px ${THUMB_WIDTH}px`,
               columnGap: 24,
-              padding: "20px 0",
+              padding: "24px 0",
               borderBottom: i === items.length - 1 ? "none" : "1px solid #DEDEDE",
               textDecoration: "none",
               position: "relative",
@@ -51,12 +54,12 @@ export default function ProjectsList({
             <span
               data-title
               style={{
-                fontSize: 20,
+                // o corpo do texto do About (24/400, -0.010em, 36): a lista sobe um degrau
+                // que já existe no site. A linha não cresce: quem manda nela é a thumb de 60.
+                fontSize: 24,
                 fontWeight: 400,
-                // -0.45px aqui era -0.0225em: mais fechado que o título de 36px do About,
-                // num corpo quase a metade. A escala tem que apertar conforme CRESCE.
-                letterSpacing: "-0.012em",
-                lineHeight: "29px",
+                letterSpacing: "-0.01em",
+                lineHeight: "36px",
                 color: "#222",
                 textAlign: "left",
                 transition: "color 0.25s ease",
@@ -85,7 +88,7 @@ export default function ProjectsList({
                   className="overflow-hidden"
                   style={{
                     height: THUMB_HEIGHT,
-                    width: THUMB_HEIGHT * 1.6,
+                    width: THUMB_WIDTH,
                     borderRadius: 6,
                     flexShrink: 0,
                   }}
@@ -104,7 +107,7 @@ export default function ProjectsList({
                   className="overflow-hidden"
                   style={{
                     height: THUMB_HEIGHT,
-                    width: THUMB_HEIGHT * 1.6,
+                    width: THUMB_WIDTH,
                     borderRadius: 6,
                     flexShrink: 0,
                   }}
@@ -120,7 +123,7 @@ export default function ProjectsList({
                 <div
                   style={{
                     height: THUMB_HEIGHT,
-                    width: THUMB_HEIGHT * 1.6,
+                    width: THUMB_WIDTH,
                     borderRadius: 6,
                     background: "#DADADA",
                     flexShrink: 0,

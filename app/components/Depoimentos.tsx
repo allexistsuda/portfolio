@@ -136,7 +136,7 @@ export default function Depoimentos() {
 
   if (ESTATICO) {
     return (
-      // mesma guia do About: o bloco "I'm Allexis -> Throughout" vai de 60 a 1380
+      // mesma borda do resto do site: a das imagens (40 a 1400 em 1440)
       <section className="depo-secao" style={{ maxWidth: 1440, margin: "0 auto", paddingBottom: 140 }}>
         <div>
           {/* cascata card a card. 90ms de passo (a lista de projetos usa 35, mas lá
@@ -156,9 +156,9 @@ export default function Depoimentos() {
           {/* o convite ao LinkedIn sai por ora — o Allexis vai decidir onde entra */}
         </div>
         <style>{`
-          /* o container pai já aplica 24/40; aqui só o que falta pra bater a guia do About */
+          /* o container pai já aplica 24/40, que é a borda das imagens; aqui não entra
+             recuo nenhum (antes tinha 20px pra bater a guia antiga do About) */
           .depo-secao { padding-left: 0; padding-right: 0; }
-          @media (min-width: 768px) { .depo-secao { padding-left: 20px; padding-right: 20px; } }
           /* 3 por linha, 2 linhas */
           .depo-grade { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
           @media (max-width: 1023px) { .depo-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -176,6 +176,10 @@ export default function Depoimentos() {
               margin-right: -24px;
               padding-left: 24px;
               padding-right: 24px;
+              /* sem isso o encaixe alinha o card na borda da área de rolagem, não no
+                 padding: o primeiro card ia pra x=0, colado na tela */
+              scroll-padding-left: 24px;
+              scroll-padding-right: 24px;
               scrollbar-width: none;
             }
             .depo-grade::-webkit-scrollbar { display: none; }
